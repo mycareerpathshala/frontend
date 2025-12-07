@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { getMBBSCountries, getMBBSUniversities } from '@/lib/api/mbbs';
 import { verifyStrapiTokenPermissions } from '@/lib/strapi';
+import { DEFAULT_PAGE_SIZE } from '@/lib/constants';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import EmptyState from '@/components/common/EmptyState';
@@ -43,7 +44,7 @@ export default function MBBSPage() {
       // Load countries and universities in parallel
       const [countriesResult, universitiesResult] = await Promise.all([
         getMBBSCountries(),
-        getMBBSUniversities({ pagination: { pageSize: 20 } }),
+        getMBBSUniversities({ pagination: { pageSize: DEFAULT_PAGE_SIZE } }),
       ]);
 
       if (countriesResult.error && universitiesResult.error) {

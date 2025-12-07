@@ -31,9 +31,9 @@ class ErrorBoundary extends Component {
             </p>
             <button 
               className="error-button"
-              onClick={() => this.setState({ hasError: false, error: null })}
+              onClick={() => window.location.reload()}
             >
-              Try again
+              Reload page
             </button>
           </div>
           <style jsx>{`

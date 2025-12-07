@@ -32,6 +32,7 @@ export default function CountryUniversitiesPage() {
     }
 
     loadCountryUniversities();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countryID]);
 
   async function loadCountryUniversities() {

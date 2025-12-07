@@ -32,6 +32,7 @@ export default function UniversityPage() {
     }
 
     loadUniversityData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [universityID]);
 
   async function loadUniversityData() {

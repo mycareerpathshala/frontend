@@ -55,6 +55,49 @@ frontend/
 - A running Strapi CMS instance
 - Strapi API token with appropriate permissions
 
+### Strapi Setup Requirements
+
+Before running this application, you need to set up the following content types in your Strapi instance:
+
+#### 1. Countries Collection Type
+```
+Fields:
+- name (String, required)
+- flag (String) - emoji or image
+- has_mbbs (Boolean)
+- university_count (Number)
+- description (Text)
+```
+
+#### 2. MBBS Universities Collection Type
+```
+Fields:
+- name (String, required)
+- location (String)
+- ranking (Number)
+- fees (String)
+- description (Text)
+- website (String)
+- email (Email)
+- country (Relation: Many-to-One with Countries)
+```
+
+#### 3. MBBS Programs Collection Type
+```
+Fields:
+- name (String, required)
+- duration (String)
+- description (Text)
+- university (Relation: Many-to-One with MBBS Universities)
+```
+
+**Note**: These content types must be created in Strapi with the exact API IDs:
+- `countries`
+- `mbbs-universities`
+- `mbbs-programs`
+
+See `lib/api/mbbs.js` for detailed schema documentation.
+
 ### Installation
 
 1. Clone the repository:

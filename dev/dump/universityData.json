@@ -1,0 +1,123 @@
+{
+    "id": 59,
+    "documentId": "h27q31dv6mkh1epayh8acfvw",
+    "name": "Heriot-Watt University Dubai",
+    "acronym": "HWUD",
+    "type": "Private",
+    "est": "2005-01-01",
+    "shortDescription": "A world-leading pioneer in British education in Dubai, known for its focus on STEM and Business.",
+    "fullDescription": "Heriot-Watt University Dubai was the first British university to open a campus in Dubai International Academic City in 2005. In 2021, it moved to a state-of-the-art, 218,000 sq. ft. campus in Dubai Knowledge Park. As a global university with campuses in the UK and Malaysia, it offers students the opportunity to transfer between locations. The university is renowned for its high graduate employability and holds a 5-star rating from the KHDA.",
+    "officialWebsite": "https://www.hw.ac.uk/dubai",
+    "numOfCourses": 90,
+    "numOfCampus": 1,
+    "campusLocality": "Urban",
+    "avgNumOfForeginStudents": 4500,
+    "scholarship": true,
+    "avgAcceptanceRate": 65,
+    "createdAt": "2026-01-29T13:28:04.952Z",
+    "updatedAt": "2026-02-04T05:19:47.755Z",
+    "publishedAt": "2026-02-04T05:19:47.867Z",
+    "location": {
+        "id": 89,
+        "areaNeighborhood": "Dubai Knowledge Park",
+        "stateProvince": "Dubai",
+        "city": "Dubai"
+    },
+    "campusSize": {
+        "id": 89,
+        "sizeInNumber": 218000,
+        "measurementUnit": "Square Foots"
+    },
+    "avgTuitionFee": {
+        "id": 283,
+        "minimum": 16350,
+        "maximum": 21500
+    },
+    "otherFees": [],
+    "ugApplicationRequirements": null,
+    "pgApplicationRequirements": null,
+    "applicationDateList": [
+        {
+            "id": 102,
+            "session": "Summer",
+            "startDate": "2026-05-05",
+            "endDate": "2026-12-05"
+        }
+    ],
+    "universityMediaContent": {
+        "id": 89
+    },
+    "highlightNoticeList": [
+        {
+            "id": 128,
+            "title": "Go Global Program",
+            "noticeText": "Transfer seamlessly to Edinburgh or Malaysia campuses after your first or second year."
+        },
+        {
+            "id": 129,
+            "title": "KHDA 5-Star University",
+            "noticeText": "Consistently ranked 5-stars by the Dubai Knowledge and Human Development Authority."
+        }
+    ],
+    "importantDateList": [
+        {
+            "id": 67,
+            "tagSelector": "Undergraduate",
+            "oneLineDescription": "Autumn Term Orientation Week",
+            "date": "2026-09-06"
+        }
+    ],
+    "rankingInfo": {
+        "id": 54,
+        "recordedDate": "2026-01-01",
+        "qsRanking": 287,
+        "theRanking": null,
+        "usnwrRanking": 685
+    },
+    "faqs": [
+        {
+            "id": 91,
+            "selectTopic": "Cost"
+        },
+        {
+            "id": 92,
+            "selectTopic": "Campus"
+        }
+    ],
+    "courses": [
+        {
+            "id": 22,
+            "documentId": "gnxua3zt0wurav9gs2x7ai6a",
+            "courseName": "Architecture BA (Hons)",
+            "courseDescription": "This program is the first and only four-year RIBA Part One accredited undergraduate architecture degree in the UAE. The curriculum balances technical and theoretical aspects, covering construction technology, history of the built environment, and integrated technology. Students engage in extensive studio-based work to develop design proficiency while addressing 21st-century challenges like sustainability and energy efficiency. Completion allows students to progress to RIBA Part Two Masters programs globally.",
+            "courseLevel": "Undergraduate",
+            "degreeName": "Bachelor of Arts (Hons)",
+            "majorName": "Architecture",
+            "courseDuration": 4,
+            "deliveryMethod": "On-Campus",
+            "teachingLanguage": "English",
+            "courseOfferings": "Full-Time",
+            "createdAt": "2026-02-04T05:18:58.740Z",
+            "updatedAt": "2026-02-04T05:18:58.740Z",
+            "publishedAt": "2026-02-04T05:18:58.759Z"
+        },
+        {
+            "id": 20,
+            "documentId": "s5xmjlh1befurn1olnhre47f",
+            "courseName": "Computer Science BSc (Hons)",
+            "courseDescription": "This program is oriented toward constructing robust and usable systems, teaching students not only how to deploy cutting-edge tools but also how to build the next generation of software. The curriculum covers foundational programming, web design, and databases in the early years, progressing to advanced topics like Artificial Intelligence, Operating Systems, and Big Data Management. Accredited by the British Computer Society (BCS), it prepares graduates for roles in software engineering, systems design, and multimedia management.",
+            "courseLevel": "Undergraduate",
+            "degreeName": "Bachelor of Science (Hons)",
+            "majorName": "Computer Science",
+            "courseDuration": 4,
+            "deliveryMethod": "On-Campus",
+            "teachingLanguage": "English",
+            "courseOfferings": "Full-Time",
+            "createdAt": "2026-02-04T05:17:24.898Z",
+            "updatedAt": "2026-02-04T05:17:24.898Z",
+            "publishedAt": "2026-02-04T05:17:24.910Z"
+        }
+    ],
+    "admissionDynamicPage": null,
+    "scholarshipDynamicPage": null
+}

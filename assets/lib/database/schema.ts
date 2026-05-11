@@ -1,0 +1,248 @@
+import { sql } from 'drizzle-orm';
+import {
+    boolean,
+    check,
+    index,
+    integer,
+    jsonb,
+    pgEnum,
+    pgTable,
+    real,
+    text,
+    timestamp,
+    uuid,
+} from 'drizzle-orm/pg-core';
+
+// ── Enums ─────────────────────────────────────────────────────────────────────
+
+export const adminRoleEnum         = pgEnum('admin_role',         ['super', 'admin', 'editor', 'counsellor']);
+export const genderEnum            = pgEnum('gender',             ['male', 'female', 'non-binary', 'prefer-not-to-say']);
+export const studyLevelEnum        = pgEnum('study_level',        ['Undergraduate', 'Postgraduate', 'MBBS']);
+export const requestStatusEnum     = pgEnum('request_status',     ['pending', 'scheduled', 'completed', 'cancelled']);
+export const applicationStatusEnum = pgEnum('application_status', ['draft', 'submitted', 'under_review', 'offer_received', 'accepted', 'rejected', 'withdrawn']);
+export const applicationTypeEnum   = pgEnum('application_type',   ['general', 'mbbs']);
+export const notificationTypeEnum  = pgEnum('notification_type',  ['counselling_scheduled', 'counselling_completed', 'counselling_cancelled', 'application_status_updated', 'new_counselling_request', 'new_application']);
+
+// ── Users ─────────────────────────────────────────────────────────────────────
+
+export const users = pgTable(
+    'users',
+    {
+        id:             uuid('id').primaryKey().defaultRandom(),
+        firstName:      text('first_name').notNull(),
+        lastName:       text('last_name').notNull(),
+        email:          text('email').notNull().unique(),
+        passwordHash:   text('password_hash').notNull(),
+        avatar:         text('avatar').notNull().default('avatar_01.png'),
+        phone:          text('phone'),
+        dateOfBirth:    text('date_of_birth'),
+        gender:         genderEnum('gender'),
+        country:        text('country'),
+        secondaryEmail: text('secondary_email'),
+        isVerified:     boolean('is_verified').notNull().default(false),
+        createdAt:      timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+        updatedAt:      timestamp('updated_at', { withTimezone: true }).notNull().defaultNow().$onUpdateFn(() => new Date()),
+    },
+);
+
+export type User = typeof users.$inferSelect;
+export type NewUser = typeof users.$inferInsert;
+
+// ── Counsellors ───────────────────────────────────────────────────────────────
+
+export const counsellors = pgTable(
+    'counsellors',
+    {
+        id:                     uuid('id').primaryKey().defaultRandom(),
+        name:                   text('name').notNull(),
+        designation:            text('designation').notNull(),
+        bio:                    text('bio').notNull(),
+        photo:                  text('photo').notNull(),
+        email:                  text('email').notNull().unique(),
+        phone:                  text('phone').notNull(),
+        experienceYears:        integer('experience_years').notNull().default(0),
+        totalSessionsConducted: integer('total_sessions_conducted').notNull().default(0),
+        rating:                 real('rating').notNull().default(0),
+        isActive:               boolean('is_active').notNull().default(true),
+        createdAt:              timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+        updatedAt:              timestamp('updated_at', { withTimezone: true }).notNull().defaultNow().$onUpdateFn(() => new Date()),
+    },
+    (t) => [
+        index('idx_counsellors_is_active').on(t.isActive),
+        check('counsellors_rating_range',         sql`${t.rating} >= 0 AND ${t.rating} <= 5`),
+        check('counsellors_experience_years_min', sql`${t.experienceYears} >= 0`),
+        check('counsellors_sessions_min',         sql`${t.totalSessionsConducted} >= 0`),
+    ],
+);
+
+export type Counsellor = typeof counsellors.$inferSelect;
+export type NewCounsellor = typeof counsellors.$inferInsert;
+
+// ── Counsellings ──────────────────────────────────────────────────────────────
+
+// preferredDays:       JSONB array — e.g. ["Monday","Wednesday","Friday"]
+// preferredTimeRanges: JSONB array — e.g. ["10 AM - 12 PM","2 PM - 4 PM"]
+
+export const counsellings = pgTable(
+    'counsellings',
+    {
+        id:          uuid('id').primaryKey().defaultRandom(),
+
+        // Student
+        userId:     uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+        name:       text('name').notNull(),
+        email:      text('email').notNull(),
+        phone:      text('phone').notNull(),
+        studyLevel: studyLevelEnum('study_level').notNull(),
+        message:    text('message').notNull(),
+
+        // Availability (stored as JSONB arrays)
+        preferredDays:       jsonb('preferred_days').notNull().$type<string[]>(),
+        preferredTimeRanges: jsonb('preferred_time_ranges').notNull().$type<string[]>(),
+
+        // Admin-set fields
+        counsellorId:  uuid('counsellor_id').references(() => counsellors.id, { onDelete: 'set null' }),
+        scheduledTime: timestamp('scheduled_time', { withTimezone: true }),
+        meetingLink:   text('meeting_link'),
+
+        // Status
+        status: requestStatusEnum('status').notNull().default('pending'),
+
+        createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+        updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow().$onUpdateFn(() => new Date()),
+    },
+    (t) => [
+        index('idx_counsellings_user_id').on(t.userId),
+        index('idx_counsellings_counsellor_id').on(t.counsellorId),
+        index('idx_counsellings_status').on(t.status),
+    ],
+);
+
+export type Counselling = typeof counsellings.$inferSelect;
+export type NewCounselling = typeof counsellings.$inferInsert;
+
+// Convenience type aliases for the JSONB array fields
+export type WeekDay   = 'Sunday' | 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday';
+export type TimeRange = '10 AM - 12 PM' | '12 PM - 2 PM' | '2 PM - 4 PM' | '4 PM - 6 PM';
+
+// ── Preferences ───────────────────────────────────────────────────────────────
+
+export const preferences = pgTable(
+    'preferences',
+    {
+        id:                   uuid('id').primaryKey().defaultRandom(),
+        userId:               uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+        name:                 text('name').notNull(),
+        countryFilter:        text('country_filter'),
+        countryName:          text('country_name'),
+        streamFilter:         text('stream_filter'),
+        streamName:           text('stream_name'),
+        levelFilter:          text('level_filter'),
+        deliveryMethodFilter: text('delivery_method_filter'),
+        studyLanguageFilter:  text('study_language_filter'),
+        courseOfferingFilter: text('course_offering_filter'),
+        createdAt:            timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+        updatedAt:            timestamp('updated_at', { withTimezone: true }).notNull().defaultNow().$onUpdateFn(() => new Date()),
+    },
+    (t) => [
+        index('idx_preferences_user_id').on(t.userId),
+    ],
+);
+
+export type Preference = typeof preferences.$inferSelect;
+export type NewPreference = typeof preferences.$inferInsert;
+
+// ── Applications ──────────────────────────────────────────────────────────────
+
+export const applications = pgTable(
+    'applications',
+    {
+        id:           uuid('id').primaryKey().defaultRandom(),
+        userId:       uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+        universityId: text('university_id').notNull(),
+        courseId:     text('course_id'),
+        type:         applicationTypeEnum('type').notNull().default('general'),
+        status:       applicationStatusEnum('status').notNull().default('submitted'),
+        notes:        text('notes'),
+        createdAt:    timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+        updatedAt:    timestamp('updated_at', { withTimezone: true }).notNull().defaultNow().$onUpdateFn(() => new Date()),
+    },
+    (t) => [
+        index('idx_applications_user_id').on(t.userId),
+        index('idx_applications_university_id').on(t.universityId),
+        index('idx_applications_status').on(t.status),
+    ],
+);
+
+export type Application = typeof applications.$inferSelect;
+export type NewApplication = typeof applications.$inferInsert;
+
+// ── Subscribers ───────────────────────────────────────────────────────────────
+
+export const subscribers = pgTable(
+    'subscribers',
+    {
+        id:        uuid('id').primaryKey().defaultRandom(),
+        name:      text('name').notNull(),
+        email:     text('email').notNull().unique(),
+        phone:     text('phone'),
+        createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    },
+    (t) => [
+        index('idx_subscribers_email').on(t.email),
+    ],
+);
+
+export type Subscriber = typeof subscribers.$inferSelect;
+export type NewSubscriber = typeof subscribers.$inferInsert;
+
+// ── Notifications ─────────────────────────────────────────────────────────────
+
+export const notifications = pgTable(
+    'notifications',
+    {
+        id:        uuid('id').primaryKey().defaultRandom(),
+        userId:    uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+        type:      notificationTypeEnum('type').notNull(),
+        title:     text('title').notNull(),
+        message:   text('message').notNull(),
+        isRead:    boolean('is_read').notNull().default(false),
+        createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    },
+    (t) => [
+        index('idx_notifications_user_id').on(t.userId),
+        index('idx_notifications_is_read').on(t.isRead),
+    ],
+);
+
+export type Notification = typeof notifications.$inferSelect;
+export type NewNotification = typeof notifications.$inferInsert;
+
+// ── User Settings ─────────────────────────────────────────────────────────────
+
+export const userSettings = pgTable(
+    'user_settings',
+    {
+        userId:                  uuid('user_id').primaryKey().references(() => users.id, { onDelete: 'cascade' }),
+        // In-app notification prefs
+        inAppApplications:       boolean('in_app_applications').notNull().default(true),
+        inAppCounselling:        boolean('in_app_counselling').notNull().default(true),
+        newCourseAlerts:         boolean('new_course_alerts').notNull().default(false),
+        universityUpdates:       boolean('university_updates').notNull().default(false),
+        // Email prefs
+        emailAdmissionDeadlines: boolean('email_admission_deadlines').notNull().default(true),
+        emailScholarshipAlerts:  boolean('email_scholarship_alerts').notNull().default(true),
+        emailPromotional:        boolean('email_promotional').notNull().default(true),
+        emailNewsletter:         boolean('email_newsletter').notNull().default(true),
+        emailSpecialOffers:      boolean('email_special_offers').notNull().default(false),
+        emailWeeklyDigest:       boolean('email_weekly_digest').notNull().default(false),
+        // Privacy
+        publicProfile:           boolean('public_profile').notNull().default(false),
+        showOnlineStatus:        boolean('show_online_status').notNull().default(true),
+        shareActivityData:       boolean('share_activity_data').notNull().default(false),
+        updatedAt:               timestamp('updated_at', { withTimezone: true }).notNull().defaultNow().$onUpdateFn(() => new Date()),
+    },
+);
+
+export type UserSettings = typeof userSettings.$inferSelect;
+export type NewUserSettings = typeof userSettings.$inferInsert;

@@ -1,0 +1,78 @@
+{
+    "id": 2,
+    "documentId": "iqqdp4a6k79dl0qhxo6s6os7",
+    "name": "Agriculture",
+    "createdAt": "2026-01-28T01:07:21.305Z",
+    "updatedAt": "2026-01-28T01:07:21.305Z",
+    "publishedAt": "2026-01-28T01:07:21.329Z",
+    "streamCover": {
+        "id": 1,
+        "documentId": "fy5wyaks2f4zcpaz0vcz6vgo",
+        "name": "agriculture.jpg",
+        "alternativeText": "Agriculture Stream Cover Image",
+        "caption": "Agriculture Cover",
+        "width": 7851,
+        "height": 5237,
+        "formats": {
+            "large": {
+                "ext": ".jpg",
+                "url": "/uploads/large_agriculture_4d223eaacd.jpg",
+                "hash": "large_agriculture_4d223eaacd",
+                "mime": "image/jpeg",
+                "name": "large_agriculture.jpg",
+                "path": null,
+                "size": 176.84,
+                "width": 1000,
+                "height": 667,
+                "sizeInBytes": 176843
+            },
+            "small": {
+                "ext": ".jpg",
+                "url": "/uploads/small_agriculture_4d223eaacd.jpg",
+                "hash": "small_agriculture_4d223eaacd",
+                "mime": "image/jpeg",
+                "name": "small_agriculture.jpg",
+                "path": null,
+                "size": 45.07,
+                "width": 500,
+                "height": 333,
+                "sizeInBytes": 45068
+            },
+            "medium": {
+                "ext": ".jpg",
+                "url": "/uploads/medium_agriculture_4d223eaacd.jpg",
+                "hash": "medium_agriculture_4d223eaacd",
+                "mime": "image/jpeg",
+                "name": "medium_agriculture.jpg",
+                "path": null,
+                "size": 98.12,
+                "width": 750,
+                "height": 500,
+                "sizeInBytes": 98116
+            },
+            "thumbnail": {
+                "ext": ".jpg",
+                "url": "/uploads/thumbnail_agriculture_4d223eaacd.jpg",
+                "hash": "thumbnail_agriculture_4d223eaacd",
+                "mime": "image/jpeg",
+                "name": "thumbnail_agriculture.jpg",
+                "path": null,
+                "size": 10.45,
+                "width": 234,
+                "height": 156,
+                "sizeInBytes": 10450
+            }
+        },
+        "hash": "agriculture_4d223eaacd",
+        "ext": ".jpg",
+        "mime": "image/jpeg",
+        "size": 6488.31,
+        "url": "/uploads/agriculture_4d223eaacd.jpg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-01-28T01:06:24.563Z",
+        "updatedAt": "2026-01-28T01:07:14.872Z",
+        "publishedAt": "2026-01-28T01:06:24.564Z"
+    }
+}

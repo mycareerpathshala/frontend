@@ -1,0 +1,217 @@
+{
+    "data": {
+        "id": 24,
+        "documentId": "bs6ycplb67p1zo6tc4wha23o",
+        "name": "United Arab Emirates",
+        "description": "The United Arab Emirates is a global hub for innovation, luxury, and education. Comprising seven emirates, including the world-renowned Dubai and the capital Abu Dhabi, the UAE offers international students a unique blend of traditional Arabian culture and ultra-modern lifestyle. It is home to branches of top-tier global universities and provides a safe, tax-free environment with rapidly growing career opportunities in tech, tourism, and finance.",
+        "countryCode": "AE",
+        "phoneCode": "+971",
+        "capital": "Abu Dhabi",
+        "numOfUniversities": 76,
+        "nativeLanguage": "Arabic",
+        "numOfIntlStudents": "120000",
+        "visaSuccessRate": 85,
+        "countryCurrency": "UAE Dirham (AED)",
+        "livingCostIndex": 4,
+        "createdAt": "2026-01-28T02:02:34.103Z",
+        "updatedAt": "2026-01-28T05:38:27.977Z",
+        "publishedAt": "2026-01-28T05:38:28.086Z",
+        "countryFlag": {
+            "id": 15,
+            "documentId": "ns8i4pofl5vec1ykaq18u799",
+            "name": "uae_flag.svg",
+            "alternativeText": "Flag of the United Arab Emirates",
+            "caption": "United Arab Emirates Flag",
+            "width": 1200,
+            "height": 600,
+            "formats": null,
+            "hash": "uae_flag_4623c8f50d",
+            "ext": ".svg",
+            "mime": "image/svg+xml",
+            "size": 0.32,
+            "url": "/uploads/uae_flag_4623c8f50d.svg",
+            "previewUrl": null,
+            "provider": "local",
+            "provider_metadata": null,
+            "createdAt": "2026-01-28T02:02:04.832Z",
+            "updatedAt": "2026-01-28T05:38:18.693Z",
+            "publishedAt": "2026-01-28T02:02:04.832Z"
+        },
+        "coverImage": {
+            "id": 17,
+            "documentId": "v8n5yt50vug5n0hduni7iirk",
+            "name": "uae_cover_photo.jpg",
+            "alternativeText": "Cover image of United Arab Emirates",
+            "caption": "United Arab Emirates",
+            "width": 3200,
+            "height": 2133,
+            "formats": {
+                "large": {
+                    "ext": ".jpg",
+                    "url": "/uploads/large_uae_cover_photo_9a0c8898a6.jpg",
+                    "hash": "large_uae_cover_photo_9a0c8898a6",
+                    "mime": "image/jpeg",
+                    "name": "large_uae_cover_photo.jpg",
+                    "path": null,
+                    "size": 124.02,
+                    "width": 1000,
+                    "height": 666,
+                    "sizeInBytes": 124023
+                },
+                "small": {
+                    "ext": ".jpg",
+                    "url": "/uploads/small_uae_cover_photo_9a0c8898a6.jpg",
+                    "hash": "small_uae_cover_photo_9a0c8898a6",
+                    "mime": "image/jpeg",
+                    "name": "small_uae_cover_photo.jpg",
+                    "path": null,
+                    "size": 33.89,
+                    "width": 500,
+                    "height": 333,
+                    "sizeInBytes": 33891
+                },
+                "medium": {
+                    "ext": ".jpg",
+                    "url": "/uploads/medium_uae_cover_photo_9a0c8898a6.jpg",
+                    "hash": "medium_uae_cover_photo_9a0c8898a6",
+                    "mime": "image/jpeg",
+                    "name": "medium_uae_cover_photo.jpg",
+                    "path": null,
+                    "size": 73.26,
+                    "width": 750,
+                    "height": 500,
+                    "sizeInBytes": 73261
+                },
+                "thumbnail": {
+                    "ext": ".jpg",
+                    "url": "/uploads/thumbnail_uae_cover_photo_9a0c8898a6.jpg",
+                    "hash": "thumbnail_uae_cover_photo_9a0c8898a6",
+                    "mime": "image/jpeg",
+                    "name": "thumbnail_uae_cover_photo.jpg",
+                    "path": null,
+                    "size": 8.34,
+                    "width": 235,
+                    "height": 156,
+                    "sizeInBytes": 8343
+                }
+            },
+            "hash": "uae_cover_photo_9a0c8898a6",
+            "ext": ".jpg",
+            "mime": "image/jpeg",
+            "size": 1048.64,
+            "url": "/uploads/uae_cover_photo_9a0c8898a6.jpg",
+            "previewUrl": null,
+            "provider": "local",
+            "provider_metadata": null,
+            "createdAt": "2026-01-28T02:07:02.394Z",
+            "updatedAt": "2026-01-28T02:09:38.020Z",
+            "publishedAt": "2026-01-28T02:07:02.394Z"
+        },
+        "estimatedPopulation": {
+            "id": 47,
+            "value": 11.6,
+            "selectUnit": "Millions"
+        },
+        "countryGDB": {
+            "id": 48,
+            "value": 564.5,
+            "selectUnit": "Billions"
+        },
+        "costOfLiving": {
+            "id": 145,
+            "minimum": 1225,
+            "maximum": 2450
+        },
+        "monthlyExpenseRange": [
+            {
+                "id": 93,
+                "expenseName": "Housing (Student Studio / Shared)"
+            },
+            {
+                "id": 94,
+                "expenseName": "Food & Groceries"
+            },
+            {
+                "id": 95,
+                "expenseName": "Public Transport (Metro / Bus)"
+            },
+            {
+                "id": 96,
+                "expenseName": "Utilities & Internet"
+            }
+        ],
+        "feesPerYear": {
+            "id": 150,
+            "minimum": 12240,
+            "maximum": 23120
+        },
+        "docsAndCertification": [
+            {
+                "id": 112,
+                "requirementType": "Document",
+                "requirementDetails": "Valid Passport (min 6 months validity)"
+            },
+            {
+                "id": 113,
+                "requirementType": "Certificate",
+                "requirementDetails": "Unconditional Offer Letter from a UAE-accredited university"
+            },
+            {
+                "id": 114,
+                "requirementType": "Certificate",
+                "requirementDetails": "Attested academic certificates and a fitness certificate from a UAE medical test"
+            },
+            {
+                "id": 115,
+                "requirementType": "Document",
+                "requirementDetails": "Proof of tuition fee payment and bank statements showing sufficient funds for living"
+            }
+        ],
+        "visaCategories": [
+            {
+                "id": 56,
+                "title": "Student Residence Visa",
+                "visaCost": 952,
+                "category": "Academic",
+                "smallDescription": "Standard 1-year renewable visa sponsored by the educational institution."
+            },
+            {
+                "id": 57,
+                "title": "Golden Visa (Students)",
+                "visaCost": 762,
+                "category": "Long-term Residency",
+                "smallDescription": "A 10-year visa for high school or university graduates with a GPA of at least 3.75 or 95%+."
+            },
+            {
+                "id": 58,
+                "title": "Family Sponsored Student Visa",
+                "visaCost": 408,
+                "category": "Family Residency",
+                "smallDescription": "For students already residing in the UAE under the sponsorship of a parent or guardian."
+            }
+        ],
+        "workOpportunities": {
+            "id": 24,
+            "partTimeWork": "Students can work up to 15 hours per week during semesters and full-time during breaks with university approval.",
+            "postStudyWork": "The UAE offers a 12-month job-seeker visa and long-term residency options for high-performing graduates to find work."
+        },
+        "faqList": [
+            {
+                "id": 70,
+                "question": "Can international students work in Dubai?",
+                "answer": "Yes, you can work 15 hours per week during semesters and full-time during breaks with a permit from your university."
+            },
+            {
+                "id": 71,
+                "question": "What is the average tuition fee?",
+                "answer": "Tuition varies by program, typically ranging from AED 45,000 to AED 80,000 per year for undergraduate degrees."
+            },
+            {
+                "id": 72,
+                "question": "Do I need health insurance to study here?",
+                "answer": "Yes, comprehensive health insurance is mandatory for all international students to obtain and renew their student visa."
+            }
+        ]
+    },
+    "meta": {}
+}

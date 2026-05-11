@@ -1,0 +1,827 @@
+@import 'tailwindcss';
+
+/*Color palette*/
+@theme {
+    --color-primary-dark: #0049ae;
+    --color-primary-base: #005fe2;
+    --color-primary-light: #0083ff;
+    --color-primary-lighter: #abcaf5;
+    --color-primary-bg: #d6e6ff;
+    --color-primary-gray: #f0f5fd;
+
+    --color-secondary-dark: #b51700;
+    --color-secondary-base: #ff1d00;
+    --color-secondary-light: #fa4f38;
+    --color-secondary-lighter: #f78374;
+    --color-secondary-gray: #f7e9e7;
+
+    --color-tertiary-base: #ff6f00;
+    --color-tertiary-light: #e8b452;
+    --color-tertiary-lighter: #f6f2e2;
+}
+
+/* for scrollbar gutter */
+html {
+    scrollbar-gutter: stable;
+}
+
+/* auth popup — backdrop fade + card scale-in */
+@keyframes auth-backdrop-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes auth-popup-in {
+    from { opacity: 0; scale: 0.95; }
+    to   { opacity: 1; scale: 1; }
+}
+
+.auth-backdrop-enter {
+    animation: auth-backdrop-in 200ms ease-out forwards;
+}
+
+.auth-popup-enter {
+    animation: auth-popup-in 220ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* floating icon animation — used on auth icon clusters */
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-12px); }
+}
+
+.icon-float {
+    animation: float 8s ease-in-out infinite;
+}
+
+/* Global button defaults */
+button {
+    cursor: pointer;
+    user-select: none;
+}
+
+/* loader */
+/* HTML: <div class="loader"></div> */
+.loader {
+    width: 45px;
+    aspect-ratio: 1;
+    --c1: no-repeat linear-gradient(#005fe2 0 0); /* First bar color */
+    --c2: no-repeat linear-gradient(#ff1d00 0 0); /* Second bar color */
+    --c3: no-repeat linear-gradient(#005fe2 0 0); /* Third bar color */
+    background:
+        var(--c1) 0% 50%,
+        /* First bar */ var(--c2) 50% 50%,
+        /* Second bar */ var(--c3) 100% 50%; /* Third bar */
+    background-size: 20% 100%;
+    animation: l1 1s infinite linear;
+}
+
+@keyframes l1 {
+    0% {
+        background-size:
+            20% 100%,
+            20% 100%,
+            20% 100%;
+    }
+    33% {
+        background-size:
+            20% 10%,
+            20% 100%,
+            20% 100%;
+    }
+    50% {
+        background-size:
+            20% 100%,
+            20% 10%,
+            20% 100%;
+    }
+    66% {
+        background-size:
+            20% 100%,
+            20% 100%,
+            20% 10%;
+    }
+    100% {
+        background-size:
+            20% 100%,
+            20% 100%,
+            20% 100%;
+    }
+}
+
+/* loader mini */
+.loader-mini {
+    width: 25px;
+    aspect-ratio: 1;
+    --c1: no-repeat linear-gradient(#005fe2 0 0); /* First bar color */
+    --c2: no-repeat linear-gradient(#ff1d00 0 0); /* Second bar color */
+    --c3: no-repeat linear-gradient(#005fe2 0 0); /* Third bar color */
+    background:
+        var(--c1) 0% 50%,
+        /* First bar */ var(--c2) 50% 50%,
+        /* Second bar */ var(--c3) 100% 50%; /* Third bar */
+    background-size: 20% 100%;
+    animation: l1 1s infinite linear;
+}
+
+@keyframes l1 {
+    0% {
+        background-size:
+            20% 100%,
+            20% 100%,
+            20% 100%;
+    }
+    33% {
+        background-size:
+            20% 10%,
+            20% 100%,
+            20% 100%;
+    }
+    50% {
+        background-size:
+            20% 100%,
+            20% 10%,
+            20% 100%;
+    }
+    66% {
+        background-size:
+            20% 100%,
+            20% 100%,
+            20% 10%;
+    }
+    100% {
+        background-size:
+            20% 100%,
+            20% 100%,
+            20% 100%;
+    }
+}
+
+/*Single blog page styles*/
+/* Root container */
+.--dynamic-markdown-content {
+    line-height: 1.8;
+    color: #2d2d2d;
+    font-size: 16px;
+}
+
+/* Headings */
+.--dynamic-markdown-content h1,
+.--dynamic-markdown-content h2,
+.--dynamic-markdown-content h3,
+.--dynamic-markdown-content h4,
+.--dynamic-markdown-content h5,
+.--dynamic-markdown-content h6 {
+    font-weight: 700;
+    line-height: 1.3;
+    margin-top: 2rem;
+    margin-bottom: 0.6rem;
+    color: #111;
+}
+
+.--dynamic-markdown-content h1 {
+    font-size: 2.2rem;
+    border-bottom: 3px solid #f1f1f1;
+    padding-bottom: 10px;
+}
+
+.--dynamic-markdown-content h2 {
+    font-size: 1.8rem;
+    border-left: 5px solid #4f46e5;
+    padding-left: 12px;
+}
+
+.--dynamic-markdown-content h3 {
+    font-size: 1.6rem;
+}
+
+.--dynamic-markdown-content h4 {
+    font-size: 1.3rem;
+}
+
+.--dynamic-markdown-content h5 {
+    font-size: 1.1rem;
+}
+
+.--dynamic-markdown-content h6 {
+    font-size: 1rem;
+    color: #666;
+}
+
+/* Paragraph */
+.--dynamic-markdown-content p {
+    margin-bottom: 1rem;
+    color: #444;
+}
+
+/* Links */
+.--dynamic-markdown-content a {
+    color: #4f46e5;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.--dynamic-markdown-content a:hover {
+    text-decoration: underline;
+}
+
+/* Bold, italic, strike */
+.--dynamic-markdown-content strong {
+    font-weight: 700;
+    color: #111;
+}
+
+.--dynamic-markdown-content em {
+    font-style: italic;
+}
+
+.--dynamic-markdown-content del {
+    text-decoration: line-through;
+    color: #888;
+}
+
+/* Lists */
+.--dynamic-markdown-content ul,
+.--dynamic-markdown-content ol {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+}
+
+.--dynamic-markdown-content li {
+    margin-bottom: 0.5rem;
+}
+
+.--dynamic-markdown-content ul li {
+    list-style-type: disc;
+}
+
+.--dynamic-markdown-content ol li {
+    list-style-type: decimal;
+}
+
+/* Nested lists */
+.--dynamic-markdown-content li ul,
+.--dynamic-markdown-content li ol {
+    margin-top: 0.5rem;
+}
+
+/* Blockquote */
+.--dynamic-markdown-content blockquote {
+    border-left: 4px solid #4f46e5;
+    padding: 12px 16px;
+    background: #f9fafb;
+    color: #555;
+    margin: 1.5rem 0;
+    font-style: italic;
+    border-radius: 6px;
+}
+
+/* Code inline */
+.--dynamic-markdown-content code {
+    background: #f3f4f6;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-family: 'Courier New', monospace;
+}
+
+/* Code block */
+.--dynamic-markdown-content pre {
+    background: #111827;
+    color: #f9fafb;
+    padding: 16px;
+    border-radius: 10px;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+}
+
+.--dynamic-markdown-content pre code {
+    background: none;
+    padding: 0;
+    color: inherit;
+}
+
+/* Images */
+.--dynamic-markdown-content img {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 10px;
+    margin: 1.5rem 0;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Horizontal line */
+.--dynamic-markdown-content hr {
+    border: none;
+    border-top: 1px solid #e5e7eb;
+    margin: 2rem 0;
+}
+
+/* Tables */
+.--dynamic-markdown-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.--dynamic-markdown-content th,
+.--dynamic-markdown-content td {
+    padding: 12px 14px;
+    border: 1px solid #e5e7eb;
+    text-align: left;
+}
+
+.--dynamic-markdown-content th {
+    background: #4f46e5;
+    color: white;
+    font-weight: 600;
+}
+
+.--dynamic-markdown-content tr:nth-child(even) {
+    background: #f9fafb;
+}
+
+/* Span */
+.--dynamic-markdown-content span {
+    color: inherit;
+}
+
+/* Highlight */
+.--dynamic-markdown-content mark {
+    background: #fde68a;
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+.--dynamic-content-university {
+    background-color: red;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .--dynamic-markdown-content {
+        font-size: 15px;
+    }
+
+    .--dynamic-markdown-content h1 {
+        font-size: 2rem;
+    }
+
+    .--dynamic-markdown-content h2 {
+        font-size: 1.6rem;
+    }
+
+    .--dynamic-markdown-content h3 {
+        font-size: 1.4rem;
+    }
+
+    .--dynamic-markdown-content pre {
+        padding: 12px;
+    }
+
+    .--dynamic-markdown-content table {
+        display: block;
+        overflow-x: auto;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+    .--dynamic-markdown-content {
+        font-size: 14px;
+    }
+
+    .--dynamic-markdown-content h1 {
+        font-size: 1.7rem;
+    }
+
+    .--dynamic-markdown-content h2 {
+        font-size: 1.4rem;
+    }
+}
+
+/* ============================================================
+   blogContentHTML — CKEditor 5 HTML output renderer
+   ============================================================ */
+
+.blogContentHTML {
+    font-size: 1.05rem;
+    line-height: 1.9;
+    color: #1e293b;
+    word-break: break-word;
+}
+
+/* Headings */
+.blogContentHTML h2,
+.blogContentHTML h3,
+.blogContentHTML h4,
+.blogContentHTML h5,
+.blogContentHTML h6 {
+    font-weight: 700;
+    line-height: 1.3;
+    color: #0f172a;
+    margin-top: 2.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.blogContentHTML h2 {
+    font-size: 1.85rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.blogContentHTML h3 {
+    font-size: 1.45rem;
+    padding-left: 0.75rem;
+    border-left: 4px solid #4f46e5;
+}
+
+.blogContentHTML h4 {
+    font-size: 1.2rem;
+    color: #334155;
+}
+
+.blogContentHTML h5 {
+    font-size: 1.05rem;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.blogContentHTML h6 {
+    font-size: 0.95rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Paragraph */
+.blogContentHTML p {
+    margin-bottom: 1.25rem;
+    color: #334155;
+}
+
+/* Inline formatting */
+.blogContentHTML strong {
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.blogContentHTML em {
+    font-style: italic;
+    color: #334155;
+}
+
+.blogContentHTML u {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.blogContentHTML s {
+    text-decoration: line-through;
+    color: #94a3b8;
+}
+
+.blogContentHTML sub {
+    font-size: 0.75em;
+    vertical-align: sub;
+}
+
+.blogContentHTML sup {
+    font-size: 0.75em;
+    vertical-align: super;
+}
+
+/* Links */
+.blogContentHTML a {
+    color: #4f46e5;
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: #c7d2fe;
+    transition: color 0.15s, text-decoration-color 0.15s;
+}
+
+.blogContentHTML a:hover {
+    color: #3730a3;
+    text-decoration-color: #4f46e5;
+}
+
+/* Lists */
+.blogContentHTML ul,
+.blogContentHTML ol {
+    margin: 1rem 0 1.25rem 0;
+    padding-left: 1.75rem;
+}
+
+.blogContentHTML ul {
+    list-style: none;
+}
+
+.blogContentHTML ul > li {
+    position: relative;
+    padding-left: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.blogContentHTML ul > li::before {
+    content: '';
+    position: absolute;
+    left: -1.1rem;
+    top: 0.65em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #4f46e5;
+}
+
+.blogContentHTML ol {
+    list-style: decimal;
+}
+
+.blogContentHTML ol > li {
+    margin-bottom: 0.5rem;
+    padding-left: 0.25rem;
+}
+
+.blogContentHTML ol > li::marker {
+    color: #4f46e5;
+    font-weight: 600;
+}
+
+/* Nested lists */
+.blogContentHTML li ul,
+.blogContentHTML li ol {
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+}
+
+.blogContentHTML li ul > li::before {
+    background-color: #a5b4fc;
+    width: 5px;
+    height: 5px;
+}
+
+/* Blockquote */
+.blogContentHTML blockquote {
+    position: relative;
+    margin: 2rem 0;
+    padding: 1.25rem 1.5rem 1.25rem 1.75rem;
+    background: linear-gradient(to right, #eef2ff, #f8fafc);
+    border-left: 5px solid #4f46e5;
+    border-radius: 0 10px 10px 0;
+    color: #334155;
+    font-style: italic;
+}
+
+.blogContentHTML blockquote p {
+    margin: 0;
+    color: inherit;
+}
+
+/* Inline code */
+.blogContentHTML code {
+    background: #f1f5f9;
+    color: #be185d;
+    padding: 2px 7px;
+    border-radius: 5px;
+    font-size: 0.88rem;
+    font-family: 'Courier New', 'Consolas', monospace;
+    border: 1px solid #e2e8f0;
+}
+
+/* Code block */
+.blogContentHTML pre {
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 1.25rem 1.5rem;
+    border-radius: 12px;
+    overflow-x: auto;
+    margin: 1.75rem 0;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    border: 1px solid #1e293b;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+}
+
+.blogContentHTML pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+    border: none;
+    font-size: inherit;
+}
+
+/* Highlight / mark */
+.blogContentHTML mark {
+    background: #fef08a;
+    color: #1e293b;
+    padding: 1px 4px;
+    border-radius: 3px;
+}
+
+.blogContentHTML mark.marker-green {
+    background: #bbf7d0;
+}
+
+.blogContentHTML mark.marker-pink {
+    background: #fecdd3;
+}
+
+.blogContentHTML mark.marker-blue {
+    background: #bfdbfe;
+}
+
+.blogContentHTML mark.pen-red {
+    color: #dc2626;
+    background: none;
+}
+
+.blogContentHTML mark.pen-green {
+    color: #16a34a;
+    background: none;
+}
+
+/* Horizontal rule */
+.blogContentHTML hr {
+    border: none;
+    height: 2px;
+    background: linear-gradient(to right, #4f46e5, #e2e8f0, transparent);
+    margin: 2.5rem 0;
+    border-radius: 2px;
+}
+
+/* Images — CKEditor wraps in <figure class="image"> */
+.blogContentHTML figure.image {
+    margin: 2rem auto;
+    text-align: center;
+    max-width: 100%;
+}
+
+.blogContentHTML figure.image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    display: inline-block;
+}
+
+.blogContentHTML figure.image figcaption {
+    margin-top: 0.6rem;
+    font-size: 0.85rem;
+    color: #64748b;
+    font-style: italic;
+}
+
+/* Image alignment styles */
+.blogContentHTML figure.image.image-style-side {
+    float: right;
+    max-width: 45%;
+    margin: 0.5rem 0 1.5rem 2rem;
+}
+
+.blogContentHTML figure.image.image-style-align-left {
+    float: left;
+    max-width: 50%;
+    margin: 0.5rem 2rem 1.5rem 0;
+}
+
+.blogContentHTML figure.image.image-style-align-right {
+    float: right;
+    max-width: 50%;
+    margin: 0.5rem 0 1.5rem 2rem;
+}
+
+.blogContentHTML figure.image.image-style-block-align-center {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Clearfix after floated images */
+.blogContentHTML figure.image.image-style-side + *,
+.blogContentHTML figure.image.image-style-align-left + *,
+.blogContentHTML figure.image.image-style-align-right + * {
+    clear: both;
+}
+
+/* Tables — CKEditor wraps in <figure class="table"> */
+.blogContentHTML figure.table {
+    margin: 2rem 0;
+    overflow-x: auto;
+    border-radius: 12px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+}
+
+.blogContentHTML table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.blogContentHTML thead {
+    background: #4f46e5;
+    color: #ffffff;
+}
+
+.blogContentHTML th {
+    padding: 0.85rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    border: 1px solid #4338ca;
+}
+
+.blogContentHTML td {
+    padding: 0.75rem 1rem;
+    border: 1px solid #e2e8f0;
+    color: #334155;
+    vertical-align: top;
+}
+
+.blogContentHTML tbody tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+.blogContentHTML tbody tr:hover {
+    background: #eef2ff;
+    transition: background 0.15s;
+}
+
+/* Text alignment (CKEditor inline styles) */
+.blogContentHTML [style*="text-align:center"],
+.blogContentHTML [style*="text-align: center"] {
+    text-align: center;
+}
+
+.blogContentHTML [style*="text-align:right"],
+.blogContentHTML [style*="text-align: right"] {
+    text-align: right;
+}
+
+.blogContentHTML [style*="text-align:justify"],
+.blogContentHTML [style*="text-align: justify"] {
+    text-align: justify;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .blogContentHTML {
+        font-size: 1rem;
+    }
+
+    .blogContentHTML h2 {
+        font-size: 1.5rem;
+    }
+
+    .blogContentHTML h3 {
+        font-size: 1.25rem;
+    }
+
+    .blogContentHTML h4 {
+        font-size: 1.1rem;
+    }
+
+    .blogContentHTML figure.image.image-style-side,
+    .blogContentHTML figure.image.image-style-align-left,
+    .blogContentHTML figure.image.image-style-align-right {
+        float: none;
+        max-width: 100%;
+        margin: 1.5rem auto;
+    }
+
+    .blogContentHTML figure.table {
+        font-size: 0.88rem;
+    }
+
+    .blogContentHTML pre {
+        padding: 1rem;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .blogContentHTML {
+        font-size: 0.95rem;
+    }
+
+    .blogContentHTML h2 {
+        font-size: 1.3rem;
+    }
+
+    .blogContentHTML h3 {
+        font-size: 1.15rem;
+        padding-left: 0.6rem;
+    }
+
+    .blogContentHTML blockquote {
+        padding: 1rem 1rem 1rem 1.25rem;
+    }
+
+    .blogContentHTML th,
+    .blogContentHTML td {
+        padding: 0.6rem 0.75rem;
+    }
+}

@@ -64,7 +64,7 @@ export default async function SingleCountryLayout({
                 <div className="z-50 mx-auto flex h-full w-full max-w-7xl flex-col justify-center px-4">
                     <h1 className="text-3xl font-black text-white">Study in {countryData.name}</h1>
                     <Link
-                        href="#"
+                        href="/dashboard/counselling"
                         className="bg-primary-base border-primary-base hover:text-primary-base mt-4 w-fit cursor-pointer rounded-xl border px-6 py-3 text-white transition-colors duration-200 ease-in-out select-none hover:bg-white"
                     >
                         Talk to Counsellor

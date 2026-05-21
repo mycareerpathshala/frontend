@@ -239,9 +239,9 @@ function NotificationDropdown({ mobile = false }: { mobile?: boolean }) {
 
             {open && (
                 <>
-                    {/* Backdrop — dark on mobile, invisible on desktop */}
+                    {/* Backdrop — mobile only (desktop uses the mousedown ref handler) */}
                     <div
-                        className="auth-backdrop-enter fixed inset-0 z-300 bg-black/60 lg:bg-transparent"
+                        className="auth-backdrop-enter fixed inset-0 z-300 bg-black/60 lg:hidden"
                         onClick={() => setOpen(false)}
                     />
 

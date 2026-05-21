@@ -8,6 +8,7 @@ export interface EnrichedApplication {
     courseId: string | null;
     status: ApplicationStatus;
     notes: string | null;
+    adminNote: string | null;
     createdAt: string;
     updatedAt: string;
     // Strapi enriched fields

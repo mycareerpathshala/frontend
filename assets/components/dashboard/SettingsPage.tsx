@@ -16,6 +16,7 @@ import {
     HiStar,
     HiTag,
     HiUserCircle,
+    HiDevicePhoneMobile,
 } from 'react-icons/hi2';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -34,6 +35,7 @@ interface UserSettings {
     publicProfile:           boolean;
     showOnlineStatus:        boolean;
     shareActivityData:       boolean;
+    twoFactorEnabled:        boolean;
 }
 
 const DEFAULTS: UserSettings = {
@@ -50,6 +52,7 @@ const DEFAULTS: UserSettings = {
     publicProfile:           false,
     showOnlineStatus:        true,
     shareActivityData:       false,
+    twoFactorEnabled:        false,
 };
 
 // ── Shared primitives ─────────────────────────────────────────────────────────
@@ -326,6 +329,35 @@ function PrivacyCard({
     );
 }
 
+// ── Security Card ─────────────────────────────────────────────────────────────
+
+function SecurityCard({
+    settings,
+    onUpdate,
+}: {
+    settings: UserSettings;
+    onUpdate: (patch: Partial<UserSettings>) => void;
+}) {
+    return (
+        <SectionCard>
+            <CardHead icon={HiShieldCheck} title="Security" subtitle="Manage how you verify your identity" />
+            <div className="px-6">
+                <ToggleRow
+                    icon={HiDevicePhoneMobile}
+                    iconBg="bg-blue-50"
+                    iconColor="text-blue-500"
+                    label="Two-Factor Authentication"
+                    description="Require a 6-digit email code each time you sign in"
+                    badge="Recommended"
+                    checked={settings.twoFactorEnabled}
+                    onChange={v => onUpdate({ twoFactorEnabled: v })}
+                />
+                <div className="pb-2" />
+            </div>
+        </SectionCard>
+    );
+}
+
 // ── Summary sidebar card ──────────────────────────────────────────────────────
 
 function SettingsSummaryCard({
@@ -343,9 +375,9 @@ function SettingsSummaryCard({
     ].filter(Boolean).length;
 
     const items = [
-        { label: 'In-app notifications on', value: `${inAppOn} / 4`,  icon: HiBell,        color: 'text-blue-500'  },
-        { label: 'Email subscriptions on',   value: `${emailOn} / 6`, icon: HiEnvelope,    color: 'text-indigo-500'},
-        { label: 'Account security',          value: 'Protected',      icon: HiShieldCheck, color: 'text-green-500' },
+        { label: 'In-app notifications on', value: `${inAppOn} / 4`,                             icon: HiBell,        color: 'text-blue-500'  },
+        { label: 'Email subscriptions on',   value: `${emailOn} / 6`,                            icon: HiEnvelope,    color: 'text-indigo-500'},
+        { label: '2-Factor Authentication',  value: settings.twoFactorEnabled ? 'On' : 'Off',    icon: HiShieldCheck, color: settings.twoFactorEnabled ? 'text-green-500' : 'text-slate-400' },
     ];
 
     return (
@@ -431,6 +463,7 @@ export default function SettingsPageContent() {
                 {/* Right — sidebar */}
                 <div className="col-span-3 flex flex-col gap-6 lg:col-span-1">
                     <SettingsSummaryCard settings={settings} saving={saving} />
+                    <SecurityCard       settings={settings} onUpdate={handleUpdate} />
                     <PrivacyCard        settings={settings} onUpdate={handleUpdate} />
                 </div>
             </div>

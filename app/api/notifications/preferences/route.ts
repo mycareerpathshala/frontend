@@ -18,6 +18,7 @@ const DEFAULTS = {
     publicProfile:           false,
     showOnlineStatus:        true,
     shareActivityData:       false,
+    twoFactorEnabled:        false,
 };
 
 export async function GET() {

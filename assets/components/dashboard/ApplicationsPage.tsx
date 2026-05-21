@@ -90,10 +90,11 @@ function ApplicationCard({ app, onDelete }: { app: EnrichedApplication; onDelete
     const [confirmDelete, setConfirmDelete] = useState(false);
     const [deleting, setDeleting] = useState(false);
 
-    const isMbbs  = app.courseId === null;
-    const level   = app.courseLevel && !isMbbs ? (LEVEL_COLOR[app.courseLevel] ?? DEFAULT_LEVEL) : DEFAULT_LEVEL;
+    const isMbbs   = app.courseId === null;
+    const level    = app.courseLevel && !isMbbs ? (LEVEL_COLOR[app.courseLevel] ?? DEFAULT_LEVEL) : DEFAULT_LEVEL;
     const initials = getInitials(app.universityName);
     const { date, time } = formatApplied(app.createdAt);
+    const sc = APPLICATION_STATUS_CONFIG[app.status];
 
     async function handleDelete() {
         setDeleting(true);
@@ -106,43 +107,39 @@ function ApplicationCard({ app, onDelete }: { app: EnrichedApplication; onDelete
     }
 
     return (
-        <div className="relative flex flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg">
-            {/* Gradient strip */}
-            <div className={`h-1.5 w-full bg-linear-to-r ${level.strip}`} />
+        <div className="relative flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg">
 
-            <div className="flex flex-1 flex-col p-5">
-                {/* University avatar + name */}
-                <div className="mb-4 flex items-start gap-3.5">
-                    <div
-                        className={`flex size-11 shrink-0 items-center justify-center rounded-xl text-sm font-extrabold ${level.avatar}`}
-                    >
+            {/* ── Gradient banner ── */}
+            <div className={`bg-linear-to-r ${level.strip} px-5 py-4`}>
+                <div className="flex items-center gap-3">
+                    <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-white/20 text-base font-extrabold text-white backdrop-blur-sm">
                         {initials}
                     </div>
-                    <div className="min-w-0 flex-1 pt-0.5">
-                        <p className="truncate text-sm leading-snug font-extrabold text-slate-800">
+                    <div className="min-w-0 flex-1">
+                        <p className="truncate font-extrabold text-white leading-snug">
                             {app.universityName}
-                            {app.universityAcronym && (
-                                <span className="ml-1.5 font-medium text-slate-400">| {app.universityAcronym}</span>
-                            )}
                         </p>
-                        {app.courseName && (
-                            <p className="mt-0.5 truncate text-xs font-medium text-slate-500">{app.courseName}</p>
-                        )}
+                        <p className="truncate text-xs text-white/70 mt-0.5">
+                            {app.courseName ?? (isMbbs ? 'MBBS Program' : '—')}
+                        </p>
                     </div>
+                    {app.universityAcronym && (
+                        <span className="shrink-0 rounded-lg bg-white/20 px-2 py-1 text-xs font-bold text-white">
+                            {app.universityAcronym}
+                        </span>
+                    )}
                 </div>
+            </div>
 
-                {/* Status badge */}
-                {(() => {
-                    const sc = APPLICATION_STATUS_CONFIG[app.status];
-                    return (
-                        <div className={`mb-3 inline-flex items-center rounded-full px-3 py-1 text-[11px] font-bold ${sc.bg} ${sc.color}`}>
-                            {sc.label}
-                        </div>
-                    );
-                })()}
+            {/* ── Body ── */}
+            <div className="flex flex-1 flex-col p-5">
 
-                {/* Chips */}
-                <div className="mb-4 flex flex-wrap gap-1.5">
+                {/* Status + chips row */}
+                <div className="mb-4 flex flex-wrap items-center gap-1.5">
+                    <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold ${sc.bg} ${sc.color}`}>
+                        <span className="size-1.5 rounded-full bg-current opacity-70" />
+                        {sc.label}
+                    </span>
                     {app.country && (
                         <span className="flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-600">
                             <HiGlobeAlt className="size-3 shrink-0" />
@@ -157,9 +154,7 @@ function ApplicationCard({ app, onDelete }: { app: EnrichedApplication; onDelete
                     ) : (
                         <>
                             {app.courseLevel && (
-                                <span
-                                    className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold ${level.chip}`}
-                                >
+                                <span className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold ${level.chip}`}>
                                     <HiOutlineAcademicCap className="size-3 shrink-0" />
                                     {app.courseLevel}
                                 </span>
@@ -175,13 +170,24 @@ function ApplicationCard({ app, onDelete }: { app: EnrichedApplication; onDelete
                 </div>
 
                 {/* Notes */}
-                {app.notes && (
-                    <div className="mb-4 rounded-xl border border-slate-100 bg-slate-50 px-3 py-2.5">
-                        <p className="line-clamp-2 text-xs leading-relaxed text-slate-500">{app.notes}</p>
+                {(app.notes || app.adminNote) && (
+                    <div className="mb-4 space-y-2">
+                        {app.notes && (
+                            <div className="rounded-xl border border-slate-100 bg-slate-50 px-3.5 py-2.5">
+                                <p className="line-clamp-2 text-xs italic leading-relaxed text-slate-500">
+                                    &ldquo;{app.notes}&rdquo;
+                                </p>
+                            </div>
+                        )}
+                        {app.adminNote && (
+                            <div className="rounded-xl border border-amber-100 bg-amber-50 px-3.5 py-2.5">
+                                <p className="mb-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-500">Admin Note</p>
+                                <p className="line-clamp-2 text-xs leading-relaxed text-amber-800">{app.adminNote}</p>
+                            </div>
+                        )}
                     </div>
                 )}
 
-                {/* Spacer */}
                 <div className="flex-1" />
 
                 {/* Footer */}
@@ -196,7 +202,6 @@ function ApplicationCard({ app, onDelete }: { app: EnrichedApplication; onDelete
                             {time}
                         </div>
                     </div>
-
                     <button
                         type="button"
                         onClick={() => setConfirmDelete(true)}

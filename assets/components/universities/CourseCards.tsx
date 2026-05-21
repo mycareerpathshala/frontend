@@ -100,13 +100,13 @@ export default function CourseCards({
                             </div>
                             <div className="flex items-center gap-2 max-sm:w-full max-sm:flex-col">
                                 <Link
-                                    href="#"
+                                    href="/auth/register"
                                     className="bg-primary-base border-primary-base hover:bg-primary-light cursor-pointer rounded-lg border px-4 py-2 text-center text-sm text-white transition-colors duration-200 ease-in-out select-none max-sm:w-full"
                                 >
                                     Check Eligibility
                                 </Link>
                                 <Link
-                                    href="#"
+                                    href="/auth/register"
                                     className="border-primary-base text-primary-base hover:bg-primary-gray cursor-pointer rounded-lg border bg-white px-4 py-2 text-center text-sm transition-colors duration-200 ease-in-out select-none max-sm:w-full"
                                 >
                                     Apply Now

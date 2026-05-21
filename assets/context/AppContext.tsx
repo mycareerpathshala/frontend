@@ -11,6 +11,8 @@ export interface SessionUser {
     email: string;
     role: string;
     avatar: string;
+    isVerified: boolean;
+    phone: string | null;
 }
 
 // AppContext type
@@ -23,6 +25,7 @@ interface AppContextType {
     setAuthModalEnabled: (value: boolean) => void;
     session: SessionUser | null;
     setSession: (value: SessionUser | null) => void;
+    refreshSession: () => Promise<void>;
 }
 
 // context
@@ -35,12 +38,16 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const [authModalEnabled, setAuthModalEnabled] = useState<boolean>(false);
     const [session, setSession] = useState<SessionUser | null>(null);
 
-    useEffect(() => {
-        fetch('/api/auth/me')
-            .then((r) => r.json())
-            .then((data) => setSession(data))
-            .catch(() => setSession(null));
+    const refreshSession = useCallback(async () => {
+        try {
+            const data = await fetch('/api/auth/me').then((r) => r.json());
+            setSession(data);
+        } catch {
+            setSession(null);
+        }
     }, []);
+
+    useEffect(() => { refreshSession(); }, [refreshSession]);
 
     const handleKeyDown = useCallback((e: KeyboardEvent) => {
         // check for ctrl+k or cmd+k
@@ -71,6 +78,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
                 authPopupEnabled, setAuthPopupEnabled,
                 authModalEnabled, setAuthModalEnabled,
                 session, setSession,
+                refreshSession,
             }}
         >
             {children}

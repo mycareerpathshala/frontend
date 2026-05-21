@@ -18,6 +18,7 @@ interface ServiceCardPropType {
     title: string;
     desc: string;
     cta: string;
+    href: string;
     bgClass: string;
     badgeBg: string;
 }
@@ -25,7 +26,7 @@ interface ServiceCardPropType {
 // 2. Destructured Props correctly
 function ServiceCard({ cardData }: { cardData: ServiceCardPropType }) {
     // Destructure properties from cardData for easier use
-    const { Icon, badgeText, title, desc, cta, bgClass, badgeBg } = cardData;
+    const { Icon, badgeText, title, desc, cta, href, bgClass, badgeBg } = cardData;
 
     return (
         <div
@@ -49,7 +50,7 @@ function ServiceCard({ cardData }: { cardData: ServiceCardPropType }) {
 
             <div className="mt-6">
                 <Link
-                    href="#"
+                    href={href}
                     className="inline-flex items-center gap-2 font-semibold text-blue-600 hover:text-blue-700"
                 >
                     {cta}
@@ -67,6 +68,7 @@ export default function OurServices() {
             title: 'Profile Assessment',
             desc: 'After your application is submitted, our team of experts reviews your educational background, work experience, and personal goals',
             cta: 'Register Now',
+            href: '/auth/register',
             bgClass: 'bg-blue-50',
             badgeBg: 'bg-blue-600',
         },
@@ -75,6 +77,7 @@ export default function OurServices() {
             title: 'Dedicated Counselling',
             desc: 'Our counselors will help you choose the right country, university, and course, or connect you with current student mentors',
             cta: 'Free Mentorship',
+            href: '/dashboard/counselling',
             bgClass: 'bg-rose-50',
             badgeBg: 'bg-rose-600',
         },
@@ -83,6 +86,7 @@ export default function OurServices() {
             title: 'Test Prep & Events',
             desc: 'Get free advice and strategies for international exams like IELTS, TOEFL, SAT, GRE, GMAT, and info on required scores for top universities',
             cta: 'Register Now',
+            href: '/auth/register',
             bgClass: 'bg-emerald-50',
             badgeBg: 'bg-emerald-600',
         },
@@ -91,6 +95,7 @@ export default function OurServices() {
             title: 'Documentation & Essay',
             desc: 'Our specialists review each application and essay before submission, offering full support throughout the preparation process',
             cta: 'Avail Services',
+            href: '/auth/register',
             bgClass: 'bg-amber-50',
             badgeBg: 'bg-amber-600',
         },
@@ -101,6 +106,7 @@ export default function OurServices() {
             title: 'VISA Application & Interview',
             desc: 'With top visa approval rates in the industry, our team helps you navigate the best strategies to secure a study visa for your dream destination',
             cta: 'Apply with us',
+            href: '/auth/register',
             bgClass: 'bg-fuchsia-50',
             badgeBg: 'bg-fuchsia-600',
         },
@@ -109,6 +115,7 @@ export default function OurServices() {
             title: 'Financial aid & Scholarship',
             desc: 'Our team will advise you on budgeting for your studies, securing internships, and obtaining educational loans and scholarships',
             cta: 'Get Help on Finance',
+            href: '/contact',
             bgClass: 'bg-indigo-50',
             badgeBg: 'bg-indigo-600',
         },

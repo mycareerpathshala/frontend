@@ -141,7 +141,7 @@ export default function Register() {
                     <p className="w-full text-center text-sm">
                         Already have an account?&nbsp;
                         <Link
-                            href="#"
+                            href="/auth/login"
                             className="border-primary-lighter hover:bg-primary-dark hover:border-primary-dark ml-1 rounded-md border-2 bg-transparent px-2 py-0.5 transition-all duration-150 ease-in-out select-none hover:text-white"
                         >
                             Login

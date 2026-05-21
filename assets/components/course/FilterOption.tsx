@@ -5,8 +5,10 @@ import { StrapiDataType } from '@/assets/types/responseTypes';
 import { StreamType } from '@/assets/types/streamTypes';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { FaUsers } from 'react-icons/fa';
+import { HiAcademicCap, HiCheck } from 'react-icons/hi2';
 import { LiaInternetExplorer, LiaSchoolSolid } from 'react-icons/lia';
-import { MdOutlineClose } from 'react-icons/md';
+import { MdAutoStories, MdCastForEducation, MdOutlineClose, MdScience, MdSchool, MdWork } from 'react-icons/md';
+import { TbCertificate } from 'react-icons/tb';
 
 // local components
 function CountryCard({
@@ -90,22 +92,57 @@ function StreamCard({
     );
 }
 
+type CourseLevel = 'Undergraduate' | 'Postgraduate' | 'PhD / Doctorate' | 'Diploma / Certificate' | 'Foundation / Pathway' | 'Vocational Training' | 'Language Course';
+
+const LEVEL_META: Record<CourseLevel, {
+    Icon:      React.ElementType;
+    iconBg:    string;
+    iconColor: string;
+    activeBg:  string;
+    activeBorder: string;
+}> = {
+    'Undergraduate':       { Icon: MdSchool,         iconBg: 'bg-blue-100',   iconColor: 'text-blue-600',   activeBg: 'bg-blue-50',   activeBorder: 'border-blue-500' },
+    'Postgraduate':        { Icon: HiAcademicCap,    iconBg: 'bg-indigo-100', iconColor: 'text-indigo-600', activeBg: 'bg-indigo-50', activeBorder: 'border-indigo-500' },
+    'PhD / Doctorate':     { Icon: MdScience,        iconBg: 'bg-purple-100', iconColor: 'text-purple-600', activeBg: 'bg-purple-50', activeBorder: 'border-purple-500' },
+    'Diploma / Certificate': { Icon: TbCertificate,  iconBg: 'bg-amber-100',  iconColor: 'text-amber-600',  activeBg: 'bg-amber-50',  activeBorder: 'border-amber-500' },
+    'Foundation / Pathway':  { Icon: MdCastForEducation, iconBg: 'bg-emerald-100', iconColor: 'text-emerald-600', activeBg: 'bg-emerald-50', activeBorder: 'border-emerald-500' },
+    'Vocational Training': { Icon: MdWork,           iconBg: 'bg-orange-100', iconColor: 'text-orange-600', activeBg: 'bg-orange-50', activeBorder: 'border-orange-500' },
+    'Language Course':     { Icon: MdAutoStories,    iconBg: 'bg-teal-100',   iconColor: 'text-teal-600',   activeBg: 'bg-teal-50',   activeBorder: 'border-teal-500' },
+};
+
 function LevelCard({
     levelData,
     localLevelFilter,
     setLocalLevelFilter,
 }: {
-    levelData: 'Undergraduate' | 'Postgraduate';
-    localLevelFilter: 'Undergraduate' | 'Postgraduate' | null;
-    setLocalLevelFilter: Dispatch<SetStateAction<'Undergraduate' | 'Postgraduate' | null>>;
+    levelData: CourseLevel;
+    localLevelFilter: CourseLevel | null;
+    setLocalLevelFilter: Dispatch<SetStateAction<CourseLevel | null>>;
 }) {
+    const isSelected = levelData === localLevelFilter;
+    const { Icon, iconBg, iconColor, activeBg, activeBorder } = LEVEL_META[levelData];
+
     return (
         <button
             type="button"
-            onClick={() => setLocalLevelFilter(levelData)}
-            className={`${levelData === localLevelFilter ? 'border-sky-500 bg-sky-50' : 'border border-sky-100'} group flex cursor-pointer items-center justify-center gap-2 rounded-md border-2 px-3 py-2 font-semibold text-gray-900 select-none hover:bg-sky-100 max-sm:text-sm`}
+            onClick={() => setLocalLevelFilter((p) => (p === levelData ? null : levelData))}
+            className={`relative flex w-full items-center gap-3 rounded-2xl border-2 px-3.5 py-3 text-left transition-all duration-150 select-none ${
+                isSelected
+                    ? `${activeBorder} ${activeBg} shadow-sm`
+                    : 'border-slate-100 bg-slate-50 hover:border-slate-200 hover:bg-white'
+            }`}
         >
-            {levelData}
+            <div className={`flex size-9 shrink-0 items-center justify-center rounded-xl ${isSelected ? iconBg : 'bg-white'} transition-colors`}>
+                <Icon className={`size-4.5 ${iconColor}`} />
+            </div>
+            <span className={`text-xs font-bold leading-snug ${isSelected ? 'text-slate-800' : 'text-slate-600'}`}>
+                {levelData}
+            </span>
+            {isSelected && (
+                <div className={`absolute top-2 right-2 flex size-4 items-center justify-center rounded-full ${iconBg}`}>
+                    <HiCheck className={`size-2.5 ${iconColor}`} />
+                </div>
+            )}
         </button>
     );
 }
@@ -200,7 +237,7 @@ function CourseOfferingCard({
 export type FilterOptionApplyPayload = {
     countryFilter: string | null;
     streamFilter: string | null;
-    levelFilter: 'Undergraduate' | 'Postgraduate' | null;
+    levelFilter: CourseLevel | null;
     deliveryMethodFilter: 'On-Campus' | 'Online' | 'Blended' | null;
     studyLanguageFilter: string | null;
     courseOfferingFilter: 'Full-Time' | 'Part-Time' | null;
@@ -223,7 +260,7 @@ export default function FilterOption({
     setShowFilter: Dispatch<SetStateAction<boolean>>;
     countryFilter: string | null;
     streamFilter: string | null;
-    levelFilter: 'Undergraduate' | 'Postgraduate' | null;
+    levelFilter: CourseLevel | null;
     deliveryMethodFilter: 'On-Campus' | 'Online' | 'Blended' | null;
     studyLanguageFilter: string | null;
     courseOfferingFilter: 'Full-Time' | 'Part-Time' | null;
@@ -234,7 +271,7 @@ export default function FilterOption({
     >('country');
     const [localCountryFilter, setLocalCountryFilter] = useState<string | null>(countryFilter);
     const [localStreamFilter, setLocalStreamFilter] = useState<string | null>(streamFilter);
-    const [localLevelFilter, setLocalLevelFilter] = useState<'Undergraduate' | 'Postgraduate' | null>(levelFilter);
+    const [localLevelFilter, setLocalLevelFilter] = useState<'Undergraduate' | 'Postgraduate' | 'PhD / Doctorate' | 'Diploma / Certificate' | 'Foundation / Pathway' | 'Vocational Training' | 'Language Course' | null>(levelFilter);
     const [localDeliveryMethodFilter, setLocalDeliveryMethodFilter] = useState<
         'On-Campus' | 'Online' | 'Blended' | null
     >(deliveryMethodFilter);
@@ -412,18 +449,20 @@ export default function FilterOption({
                                     </span>
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-2 max-sm:grid-cols-1 max-sm:gap-3">
-                                    {(['Undergraduate', 'Postgraduate'] as const).map(
-                                        (levelData: 'Undergraduate' | 'Postgraduate', index) => {
-                                            return (
+                                <div className="grid grid-cols-2 gap-2.5">
+                                    {(['Undergraduate', 'Postgraduate', 'PhD / Doctorate', 'Diploma / Certificate', 'Foundation / Pathway', 'Vocational Training', 'Language Course'] as const).map(
+                                        (levelData, index, arr) => (
+                                            <div
+                                                key={levelData}
+                                                className={index === arr.length - 1 && arr.length % 2 !== 0 ? 'col-span-2' : ''}
+                                            >
                                                 <LevelCard
-                                                    key={index}
                                                     levelData={levelData}
                                                     localLevelFilter={localLevelFilter}
                                                     setLocalLevelFilter={setLocalLevelFilter}
                                                 />
-                                            );
-                                        },
+                                            </div>
+                                        ),
                                     )}
                                 </div>
                             </div>

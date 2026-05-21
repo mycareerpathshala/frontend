@@ -100,10 +100,17 @@ export const counsellings = pgTable(
         preferredDays:       jsonb('preferred_days').notNull().$type<string[]>(),
         preferredTimeRanges: jsonb('preferred_time_ranges').notNull().$type<string[]>(),
 
+        // Study interests (student-supplied)
+        nationality: text('nationality'),
+        streams:   jsonb('streams').$type<string[]>(),
+        countries: jsonb('countries').$type<string[]>(),
+        courses:   jsonb('courses').$type<string[]>(),
+
         // Admin-set fields
         counsellorId:  uuid('counsellor_id').references(() => counsellors.id, { onDelete: 'set null' }),
         scheduledTime: timestamp('scheduled_time', { withTimezone: true }),
         meetingLink:   text('meeting_link'),
+        adminNote:     text('admin_note'),
 
         // Status
         status: requestStatusEnum('status').notNull().default('pending'),
@@ -164,6 +171,7 @@ export const applications = pgTable(
         type:         applicationTypeEnum('type').notNull().default('general'),
         status:       applicationStatusEnum('status').notNull().default('submitted'),
         notes:        text('notes'),
+        adminNote:    text('admin_note'),
         createdAt:    timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
         updatedAt:    timestamp('updated_at', { withTimezone: true }).notNull().defaultNow().$onUpdateFn(() => new Date()),
     },
@@ -195,6 +203,35 @@ export const subscribers = pgTable(
 
 export type Subscriber = typeof subscribers.$inferSelect;
 export type NewSubscriber = typeof subscribers.$inferInsert;
+
+// ── Contact Info (singleton row, id = 1) ──────────────────────────────────────
+
+export const contactInfo = pgTable(
+    'contact_info',
+    {
+        id:                   integer('id').primaryKey().default(1),
+        email:                text('email'),
+        phone:                text('phone'),
+        whatsappNumber:       text('whatsapp_number'),
+        whatsappDisplay:      text('whatsapp_display'),
+        facebookUrl:          text('facebook_url'),
+        facebookHandle:       text('facebook_handle'),
+        instagramUrl:         text('instagram_url'),
+        instagramHandle:      text('instagram_handle'),
+        youtubeUrl:           text('youtube_url'),
+        youtubeHandle:        text('youtube_handle'),
+        linkedinUrl:          text('linkedin_url'),
+        linkedinHandle:       text('linkedin_handle'),
+        officeHoursDays:      text('office_hours_days'),
+        officeHoursTime:      text('office_hours_time'),
+        emailResponseTime:    text('email_response_time'),
+        whatsappResponseTime: text('whatsapp_response_time'),
+        languages:            text('languages'),
+        updatedAt:            timestamp('updated_at', { withTimezone: true }).notNull().defaultNow().$onUpdateFn(() => new Date()),
+    },
+);
+
+export type ContactInfo = typeof contactInfo.$inferSelect;
 
 // ── Notifications ─────────────────────────────────────────────────────────────
 
@@ -240,9 +277,30 @@ export const userSettings = pgTable(
         publicProfile:           boolean('public_profile').notNull().default(false),
         showOnlineStatus:        boolean('show_online_status').notNull().default(true),
         shareActivityData:       boolean('share_activity_data').notNull().default(false),
+        // Security
+        twoFactorEnabled:        boolean('two_factor_enabled').notNull().default(false),
         updatedAt:               timestamp('updated_at', { withTimezone: true }).notNull().defaultNow().$onUpdateFn(() => new Date()),
     },
 );
 
 export type UserSettings = typeof userSettings.$inferSelect;
 export type NewUserSettings = typeof userSettings.$inferInsert;
+
+// ── OTP Tokens ────────────────────────────────────────────────────────────────
+
+export const otpTokens = pgTable(
+    'otp_tokens',
+    {
+        id:        uuid('id').primaryKey().defaultRandom(),
+        userId:    uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+        code:      text('code').notNull(),
+        expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+        usedAt:    timestamp('used_at', { withTimezone: true }),
+        createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    },
+    (t) => [
+        index('idx_otp_tokens_user_id').on(t.userId),
+    ],
+);
+
+export type OtpToken = typeof otpTokens.$inferSelect;

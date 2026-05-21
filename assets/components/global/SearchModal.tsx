@@ -161,9 +161,24 @@ export default function SearchModal() {
     const [debouncedQuery, setDebouncedQuery] = useState<string>('');
     const [results, setResults] = useState<SearchResults | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [mounted, setMounted] = useState(false);
+    const [visible, setVisible] = useState(false);
 
     // context
     const { searchEnabled, setSearchEnabled } = useAppContext();
+
+    // mount → wait one frame → show (enter); hide → wait 300ms → unmount (exit)
+    useEffect(() => {
+        if (searchEnabled) {
+            setMounted(true);
+            const raf = requestAnimationFrame(() => setVisible(true));
+            return () => cancelAnimationFrame(raf);
+        } else {
+            setVisible(false);
+            const t = setTimeout(() => setMounted(false), 300);
+            return () => clearTimeout(t);
+        }
+    }, [searchEnabled]);
 
     // debounce: wait 300ms after user stops typing before fetching
     useEffect(() => {
@@ -219,31 +234,30 @@ export default function SearchModal() {
           results.blogs.length
         : 0;
 
-    if (!searchEnabled) return null;
+    if (!mounted) return null;
 
     return (
         <div
             onClick={() => setSearchEnabled(false)}
-            className="fixed inset-0 z-110 flex h-screen w-screen items-end justify-center bg-black/50 backdrop-blur-sm sm:items-start sm:pt-[12vh]"
+            className={`fixed inset-0 z-110 flex h-screen w-screen items-center justify-center px-4 transition-opacity duration-300 sm:items-start sm:px-0 sm:pt-[12vh] ${
+                visible ? 'bg-black/50 opacity-100 backdrop-blur-sm' : 'opacity-0'
+            }`}
         >
-            {/* modal — bottom sheet on mobile, centered card on desktop */}
+            {/* modal — centered on mobile, card near top on desktop */}
             <div
                 onClick={(e) => e.stopPropagation()}
-                className="flex w-full flex-col overflow-hidden rounded-t-3xl bg-white shadow-2xl ring-1 ring-black/5 sm:mx-4 sm:max-w-2xl sm:rounded-2xl"
+                className={`flex w-full flex-col overflow-hidden rounded-3xl bg-white shadow-2xl ring-1 ring-black/5 transition-transform duration-300 ease-out sm:mx-4 sm:max-w-2xl sm:rounded-2xl ${
+                    visible ? 'translate-y-0' : 'translate-y-full'
+                }`}
             >
-                {/* drag handle — mobile only */}
-                <div className="flex justify-center pb-1 pt-3 sm:hidden">
-                    <div className="h-1 w-10 rounded-full bg-gray-200" />
-                </div>
-
                 {/* ── search input row ── */}
-                <div className="flex items-center gap-3 px-4 py-3 sm:px-5 sm:py-4">
+                <div className="flex items-center gap-2 px-3 py-3 sm:gap-3 sm:px-5 sm:py-4">
                     {/* icon */}
-                    <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-blue-600 shadow-sm">
+                    <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-blue-600 shadow-sm sm:size-10 sm:rounded-xl">
                         {isLoading ? (
-                            <div className="size-5 animate-spin rounded-full border-2 border-white/40 border-t-white" />
+                            <div className="size-4 animate-spin rounded-full border-2 border-white/40 border-t-white sm:size-5" />
                         ) : (
-                            <HiMagnifyingGlass className="size-5 text-white" />
+                            <HiMagnifyingGlass className="size-4 text-white sm:size-5" />
                         )}
                     </div>
 
@@ -254,9 +268,9 @@ export default function SearchModal() {
                         name="search"
                         id="search"
                         value={searchInput}
-                        placeholder="Search universities, courses, countries..."
+                        placeholder="Search..."
                         onChange={(e) => setSearchInput(e.target.value)}
-                        className="flex-1 bg-transparent text-base font-medium text-gray-800 placeholder:text-gray-400 outline-none sm:text-lg"
+                        className="flex-1 min-w-0 bg-transparent text-sm font-medium text-gray-800 placeholder:text-gray-400 outline-none sm:text-lg sm:placeholder:content-['Search_universities,_courses,_countries...']"
                     />
                     <label htmlFor="search" className="hidden">
                         Search
@@ -271,10 +285,10 @@ export default function SearchModal() {
                     <button
                         type="button"
                         onClick={() => setSearchEnabled(false)}
-                        className="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full bg-gray-100 text-gray-500 transition-colors select-none hover:bg-red-100 hover:text-red-500"
+                        className="flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-full bg-gray-100 text-gray-500 transition-colors select-none hover:bg-red-100 hover:text-red-500 sm:size-8"
                     >
                         <span className="hidden">Close</span>
-                        <RxCross2 className="size-4" />
+                        <RxCross2 className="size-3.5 sm:size-4" />
                     </button>
                 </div>
 
@@ -282,7 +296,7 @@ export default function SearchModal() {
                 <div className="mx-4 border-t border-gray-100" />
 
                 {/* ── quick navigate chips ── */}
-                <div className="px-4 py-3">
+                <div className="px-4 py-2 sm:py-3">
                     <p className="mb-2 text-[11px] font-semibold tracking-wider text-gray-400 uppercase">
                         Quick Navigate
                     </p>
@@ -364,8 +378,8 @@ export default function SearchModal() {
                     </div>
                 </div>
 
-                {/* ── footer ── */}
-                <div className="border-t border-gray-100 bg-gray-50 px-4 py-2">
+                {/* ── footer — hidden on mobile to save space ── */}
+                <div className="hidden border-t border-gray-100 bg-gray-50 px-4 py-2 sm:block">
                     <div className="flex items-center justify-center gap-4 sm:justify-start">
                         <span className="flex items-center gap-1 text-[11px] text-gray-400">
                             <kbd className="rounded border border-gray-200 bg-white px-1.5 py-0.5 font-mono text-[10px] text-gray-500 shadow-sm">

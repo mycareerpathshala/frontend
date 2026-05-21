@@ -33,7 +33,7 @@ export default function Banner({ bannerUrl, colorOne, colorTwo }: BannerPropType
                     </p>
                     <div className="mt-12 space-x-4 font-semibold max-lg:mt-10 max-md:flex max-md:w-full max-md:flex-col max-md:gap-3 max-sm:gap-2 max-sm:px-2">
                         <Link
-                            href="#"
+                            href="/universities"
                             className="bg-primary-base border-primary-base hover:text-primary-base cursor-pointer rounded-lg border px-5 py-3 text-white transition-all duration-100 select-none hover:bg-white max-lg:text-sm max-md:w-full max-md:text-center"
                         >
                             Find My University

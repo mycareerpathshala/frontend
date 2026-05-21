@@ -1,5 +1,7 @@
 import { db } from '@/assets/lib/database/db';
 import { users } from '@/assets/lib/database/schema';
+import { sendEmail } from '@/assets/lib/email';
+import { welcomeEmailHtml } from '@/assets/lib/email/templates/welcome';
 import { hash } from 'bcryptjs';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
@@ -22,8 +24,14 @@ export async function POST(request: NextRequest) {
         }
 
         const passwordHash = await hash(password, 12);
-
         await db.insert(users).values({ firstName, lastName, email, passwordHash });
+
+        // Welcome email — fire and forget so registration never fails due to email
+        sendEmail({
+            to:      email,
+            subject: `Welcome to My Career Pathshala, ${firstName}!`,
+            html:    welcomeEmailHtml({ firstName }),
+        }).catch(() => {});
 
         return NextResponse.json({ success: true }, { status: 201 });
     } catch (err) {

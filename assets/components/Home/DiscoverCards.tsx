@@ -49,7 +49,7 @@ export default function DiscoverCards() {
                     imgAlt="Find Programs Image"
                     cardTitle="Explore Programs"
                     cardDesc="Explore over 20,000 programs and find your perfect course in just seconds"
-                    linkURL="#"
+                    linkURL="/courses"
                     linkText="Find Programs"
                 />
 
@@ -59,7 +59,7 @@ export default function DiscoverCards() {
                     imgAlt="Find University Image"
                     cardTitle="Explore University"
                     cardDesc="Explore over 1000 universities and find your preferred university from everywhere"
-                    linkURL="#"
+                    linkURL="/universities"
                     linkText="Find University"
                 />
 

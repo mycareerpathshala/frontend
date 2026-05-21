@@ -1,7 +1,7 @@
 // imports
-
 import SubHeader from '@/assets/components/global/SubHeader';
 import RequirementMax from '@/assets/components/mbbs/RequirementMax';
+import { getFallbackData } from '@/assets/lib/cms/fetchFallback';
 import { getMedicalCollegesData, getSingleMedicalData } from '@/assets/lib/cms/fetchMedical';
 import { notFound } from 'next/navigation';
 
@@ -22,7 +22,30 @@ export default async function AdmissionCriteriaPage({ params }: { params: Promis
     }
 
     const { data: medicalData } = medicalDataResponse;
-    // console.log(medicalData);
+
+    // fallback requirement data — filtered by the college's country
+    const fallbackDataResponse = await getFallbackData(
+        {
+            filters: {
+                country: {
+                    documentId: { $eq: medicalData.location?.country?.documentId },
+                },
+            },
+            populate: {
+                mbbsApplicationRequirements: {
+                    populate: {
+                        englishProficiency: true,
+                        applicationDateList: true,
+                    },
+                },
+            },
+        },
+        true,
+    );
+
+    const requirements =
+        medicalData.applicationRequirements ??
+        fallbackDataResponse?.data.at(0)?.mbbsApplicationRequirements;
 
     return (
         <>
@@ -30,8 +53,15 @@ export default async function AdmissionCriteriaPage({ params }: { params: Promis
             <SubHeader headerTitle="Admission Criteria" universityName={medicalData.name} />
 
             {/* all requirements */}
-            {medicalData.applicationRequirements && (
-                <RequirementMax applicationRequirements={medicalData.applicationRequirements} />
+            {requirements ? (
+                <RequirementMax applicationRequirements={requirements} />
+            ) : (
+                <div className="rounded-lg px-6 py-8 shadow-md">
+                    <p className="w-full rounded-lg bg-red-50 py-4 text-center text-lg text-red-900">
+                        <span className="font-semibold">No admission requirements</span> found for{' '}
+                        <span className="font-semibold">{medicalData.name}</span>
+                    </p>
+                </div>
             )}
         </>
     );

@@ -74,7 +74,7 @@ export default function Login() {
                                 </label>
                             </div>
                             <div className="flex items-center">
-                                <Link href="#" className="text-xs">
+                                <Link href="/contact" className="text-xs">
                                     Forgot Password
                                 </Link>
                             </div>
@@ -95,7 +95,7 @@ export default function Login() {
                     <p className="w-full text-center text-sm">
                         Don&apos;t have an account?{' '}
                         <Link
-                            href="#"
+                            href="/auth/register"
                             className="border-primary-lighter hover:bg-primary-dark hover:border-primary-dark ml-1 rounded-md border-2 bg-transparent px-2 py-0.5 transition-all duration-150 ease-in-out select-none hover:text-white"
                         >
                             Register Now

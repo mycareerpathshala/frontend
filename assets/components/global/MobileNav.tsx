@@ -71,8 +71,8 @@ export default function MobileNav() {
                     <SearchButton />
                 </div>
 
-                {/* Nav links — scrollable if content overflows */}
-                <ul className="mt-12 flex flex-col gap-8 px-4">
+                {/* Nav links — fills remaining space, scrollable on very short screens */}
+                <ul className="mt-6 flex flex-col gap-5 px-4 py-2">
                     {navItems.map((item) => (
                         <li key={item.path} className="flex flex-col">
                             <Link
@@ -91,7 +91,7 @@ export default function MobileNav() {
                 </ul>
 
                 {/* Bottom actions — always visible */}
-                <div className="mt-auto flex shrink-0 flex-row gap-3 px-4 py-4 max-sm:flex-col">
+                <div className="mt-10 flex flex-row gap-3 px-4 py-4 max-sm:flex-col">
                     <Link
                         href="/contact"
                         onClick={() => setIsOpen(false)}

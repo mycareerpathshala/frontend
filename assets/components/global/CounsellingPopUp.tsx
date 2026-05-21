@@ -16,11 +16,13 @@ import {
     HiCheckCircle,
     HiClock,
     HiEnvelope,
+    HiPencilSquare,
     HiPhone,
     HiTrash,
     HiXCircle,
     HiXMark,
 } from 'react-icons/hi2';
+import Link from 'next/link';
 import { MdSupportAgent } from 'react-icons/md';
 import { SiGooglemeet, SiZoom } from 'react-icons/si';
 
@@ -283,6 +285,15 @@ export function CounsellingRequestCard({ req, onDelete }: { req: CounsellingRequ
                         <span className="truncate">{req.email}</span>
                     </div>
                     <div className="flex items-center gap-1">
+                        {req.status === 'pending' && (
+                            <Link
+                                href={`/dashboard/counselling/edit/${req.id}`}
+                                className="flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-[11px] font-semibold text-slate-400 transition-all select-none hover:bg-blue-50 hover:text-blue-600"
+                            >
+                                <HiPencilSquare className="size-3.5" />
+                                Edit
+                            </Link>
+                        )}
                         {req.status === 'scheduled' && req.scheduledTime && (
                             <button
                                 type="button"
@@ -399,6 +410,10 @@ export default function CounsellingPopUp({
                 message: form.message.trim(),
                 preferredDays: selectedDays,
                 preferredTimeRanges: selectedRanges,
+                nationality: null,
+                streams: null,
+                countries: null,
+                courses: null,
             });
         } finally {
             setLoading(false);

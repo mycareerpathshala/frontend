@@ -40,7 +40,7 @@ export default function FindCourse({
     // all filter state is derived from the URL — no useState needed
     const countryFilter = searchParams.get('countryFilter');
     const streamFilter = searchParams.get('streamFilter');
-    const levelFilter = searchParams.get('levelFilter') as 'Undergraduate' | 'Postgraduate' | null;
+    const levelFilter = searchParams.get('levelFilter') as 'Undergraduate' | 'Postgraduate' | 'PhD / Doctorate' | 'Diploma / Certificate' | 'Foundation / Pathway' | 'Vocational Training' | 'Language Course' | null;
     const deliveryMethodFilter = searchParams.get('deliveryMethodFilter') as 'On-Campus' | 'Online' | 'Blended' | null;
     const studyLanguageFilter = searchParams.get('studyLanguageFilter');
     const courseOfferingFilter = searchParams.get('courseOfferingFilter') as 'Full-Time' | 'Part-Time' | null;

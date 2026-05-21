@@ -27,13 +27,13 @@ export default function InlineBanner() {
                     <p className="text-center text-xl max-sm:text-xl">Find the right University and Courses for you</p>
                     <div className="mt-6 flex items-center justify-start gap-8 max-sm:flex-col max-sm:gap-3">
                         <Link
-                            href="#"
+                            href="/mbbs"
                             className="border-primary-light text-primary-base hover:bg-primary-base cursor-pointer rounded-full border bg-white px-4 py-2 font-semibold select-none hover:text-white max-sm:text-center"
                         >
                             MBBS Universities
                         </Link>
                         <Link
-                            href="#"
+                            href="/courses"
                             className="border-secondary-light text-secondary-base hover:bg-secondary-base cursor-pointer rounded-full border bg-white px-4 py-2 font-semibold select-none hover:text-white"
                         >
                             Best Courses

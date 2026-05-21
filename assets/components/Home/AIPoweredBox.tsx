@@ -17,7 +17,7 @@ export default function AIPoweredBox() {
                     <span className="flex w-full items-center justify-between gap-4 max-md:flex-col max-md:items-center max-md:gap-2">
                         <span className="text-primary-base text-sm">Best Universities</span>
                         <Link
-                            href="#"
+                            href="/universities"
                             className="bg-primary-base hover:bg-primary-light block w-fit rounded-lg px-4 py-2 text-white transition-all duration-200 ease-in-out"
                         >
                             Find University
@@ -31,7 +31,7 @@ export default function AIPoweredBox() {
                     <span className="flex w-full items-center justify-between gap-4 max-md:flex-col max-md:items-center max-md:gap-2">
                         <span className="text-primary-base text-sm">Already have a program in mind?</span>
                         <Link
-                            href="#"
+                            href="/courses"
                             className="bg-primary-base hover:bg-primary-light block w-fit rounded-lg px-4 py-2 text-white transition-all duration-200 ease-in-out"
                         >
                             Find Details

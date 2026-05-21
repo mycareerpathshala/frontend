@@ -2,6 +2,7 @@
 // imports
 import Breadcrumb from '@/assets/components/global/Breadcrumb';
 import ExamContainer from '@/assets/components/course/ExamContainer';
+import ApplyNowButton from '@/assets/components/global/ApplyNowButton';
 import { getCourseIds, getSingleCourseData } from '@/assets/lib/cms/fetchCourse';
 import { Metadata } from 'next';
 import Link from 'next/link';
@@ -304,14 +305,23 @@ export default async function SingleCoursePage({ params }: { params: Promise<{ c
                         <h3 className="text-base font-semibold text-slate-800">Ready to Apply?</h3>
                         <p className="mt-1 text-sm text-slate-500">Take the next step towards your academic journey.</p>
                         <div className="mt-4 flex flex-col gap-2">
-                            <Link
-                                href="#"
+                            <ApplyNowButton
                                 className="bg-primary-base hover:bg-primary-light block w-full rounded-xl py-2.5 text-center text-sm font-semibold text-white transition-colors duration-200 select-none"
-                            >
-                                Apply Now
-                            </Link>
+                                university={university ? {
+                                    documentId: university.documentId,
+                                    name: university.name,
+                                    acronym: university.acronym ?? undefined,
+                                    country: university.location?.country?.name ?? undefined,
+                                } : undefined}
+                                course={{
+                                    documentId: course.documentId,
+                                    courseName: course.courseName,
+                                    courseLevel: course.courseLevel,
+                                    degreeName: course.degreeName,
+                                }}
+                            />
                             <Link
-                                href="#"
+                                href="/dashboard/counselling"
                                 className="border-primary-base text-primary-base hover:bg-primary-base block w-full rounded-xl border bg-white py-2.5 text-center text-sm font-semibold transition-colors duration-200 select-none hover:text-white"
                             >
                                 Talk to Counsellor

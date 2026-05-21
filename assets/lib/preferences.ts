@@ -14,7 +14,7 @@ export interface StudyPreference {
     streamFilter: string | null;
     streamName: string | null;
     // Enum-based filters
-    levelFilter: 'Undergraduate' | 'Postgraduate' | null;
+    levelFilter: 'Undergraduate' | 'Postgraduate' | 'PhD / Doctorate' | 'Diploma / Certificate' | 'Foundation / Pathway' | 'Vocational Training' | 'Language Course' | null;
     deliveryMethodFilter: 'On-Campus' | 'Online' | 'Blended' | null;
     studyLanguageFilter: string | null;
     courseOfferingFilter: 'Full-Time' | 'Part-Time' | null;

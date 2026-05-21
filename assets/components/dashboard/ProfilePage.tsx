@@ -28,6 +28,7 @@ import {
 import { MdCalendarMonth, MdPerson, MdPublic } from 'react-icons/md';
 import CountrySelector from './CountrySelector';
 import DatePicker from './DatePicker';
+import DialCodeSelector, { DEFAULT_DIAL_COUNTRY, parsePhone, type DialCountry } from './DialCodeSelector';
 
 // ── Profile data type ─────────────────────────────────────────────────────────
 
@@ -609,6 +610,8 @@ function PersonalInfoCard({ profile, onSaved }: { profile: ProfileData | null; o
     const [saving, setSaving] = useState(false);
     const [saved, setSaved] = useState(false);
     const [error, setError] = useState('');
+    const [dialCountry, setDialCountry] = useState<DialCountry>(DEFAULT_DIAL_COUNTRY);
+    const [phoneNumber, setPhoneNumber] = useState('');
 
     // Sync from fetched profile data
     useEffect(() => {
@@ -626,6 +629,9 @@ function PersonalInfoCard({ profile, onSaved }: { profile: ProfileData | null; o
     function handleEdit() {
         setDraft(form);
         setError('');
+        const parsed = parsePhone(form.phone);
+        setDialCountry(parsed.country);
+        setPhoneNumber(parsed.number);
         setEditing(true);
     }
     function handleCancel() {
@@ -643,7 +649,7 @@ function PersonalInfoCard({ profile, onSaved }: { profile: ProfileData | null; o
                 body: JSON.stringify({
                     firstName: draft.firstName,
                     lastName: draft.lastName,
-                    phone: draft.phone || null,
+                    phone: phoneNumber.trim() ? `${dialCountry.dial} ${phoneNumber.trim()}` : null,
                     dateOfBirth: draft.dateOfBirth || null,
                     gender: draft.gender || null,
                     country: draft.country || null,
@@ -698,13 +704,21 @@ function PersonalInfoCard({ profile, onSaved }: { profile: ProfileData | null; o
                             onChange={(v) => setDraft((p) => ({ ...p, lastName: v }))}
                             placeholder="Enter last name"
                         />
-                        <InputField
-                            label="Phone Number"
-                            value={draft.phone}
-                            onChange={(v) => setDraft((p) => ({ ...p, phone: v }))}
-                            placeholder="+91 00000 00000"
-                            type="tel"
-                        />
+                        <div>
+                            <label className="mb-1.5 block text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+                                Phone Number
+                            </label>
+                            <div className="flex gap-2">
+                                <DialCodeSelector value={dialCountry} onChange={setDialCountry} />
+                                <input
+                                    type="tel"
+                                    value={phoneNumber}
+                                    onChange={e => setPhoneNumber(e.target.value.replace(/[^\d\s\-()]/g, ''))}
+                                    placeholder="Phone number"
+                                    className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-800 transition outline-none placeholder:text-slate-300 focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-100"
+                                />
+                            </div>
+                        </div>
                         <div>
                             <label className="mb-1.5 block text-[10px] font-bold tracking-wider text-slate-400 uppercase">
                                 Date of Birth
@@ -755,6 +769,18 @@ function ContactCard({ profile, onSaved }: { profile: ProfileData | null; onSave
     const [saving, setSaving] = useState(false);
     const [saved, setSaved] = useState(false);
     const [error, setError] = useState('');
+    const [verifySent, setVerifySent] = useState(false);
+    const [verifyLoading, setVerifyLoading] = useState(false);
+
+    async function handleSendVerification() {
+        setVerifyLoading(true);
+        try {
+            await fetch('/api/auth/send-verification', { method: 'POST' });
+            setVerifySent(true);
+        } finally {
+            setVerifyLoading(false);
+        }
+    }
 
     // Sync from fetched profile data
     useEffect(() => {
@@ -827,16 +853,30 @@ function ContactCard({ profile, onSaved }: { profile: ProfileData | null; onSave
                             <span className="text-[10px] font-semibold text-slate-400">Primary</span>
                         </div>
                     </div>
-                    <div className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg border border-amber-100 bg-amber-50 px-3 py-2">
-                        <HiExclamationTriangle className="size-3 shrink-0 text-amber-500" />
-                        <span className="text-[10px] font-medium text-amber-600">Not verified — check your inbox</span>
-                        <button
-                            type="button"
-                            className="ml-auto text-[10px] font-bold text-amber-600 underline transition-colors select-none hover:text-amber-700"
-                        >
-                            Verify now
-                        </button>
-                    </div>
+                    {session?.isVerified ? (
+                        <div className="mt-4 flex items-center gap-2 rounded-lg border border-green-100 bg-green-50 px-3 py-2">
+                            <HiCheckBadge className="size-3.5 shrink-0 text-green-500" />
+                            <span className="text-[10px] font-semibold text-green-600">Email verified</span>
+                        </div>
+                    ) : verifySent ? (
+                        <div className="mt-4 flex items-center gap-2 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2">
+                            <HiEnvelope className="size-3 shrink-0 text-blue-500" />
+                            <span className="text-[10px] font-medium text-blue-600">Verification email sent — check your inbox</span>
+                        </div>
+                    ) : (
+                        <div className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg border border-amber-100 bg-amber-50 px-3 py-2">
+                            <HiExclamationTriangle className="size-3 shrink-0 text-amber-500" />
+                            <span className="text-[10px] font-medium text-amber-600">Not verified — check your inbox</span>
+                            <button
+                                type="button"
+                                onClick={handleSendVerification}
+                                disabled={verifyLoading}
+                                className="ml-auto text-[10px] font-bold text-amber-600 underline transition-colors select-none hover:text-amber-700 disabled:opacity-50"
+                            >
+                                {verifyLoading ? 'Sending…' : 'Verify now'}
+                            </button>
+                        </div>
+                    )}
                 </div>
 
                 {/* Secondary email */}

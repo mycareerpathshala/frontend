@@ -206,7 +206,7 @@ function PreferenceCard({
 // Quick-add form for manually creating a preference from the dashboard
 // (without needing to go through FindCourse).
 
-const LEVEL_OPTIONS = ['Undergraduate', 'Postgraduate'] as const;
+const LEVEL_OPTIONS = ['Undergraduate', 'Postgraduate', 'PhD / Doctorate', 'Diploma / Certificate', 'Foundation / Pathway', 'Vocational Training', 'Language Course'] as const;
 const DELIVERY_OPTIONS = ['On-Campus', 'Online', 'Blended'] as const;
 const OFFERING_OPTIONS = ['Full-Time', 'Part-Time'] as const;
 
@@ -225,7 +225,7 @@ function AddPreferencePopup({
     const [name, setName] = useState('');
     const [countryName, setCountryName] = useState('');
     const [streamName, setStreamName] = useState('');
-    const [level, setLevel] = useState<'Undergraduate' | 'Postgraduate' | ''>('');
+    const [level, setLevel] = useState<'Undergraduate' | 'Postgraduate' | 'PhD / Doctorate' | 'Diploma / Certificate' | 'Foundation / Pathway' | 'Vocational Training' | 'Language Course' | ''>('');
     const [delivery, setDelivery] = useState<'On-Campus' | 'Online' | 'Blended' | ''>('');
     const [language, setLanguage] = useState('');
     const [offering, setOffering] = useState<'Full-Time' | 'Part-Time' | ''>('');
@@ -237,7 +237,7 @@ function AddPreferencePopup({
             countryName: countryName.trim() || null,
             streamFilter: null,
             streamName: streamName.trim() || null,
-            levelFilter: (level as 'Undergraduate' | 'Postgraduate') || null,
+            levelFilter: (level as StudyPreference['levelFilter']) || null,
             deliveryMethodFilter: (delivery as 'On-Campus' | 'Online' | 'Blended') || null,
             studyLanguageFilter: language.trim() || null,
             courseOfferingFilter: (offering as 'Full-Time' | 'Part-Time') || null,
@@ -328,13 +328,13 @@ function AddPreferencePopup({
                         <label className="mb-1.5 block text-[10px] font-bold tracking-wider text-slate-400 uppercase">
                             Course Level
                         </label>
-                        <div className="flex gap-2">
+                        <div className="grid grid-cols-2 gap-2">
                             {LEVEL_OPTIONS.map((opt) => (
                                 <button
                                     key={opt}
                                     type="button"
                                     onClick={() => setLevel((p) => (p === opt ? '' : opt))}
-                                    className={`flex-1 rounded-xl border-2 py-2 text-xs font-bold transition-all select-none ${
+                                    className={`rounded-xl border-2 px-2 py-2 text-xs font-bold transition-all select-none ${
                                         level === opt
                                             ? 'border-blue-500 bg-blue-50 text-blue-700'
                                             : 'border-slate-100 bg-slate-50 text-slate-500 hover:border-slate-200'

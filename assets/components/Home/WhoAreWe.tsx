@@ -37,7 +37,7 @@ export default function WhoAreWe() {
                 <div>
                     {/* search box in the thumbnail */}
                     <Link
-                        href="#"
+                        href="/universities"
                         className="bg-primary-light absolute -top-14 left-[23%] flex w-fit items-center gap-3 rounded-xl py-2 pr-4 pl-3 text-white"
                     >
                         <span>
@@ -63,7 +63,7 @@ export default function WhoAreWe() {
                             </p>
                         </div>
                         <Link
-                            href="#"
+                            href="/dashboard/counselling"
                             className="mt-2 flex cursor-pointer items-center justify-center bg-linear-to-r from-blue-300 to-blue-500 px-4 py-1.5 text-sm select-none"
                         >
                             <span className="font-bold">Get Help</span>

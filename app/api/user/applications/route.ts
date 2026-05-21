@@ -1,6 +1,8 @@
 import { getSession } from '@/assets/lib/auth/session';
 import { db } from '@/assets/lib/database/db';
-import { applications } from '@/assets/lib/database/schema';
+import { applications, users } from '@/assets/lib/database/schema';
+import { sendEmail } from '@/assets/lib/email';
+import { applicationConfirmEmailHtml } from '@/assets/lib/email/templates/applicationConfirm';
 import { fetchData } from '@/assets/utilities/getRequest';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
@@ -87,6 +89,7 @@ export async function GET() {
                 courseId:          null,
                 status:            app.status,
                 notes:             app.notes,
+                adminNote:         app.adminNote,
                 createdAt:         app.createdAt,
                 updatedAt:         app.updatedAt,
                 universityName:    college?.name ?? 'Unknown College',
@@ -107,6 +110,7 @@ export async function GET() {
             courseId:          app.courseId,
             status:            app.status,
             notes:             app.notes,
+            adminNote:         app.adminNote,
             createdAt:         app.createdAt,
             updatedAt:         app.updatedAt,
             universityName:    uni?.name          ?? 'Unknown University',
@@ -151,6 +155,37 @@ export async function POST(request: NextRequest) {
             .insert(applications)
             .values({ userId: session.userId, universityId, courseId: courseId ?? null, type, notes: notes || null })
             .returning();
+
+        // Confirmation email — resolve university/course names then send
+        ;(async () => {
+            const [[user], uniRes, courseRes] = await Promise.all([
+                db.select({ email: users.email, firstName: users.firstName })
+                    .from(users).where(eq(users.id, session.userId)).limit(1),
+                fetchData(`/api/${type === 'mbbs' ? 'medical-colleges' : 'universities'}`, {
+                    fields:     ['name'],
+                    filters:    { documentId: { $eq: universityId } },
+                    pagination: { pageSize: 1 },
+                }, false).then((r) => r.json()).catch(() => ({ data: [] })),
+                courseId
+                    ? fetchData('/api/courses', {
+                        fields:     ['courseName'],
+                        filters:    { documentId: { $eq: courseId } },
+                        pagination: { pageSize: 1 },
+                    }, false).then((r) => r.json()).catch(() => ({ data: [] }))
+                    : Promise.resolve({ data: [] }),
+            ]);
+
+            if (!user?.email) return;
+
+            const universityName: string = uniRes.data?.[0]?.name ?? 'your chosen university';
+            const courseName: string | null = courseRes.data?.[0]?.courseName ?? null;
+
+            await sendEmail({
+                to:      user.email,
+                subject: `Application submitted — ${universityName}`,
+                html:    applicationConfirmEmailHtml({ firstName: user.firstName, universityName, courseName }),
+            });
+        })().catch(() => {});
 
         return NextResponse.json({ data: created }, { status: 201 });
     } catch (err) {

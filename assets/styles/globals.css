@@ -706,48 +706,96 @@ button {
     clear: both;
 }
 
-/* Tables — CKEditor wraps in <figure class="table"> */
-.blogContentHTML figure.table {
-    margin: 2rem 0;
+/* Tables — Ocean Blue with full outer border, centered, auto-width */
+.blogContentHTML figure.table,
+.blogContentHTML .blog-table-scroll {
+    margin: 2.5rem auto;
+    width: fit-content;
+    max-width: 100%;
     overflow-x: auto;
-    border-radius: 12px;
-    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+    border-radius: 14px;
+    border: 2px solid #3b82f6;
+    box-shadow:
+        0 1px 4px rgba(59, 130, 246, 0.1),
+        0 8px 32px rgba(59, 130, 246, 0.12);
 }
 
 .blogContentHTML table {
-    width: 100%;
+    width: auto;
+    min-width: 480px;
     border-collapse: collapse;
-    font-size: 0.95rem;
+    font-size: 0.94rem;
+    line-height: 1.65;
 }
 
-.blogContentHTML thead {
-    background: #4f46e5;
-    color: #ffffff;
-}
-
+/* Header — TipTap puts <th> inside <tbody>, not <thead>, so target th directly */
 .blogContentHTML th {
-    padding: 0.85rem 1rem;
+    padding: 0.9rem 1.4rem;
     text-align: left;
-    font-weight: 600;
+    font-weight: 700;
+    font-size: 0.95rem;
     letter-spacing: 0.03em;
+    text-transform: uppercase;
     white-space: nowrap;
-    border: 1px solid #4338ca;
+    border-bottom: 2px solid #1d4ed8;
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
+    background: linear-gradient(120deg, #1d4ed8 0%, #3b82f6 100%) !important;
+    color: #ffffff !important;
 }
 
+.blogContentHTML th:last-child {
+    border-right: none;
+}
+
+/* <p> inside <th> — reset blog p styles so they don't fight */
+.blogContentHTML th p {
+    margin: 0 !important;
+    color: #ffffff !important;
+    font-size: inherit;
+}
+
+/* Cells */
 .blogContentHTML td {
-    padding: 0.75rem 1rem;
-    border: 1px solid #e2e8f0;
-    color: #334155;
-    vertical-align: top;
+    padding: 0.875rem 1.4rem;
+    border-bottom: 1px solid #dbeafe;
+    border-right: 1px solid #dbeafe;
+    color: #1e293b;
+    vertical-align: middle;
+    font-size: 0.84rem;
 }
 
-.blogContentHTML tbody tr:nth-child(even) {
-    background: #f8fafc;
+.blogContentHTML td:last-child {
+    border-right: none;
 }
 
-.blogContentHTML tbody tr:hover {
-    background: #eef2ff;
-    transition: background 0.15s;
+/* <p> inside <td> — remove bottom margin so rows aren't padded by paragraph spacing */
+.blogContentHTML td p {
+    margin: 0 !important;
+    color: inherit;
+    font-size: inherit;
+}
+
+.blogContentHTML tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* First column */
+.blogContentHTML td:first-child {
+    font-weight: 600;
+    color: #1e3a8a;
+}
+
+/* Zebra — skip first row (the th header row sitting in tbody) */
+.blogContentHTML tbody tr:nth-child(even) td {
+    background: #eff6ff;
+}
+
+.blogContentHTML tbody tr {
+    transition: background 0.15s ease;
+}
+
+.blogContentHTML tbody tr:hover td {
+    background: #dbeafe;
 }
 
 /* Text alignment (CKEditor inline styles) */
@@ -822,6 +870,7 @@ button {
 
     .blogContentHTML th,
     .blogContentHTML td {
-        padding: 0.6rem 0.75rem;
+        padding: 0.65rem 0.875rem;
+        font-size: 0.85rem;
     }
 }

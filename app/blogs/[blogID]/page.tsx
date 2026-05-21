@@ -59,7 +59,9 @@ export default async function SingleBlogPage({ params }: { params: Promise<{ blo
         notFound();
     }
 
+    
     const { data: blogData } = blogDataResponse;
+    // console.log(blogData)
 
     // published date
     const { publishedAt } = blogData;
@@ -117,7 +119,7 @@ export default async function SingleBlogPage({ params }: { params: Promise<{ blo
             </section>
 
             {/* content */}
-            <section className="mx-auto mt-10 w-full max-w-5xl">
+            <section className="mx-auto mt-10 mb-12 w-full max-w-5xl">
                 {blogData.blogContent ? (
                     <MarkViewerBlog content={blogData.blogContent} />
                 ) : (

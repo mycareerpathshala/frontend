@@ -57,6 +57,12 @@ export default function LoginPage() {
                 return;
             }
 
+            if (data.requires2fa) {
+                const next = new URLSearchParams(window.location.search).get('next') ?? '';
+                window.location.href = `/auth/verify-otp${next ? `?next=${encodeURIComponent(next)}` : ''}`;
+                return;
+            }
+
             window.location.href = getNextPath();
         } catch {
             setError('Something went wrong. Please try again.');
@@ -252,7 +258,7 @@ export default function LoginPage() {
                             {/* forgot password */}
                             <div className="flex justify-end">
                                 <Link
-                                    href="#"
+                                    href="/contact"
                                     className="text-xs font-medium text-blue-500 transition-colors hover:text-blue-700"
                                 >
                                     Forgot password?

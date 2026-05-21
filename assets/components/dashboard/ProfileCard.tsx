@@ -13,12 +13,87 @@ import {
     HiExclamationTriangle,
     HiLockClosed,
     HiPhone,
+    HiPlus,
     HiSparkles,
     HiUser,
     HiXMark,
 } from 'react-icons/hi2';
 import { MdSchool, MdScience, MdLocalHospital, MdWork, MdCastForEducation, MdAutoStories } from 'react-icons/md';
 import { TbCertificate } from 'react-icons/tb';
+import DialCodeSelector, { DEFAULT_DIAL_COUNTRY, type DialCountry } from '@/assets/components/dashboard/DialCodeSelector';
+
+// ── Add phone popup ───────────────────────────────────────────────────────────
+
+function AddPhonePopup({ onClose, onSaved }: { onClose: () => void; onSaved: (phone: string) => void }) {
+    const [country, setCountry] = useState<DialCountry>(DEFAULT_DIAL_COUNTRY);
+    const [number, setNumber]   = useState('');
+    const [saving, setSaving]   = useState(false);
+    const [error, setError]     = useState('');
+
+    async function handleSave() {
+        const digits = number.replace(/\D/g, '');
+        if (!digits) { setError('Please enter a phone number.'); return; }
+        setSaving(true);
+        setError('');
+        try {
+            const res = await fetch('/api/auth/profile', {
+                method:  'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify({ phone: `${country.dial} ${digits}` }),
+            });
+            if (!res.ok) { setError('Failed to save. Please try again.'); return; }
+            onSaved(`${country.dial} ${digits}`);
+        } catch {
+            setError('Network error. Please try again.');
+        } finally {
+            setSaving(false);
+        }
+    }
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 backdrop-blur-sm">
+            <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl ring-1 ring-slate-100">
+                {/* Header */}
+                <div className="mb-5 flex items-start justify-between gap-3">
+                    <div>
+                        <p className="text-sm font-extrabold text-slate-800">Add phone number</p>
+                        <p className="mt-0.5 text-xs text-slate-400">Select your country code and enter your number</p>
+                    </div>
+                    <button type="button" onClick={onClose}
+                        className="shrink-0 rounded-lg p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600">
+                        <HiXMark className="size-4" />
+                    </button>
+                </div>
+
+                {/* Input row */}
+                <div className="flex gap-2">
+                    <DialCodeSelector value={country} onChange={setCountry} />
+                    <input
+                        type="tel"
+                        value={number}
+                        onChange={e => { setNumber(e.target.value.replace(/[^\d\s\-()]/g, '')); setError(''); }}
+                        placeholder="Phone number"
+                        className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-800 transition outline-none placeholder:text-slate-300 focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-100"
+                    />
+                </div>
+
+                {error && <p className="mt-2 text-xs text-red-500">{error}</p>}
+
+                {/* Actions */}
+                <div className="mt-4 flex items-center justify-end gap-2">
+                    <button type="button" onClick={onClose}
+                        className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">
+                        Cancel
+                    </button>
+                    <button type="button" onClick={handleSave} disabled={saving}
+                        className="rounded-xl bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow-sm shadow-blue-200 transition hover:bg-blue-700 disabled:opacity-60">
+                        {saving ? 'Saving…' : 'Save'}
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
 
 // ── Study level options ──────────────────────────────────────────────────────
 
@@ -231,11 +306,25 @@ const COMPLETION = 20;
 // ── ProfileCard ──────────────────────────────────────────────────────────────
 
 export default function ProfileCard() {
-    const { session } = useAppContext();
+    const { session, refreshSession } = useAppContext();
     const fullName = session ? `${session.firstName} ${session.lastName}` : 'Student';
 
     const [popupOpen, setPopupOpen] = useState(false);
     const [studyLevel, setStudyLevel] = useState<string | null>(null);
+    const [verifyPopupOpen, setVerifyPopupOpen] = useState(false);
+    const [verifySent, setVerifySent] = useState(false);
+    const [verifyLoading, setVerifyLoading] = useState(false);
+    const [phonePopupOpen, setPhonePopupOpen] = useState(false);
+
+    async function handleSendVerification() {
+        setVerifyLoading(true);
+        try {
+            const res = await fetch('/api/auth/send-verification', { method: 'POST' });
+            if (res.ok) setVerifySent(true);
+        } finally {
+            setVerifyLoading(false);
+        }
+    }
 
     const currentLevel = studyLevel ? STUDY_LEVELS.find((l) => l.id === studyLevel) : null;
 
@@ -246,6 +335,14 @@ export default function ProfileCard() {
 
     return (
         <>
+            {/* Add phone popup */}
+            {phonePopupOpen && (
+                <AddPhonePopup
+                    onClose={() => setPhonePopupOpen(false)}
+                    onSaved={async () => { setPhonePopupOpen(false); await refreshSession(); }}
+                />
+            )}
+
             {/* Study level popup — rendered at root level to escape any stacking context */}
             {popupOpen && (
                 <StudyLevelSelectorPopUp
@@ -276,7 +373,7 @@ export default function ProfileCard() {
                     </div>
                     <div>
                         <h2 className="mb-0.5 text-sm font-bold text-white">{fullName}</h2>
-                        <p className="truncate text-xs text-blue-100/80">{session?.email ?? 'student@example.com'}</p>
+                        <p className="truncate text-xs text-blue-100/80">{session?.email}</p>
                     </div>
                 </div>
 
@@ -332,25 +429,103 @@ export default function ProfileCard() {
                         <p className="mb-2 text-[10px] font-bold tracking-widest text-slate-400 uppercase">
                             Contact Info
                         </p>
-                        <div className="flex items-center gap-3 rounded-xl bg-slate-50 px-3 py-2.5">
-                            <HiPhone className="size-4 shrink-0 text-slate-400" />
-                            <span className="flex-1 text-sm text-slate-600">+91 - 851-000-8178</span>
-                            <HiCheckBadge className="size-4.5 shrink-0 text-green-500" />
-                        </div>
+                        {/* Email — first */}
                         <div className="flex items-center gap-3 rounded-xl bg-slate-50 px-3 py-2.5">
                             <HiEnvelope className="size-4 shrink-0 text-slate-400" />
                             <span className="flex-1 truncate text-sm text-slate-600">
-                                {session?.email ?? 'xyz@gmail.com'}
+                                {session?.email}
                             </span>
-                            <button
-                                type="button"
-                                className="flex shrink-0 items-center gap-1 text-xs font-semibold text-amber-500 transition-colors select-none hover:text-amber-700"
-                            >
-                                <HiExclamationTriangle className="size-3.5" />
-                                Verify
-                            </button>
+                            {session?.isVerified ? (
+                                <HiCheckBadge className="size-4.5 shrink-0 text-green-500" />
+                            ) : (
+                                <button
+                                    type="button"
+                                    onClick={() => setVerifyPopupOpen(true)}
+                                    className="flex shrink-0 items-center gap-1 text-xs font-semibold text-amber-500 transition-colors select-none hover:text-amber-700"
+                                >
+                                    <HiExclamationTriangle className="size-3.5" />
+                                    Verify
+                                </button>
+                            )}
+                        </div>
+                        {/* Phone */}
+                        <div className="flex items-center gap-3 rounded-xl bg-slate-50 px-3 py-2.5">
+                            <HiPhone className="size-4 shrink-0 text-slate-400" />
+                            {session?.phone ? (
+                                <>
+                                    <span className="flex-1 text-sm text-slate-600">{session.phone}</span>
+                                    <HiCheckBadge className="size-4.5 shrink-0 text-green-500" />
+                                </>
+                            ) : (
+                                <>
+                                    <span className="flex-1 text-sm italic text-slate-300">No phone added</span>
+                                    <button
+                                        type="button"
+                                        onClick={() => setPhonePopupOpen(true)}
+                                        className="flex shrink-0 items-center gap-1 text-xs font-semibold text-blue-500 transition-colors select-none hover:text-blue-700"
+                                    >
+                                        <HiPlus className="size-3.5" />
+                                        Add
+                                    </button>
+                                </>
+                            )}
                         </div>
                     </div>
+
+                    {/* Verify email popup */}
+                    {verifyPopupOpen && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 backdrop-blur-sm">
+                            <div className="w-full max-w-xs rounded-2xl bg-white p-6 shadow-2xl ring-1 ring-slate-100">
+                                <div className="mb-4 flex items-start justify-between gap-3">
+                                    <div>
+                                        <p className="text-sm font-extrabold text-slate-800">Verify your email</p>
+                                        <p className="mt-0.5 text-xs text-slate-400 break-all">{session?.email}</p>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => { setVerifyPopupOpen(false); setVerifySent(false); }}
+                                        className="shrink-0 rounded-lg p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
+                                    >
+                                        <HiXMark className="size-4" />
+                                    </button>
+                                </div>
+
+                                {verifySent ? (
+                                    <>
+                                        <div className="rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-center">
+                                            <HiEnvelope className="mx-auto mb-1.5 size-5 text-blue-400" />
+                                            <p className="text-xs font-semibold text-blue-700">Verification email sent!</p>
+                                            <p className="mt-0.5 text-[11px] text-blue-500">Check your inbox and click the link to verify.</p>
+                                        </div>
+                                        <div className="mt-3 flex justify-center">
+                                            <button
+                                                type="button"
+                                                onClick={() => { setVerifyPopupOpen(false); setVerifySent(false); }}
+                                                className="rounded-xl bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-sm shadow-blue-200 transition-all hover:bg-blue-700"
+                                            >
+                                                Done
+                                            </button>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <p className="mb-4 text-xs text-slate-500 leading-relaxed">
+                                            We&apos;ll send a verification link to your email address. Click it to confirm your account.
+                                        </p>
+                                        <button
+                                            type="button"
+                                            onClick={handleSendVerification}
+                                            disabled={verifyLoading}
+                                            className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-blue-700 disabled:opacity-60"
+                                        >
+                                            <HiEnvelope className="size-4" />
+                                            {verifyLoading ? 'Sending…' : 'Send verification email'}
+                                        </button>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    )}
 
                     {/* Account details */}
                     <div className="mb-5 space-y-2">
@@ -359,7 +534,7 @@ export default function ProfileCard() {
                         </p>
                         <div className="rounded-xl bg-slate-50 px-3 py-2.5">
                             <p className="mb-0.5 text-[10px] text-slate-400">Email</p>
-                            <p className="truncate text-sm text-slate-600">{session?.email ?? 'xyz@gmail.com'}</p>
+                            <p className="truncate text-sm text-slate-600">{session?.email}</p>
                         </div>
                         <div className="flex items-center gap-3 rounded-xl bg-slate-50 px-3 py-2.5">
                             <HiLockClosed className="size-4 shrink-0 text-slate-400" />

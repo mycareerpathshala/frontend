@@ -6,6 +6,8 @@ export type { WeekDay, TimeRange };
 export type CounsellingStatus = 'pending' | 'scheduled' | 'completed' | 'cancelled';
 export type StudyLevel = 'Undergraduate' | 'Postgraduate' | 'MBBS';
 
+export const ACTIVE_STATUSES: CounsellingStatus[] = ['pending', 'scheduled'];
+
 export interface CounsellingRequest {
     id: string;
     userId: string;
@@ -16,6 +18,10 @@ export interface CounsellingRequest {
     message: string;
     preferredDays: WeekDay[];
     preferredTimeRanges: TimeRange[];
+    nationality: string | null;
+    streams: string[] | null;
+    countries: string[] | null;
+    courses: string[] | null;
     counsellorId: string | null;
     scheduledTime: string | null;  // ISO string
     meetingLink: string | null;
@@ -27,5 +33,7 @@ export interface CounsellingRequest {
 // Payload sent when creating a new request (user-supplied fields only)
 export type NewCounsellingRequestPayload = Pick<
     CounsellingRequest,
-    'name' | 'email' | 'phone' | 'studyLevel' | 'message' | 'preferredDays' | 'preferredTimeRanges'
+    | 'name' | 'email' | 'phone' | 'studyLevel' | 'message'
+    | 'preferredDays' | 'preferredTimeRanges'
+    | 'nationality' | 'streams' | 'countries' | 'courses'
 >;

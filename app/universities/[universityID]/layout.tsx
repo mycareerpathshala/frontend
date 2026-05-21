@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import Breadcrumb from '@/assets/components/global/Breadcrumb';
+import ApplyNowButton from '@/assets/components/global/ApplyNowButton';
 import SideNav from '@/assets/components/universities/SideNav';
 import { getSingleUniversityData, getUniversitiesId } from '@/assets/lib/cms/fetchUniversity';
 import { HiArrowDownTray, HiArrowTopRightOnSquare, HiCalendarDays, HiChevronDown, HiMapPin } from 'react-icons/hi2';
@@ -96,7 +97,7 @@ export default async function SingleUniversityLayout({
                                     {', '}
                                     <span>{universityData.location.stateProvince}</span>
                                     {', '}
-                                    <Link href="#">
+                                    <Link href={universityData.location.country?.documentId ? `/countries/${universityData.location.country.documentId}` : '/countries'}>
                                         <span className="underline underline-offset-1">
                                             {universityData.location.country?.name}
                                         </span>
@@ -151,12 +152,15 @@ export default async function SingleUniversityLayout({
                                     <span>Brochure</span>
                                 </a>
                             )}
-                            <Link
-                                href="#"
+                            <ApplyNowButton
                                 className="bg-primary-base hover:bg-primary-light cursor-pointer rounded-lg px-4 py-2 font-bold text-white transition-colors duration-200 ease-in-out select-none max-md:text-sm max-md:font-medium"
-                            >
-                                Apply Now
-                            </Link>
+                                university={{
+                                    documentId: universityData.documentId,
+                                    name: universityData.name,
+                                    acronym: universityData.acronym ?? undefined,
+                                    country: universityData.location?.country?.name ?? undefined,
+                                }}
+                            />
                         </div>
                     </div>
                 </div>
@@ -171,7 +175,7 @@ export default async function SingleUniversityLayout({
                             I want to get admitted into this university, I need counselling.
                         </p>
                         <Link
-                            href="#"
+                            href="/dashboard/counselling"
                             className="bg-primary-base hover:bg-primary-light cursor-pointer rounded-lg px-4 py-2 text-sm font-semibold whitespace-nowrap text-white transition-colors duration-200 ease-in-out select-none max-md:font-medium"
                         >
                             Get Counselling
@@ -180,7 +184,7 @@ export default async function SingleUniversityLayout({
                     <div className="flex items-center justify-between gap-12 rounded-lg bg-[linear-gradient(90deg,rgba(105,79,142,0.75)_0%,rgba(227,165,199,0.75)_67.5%)] px-5 py-2.5 text-white max-sm:flex-col max-sm:gap-2">
                         <p className="text-sm font-medium">I am still figuring out best options for my study abroad.</p>
                         <Link
-                            href="#"
+                            href="/courses"
                             className="bg-secondary-base hover:bg-secondary-light cursor-pointer rounded-lg px-4 py-2 text-sm font-semibold whitespace-nowrap text-white transition-colors duration-200 ease-in-out select-none max-md:font-medium"
                         >
                             Find Programs
@@ -232,13 +236,13 @@ export default async function SingleUniversityLayout({
                         </p>
                         <div className="mt-6 flex items-center justify-between gap-3">
                             <Link
-                                href="#"
+                                href="/auth/register"
                                 className="bg-primary-base w-full cursor-pointer rounded-lg px-4 py-2 text-center text-white select-none"
                             >
                                 Register
                             </Link>
                             <Link
-                                href="#"
+                                href="/auth/login"
                                 className="text-primary-base border-primary-base w-full cursor-pointer rounded-lg border px-4 py-2 text-center select-none"
                             >
                                 Login

@@ -51,7 +51,7 @@ export default async function SingleUniversityPage({ params }: { params: Promise
                 <p className="text-sm font-medium">Need expert assistance in securing enrolment at this university?</p>
                 <div className="flex items-center gap-3.5 text-sm max-lg:flex-col max-lg:items-start">
                     <Link
-                        href="#"
+                        href="/dashboard/counselling"
                         className="bg-secondary-base cursor-pointer rounded-lg px-6 py-2 font-bold whitespace-nowrap text-white select-none max-md:font-medium"
                     >
                         Talk to Counsellor

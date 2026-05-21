@@ -38,19 +38,19 @@ export default function Footer() {
                         <h4 className="text-lg font-bold">Company</h4>
                         <ul className="flex flex-col items-start gap-1 text-sm">
                             <li>
-                                <Link href="#">About US</Link>
+                                <Link href="/about">About US</Link>
                             </li>
                             <li>
-                                <Link href="#">Resource</Link>
+                                <Link href="/resources">Resource</Link>
                             </li>
                             <li>
-                                <Link href="#">Terms & Condition</Link>
+                                <Link href="/terms">Terms & Condition</Link>
                             </li>
                             <li>
-                                <Link href="#">Privacy Policy</Link>
+                                <Link href="/privacy">Privacy Policy</Link>
                             </li>
                             <li>
-                                <Link href="#">Contact US</Link>
+                                <Link href="/contact">Contact US</Link>
                             </li>
                         </ul>
                     </div>
@@ -72,7 +72,7 @@ export default function Footer() {
                     <div className="flex flex-col gap-6 p-6 text-white max-md:gap-4 max-md:p-4">
                         <p className="text-lg font-bold">Get Your Personalised Guidance</p>
                         <Link
-                            href="#"
+                            href="/dashboard/counselling"
                             className="bg-primary-base cursor-pointer rounded-lg py-2.5 text-center text-sm select-none"
                         >
                             Talk to Counsellor

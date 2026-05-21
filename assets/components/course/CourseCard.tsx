@@ -230,7 +230,7 @@ const CourseCard = memo(({ courseData }: { courseData: CourseType & { documentId
                         </div>
                         <div>
                             <Link
-                                href="#"
+                                href="/dashboard/counselling"
                                 className="border-primary-base text-primary-base hover:bg-primary-base block cursor-pointer rounded-lg border bg-white px-4 py-2 text-center font-medium transition-all duration-200 ease-in-out select-none hover:text-white max-sm:py-2.5"
                             >
                                 Talk To Counsellor

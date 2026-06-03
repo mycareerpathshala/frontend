@@ -11,12 +11,13 @@ import { StreamListResponseType } from '@/assets/types/streamTypes';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { type FilterOptionApplyPayload } from './FilterOption';
 import qs from 'qs';
-import { useCallback, useEffect, useMemo, useState, useTransition } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import CourseCard from './CourseCard';
 import FilterBlock from './FilterBlock';
 import FilterOption from './FilterOption';
 import SpinnerMini from '../global/SpinnerMini';
-import ModernPagination from '../global/ModernPagination';
+
+type CourseItem = CourseListResponseType['data'][number];
 
 export default function FindCourse({
     countryDataResponse,
@@ -27,29 +28,39 @@ export default function FindCourse({
 }) {
     const { session } = useAppContext();
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [courseDataListResponse, setCourseDataListResponse] = useState<CourseListResponseType | null>(null);
+    const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
+    const [items, setItems] = useState<CourseItem[]>([]);
+    const [hasMore, setHasMore] = useState<boolean>(false);
+    const [page, setPage] = useState<number>(1);
 
-    // navigation hooks
     const searchParams = useSearchParams();
     const router = useRouter();
     const pathname = usePathname();
 
-    // UI-only state (modal open/close — no reason to put this in the URL)
     const [showFilter, setShowFilter] = useState<boolean>(false);
+    const [isPending, startTransition] = useTransition();
+    const sentinelRef = useRef<HTMLDivElement>(null);
 
-    // all filter state is derived from the URL — no useState needed
+    // All filter state derived from URL (page excluded)
     const countryFilter = searchParams.get('countryFilter');
     const streamFilter = searchParams.get('streamFilter');
     const levelFilter = searchParams.get('levelFilter') as 'Undergraduate' | 'Postgraduate' | 'PhD / Doctorate' | 'Diploma / Certificate' | 'Foundation / Pathway' | 'Vocational Training' | 'Language Course' | null;
     const deliveryMethodFilter = searchParams.get('deliveryMethodFilter') as 'On-Campus' | 'Online' | 'Blended' | null;
     const studyLanguageFilter = searchParams.get('studyLanguageFilter');
     const courseOfferingFilter = searchParams.get('courseOfferingFilter') as 'Full-Time' | 'Part-Time' | null;
-    const pageNum = Number(searchParams.get('page') ?? '1');
 
-    // transition hook
-    const [isPending, startTransition] = useTransition();
+    // Stable string representing active filters (excludes page) — used to detect filter changes
+    const filterKey = useMemo(() => {
+        const params = new URLSearchParams(searchParams.toString());
+        params.delete('page');
+        return params.toString();
+    }, [searchParams]);
 
-    // central function to write any filter update back to the URL in one router.push
+    // Reset page and items when filters change
+    useEffect(() => {
+        setPage(1);
+    }, [filterKey]);
+
     const updateParams = useCallback(
         (updates: Record<string, string | null>, resetPage = true) => {
             const params = new URLSearchParams(searchParams.toString());
@@ -62,7 +73,6 @@ export default function FindCourse({
                 }
             }
 
-            // page 1 = no param in URL (keeps the URL clean)
             if (resetPage) params.delete('page');
 
             router.push(`${pathname}?${params.toString()}`, { scroll: false });
@@ -70,46 +80,26 @@ export default function FindCourse({
         [searchParams, router, pathname],
     );
 
-    // full filter list
     const activeFilters = useMemo(() => {
         const active = [];
 
-        // 1) country filter
         if (countryFilter) {
             const country = countryDataResponse.data.find((c) => c.documentId === countryFilter);
-            active.push({
-                key: 'countryFilter',
-                label: 'Country',
-                value: country?.name || 'Selected',
-            });
+            active.push({ key: 'countryFilter', label: 'Country', value: country?.name || 'Selected' });
         }
-
-        // 2) stream filter
         if (streamFilter) {
             const stream = streamDataResponse.data.find((s) => s.documentId === streamFilter);
-            active.push({
-                key: 'streamFilter',
-                label: 'Stream',
-                value: stream?.name || 'Selected',
-            });
+            active.push({ key: 'streamFilter', label: 'Stream', value: stream?.name || 'Selected' });
         }
-
-        // 3) level filter
         if (levelFilter) {
             active.push({ key: 'levelFilter', label: 'Course Level', value: levelFilter });
         }
-
-        // 4) delivery method filter
         if (deliveryMethodFilter) {
             active.push({ key: 'deliveryMethodFilter', label: 'Delivery Method', value: deliveryMethodFilter });
         }
-
-        // 5) study language filter
         if (studyLanguageFilter) {
             active.push({ key: 'studyLanguageFilter', label: 'Language', value: studyLanguageFilter });
         }
-
-        // 6) course offering filter
         if (courseOfferingFilter) {
             active.push({ key: 'courseOfferingFilter', label: 'Course Offering', value: courseOfferingFilter });
         }
@@ -126,7 +116,6 @@ export default function FindCourse({
         courseOfferingFilter,
     ]);
 
-    // key === the URL param name, so we can remove it directly with no mapping
     const removeFilter = useCallback(
         (key: string) => {
             startTransition(() => {
@@ -136,7 +125,6 @@ export default function FindCourse({
         [updateParams],
     );
 
-    // body scroll lock
     useEffect(() => {
         document.body.style.overflow = showFilter ? 'hidden' : 'unset';
         return () => {
@@ -144,54 +132,27 @@ export default function FindCourse({
         };
     }, [showFilter]);
 
-    // get courses useEffect — searchParams as the single dependency covers all filters + page
+    // Fetch: replace on page 1, append on subsequent pages
     useEffect(() => {
         const controller = new AbortController();
-        const signal = controller.signal;
+        const { signal } = controller;
 
         const fetchCourseData = async () => {
-            // loading state
-            setIsLoading(true);
+            if (page === 1) setIsLoading(true);
+            else setIsLoadingMore(true);
 
             try {
                 const dynamicFilters = {
-                    // Country: Nested deep into the University relation
                     ...(countryFilter && {
                         university: {
-                            location: {
-                                country: {
-                                    documentId: { $eq: countryFilter },
-                                },
-                            },
+                            location: { country: { documentId: { $eq: countryFilter } } },
                         },
                     }),
-
-                    // Stream: Filter by the Course's stream
-                    ...(streamFilter && {
-                        stream: {
-                            documentId: { $eq: streamFilter },
-                        },
-                    }),
-
-                    // Level: Undergraduate or Postgraduate
-                    ...(levelFilter && {
-                        courseLevel: { $eq: levelFilter },
-                    }),
-
-                    // Delivery Method: On-Campus, Online, etc.
-                    ...(deliveryMethodFilter && {
-                        deliveryMethod: { $eq: deliveryMethodFilter },
-                    }),
-
-                    // Study Language: e.g., English, Arabic, etc.
-                    ...(studyLanguageFilter && {
-                        teachingLanguage: { $eq: studyLanguageFilter },
-                    }),
-
-                    // Course Offering: Full-Time or Part-Time
-                    ...(courseOfferingFilter && {
-                        courseOfferings: { $eq: courseOfferingFilter },
-                    }),
+                    ...(streamFilter && { stream: { documentId: { $eq: streamFilter } } }),
+                    ...(levelFilter && { courseLevel: { $eq: levelFilter } }),
+                    ...(deliveryMethodFilter && { deliveryMethod: { $eq: deliveryMethodFilter } }),
+                    ...(studyLanguageFilter && { teachingLanguage: { $eq: studyLanguageFilter } }),
+                    ...(courseOfferingFilter && { courseOfferings: { $eq: courseOfferingFilter } }),
                 };
 
                 const queryObject: QueryObjectType = {
@@ -204,24 +165,16 @@ export default function FindCourse({
                                 applicationDateList: true,
                                 location: {
                                     populate: {
-                                        country: {
-                                            fields: ['id', 'documentId', 'name'],
-                                        },
+                                        country: { fields: ['id', 'documentId', 'name'] },
                                     },
                                 },
                                 universityMediaContent: {
-                                    populate: {
-                                        logo: true,
-                                        coverPhoto: true,
-                                    },
+                                    populate: { logo: true, coverPhoto: true },
                                 },
                             },
                         },
                     },
-                    pagination: {
-                        page: pageNum,
-                        pageSize: 12,
-                    },
+                    pagination: { page, pageSize: 12 },
                 };
 
                 const queryString = qs.stringify(queryObject, { encodeValuesOnly: true });
@@ -232,20 +185,45 @@ export default function FindCourse({
                     await response.json();
                 if (parsedResponse.status === 'error') throw new Error('Unsuccessful response');
 
-                setCourseDataListResponse(parsedResponse.response);
+                const { data, meta } = parsedResponse.response;
+
+                if (page === 1) {
+                    setItems(data);
+                } else {
+                    setItems((prev) => [...prev, ...data]);
+                }
+                setHasMore(meta.pagination.page < meta.pagination.pageCount);
             } catch (err: any) {
-                // FIX: Silence the AbortError overlay
                 if (err.name === 'AbortError') return;
                 console.error(err);
             } finally {
-                setIsLoading(false);
+                if (page === 1) setIsLoading(false);
+                else setIsLoadingMore(false);
             }
         };
 
         fetchCourseData();
         return () => controller.abort();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchParams]);
+    }, [page, filterKey]);
+
+    // IntersectionObserver — triggers next page load when sentinel enters viewport
+    useEffect(() => {
+        const el = sentinelRef.current;
+        if (!el) return;
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting && hasMore && !isLoading && !isLoadingMore) {
+                    setPage((prev) => prev + 1);
+                }
+            },
+            { rootMargin: '200px' },
+        );
+
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, [hasMore, isLoading, isLoadingMore, items.length]);
 
     const clearAllFilters = () => {
         startTransition(() => {
@@ -260,7 +238,6 @@ export default function FindCourse({
         });
     };
 
-    // Resolve human-readable names from the active filter chips for display + auto-naming
     const countryName = activeFilters.find((f) => f.key === 'countryFilter')?.value ?? null;
     const streamName = activeFilters.find((f) => f.key === 'streamFilter')?.value ?? null;
 
@@ -301,27 +278,32 @@ export default function FindCourse({
         ],
     );
 
+    if (isLoading && items.length === 0) {
+        return (
+            <div className="animate-in fade-in flex flex-col items-center justify-center py-40 duration-700">
+                <SpinnerMini />
+                <p className="mt-4 text-sm font-medium text-slate-400">Loading courses...</p>
+            </div>
+        );
+    }
+
     return (
         <>
-            {/* filter options */}
             {showFilter && (
                 <FilterOption
                     countryList={countryDataResponse.data}
                     streamList={streamDataResponse.data}
                     setShowFilter={setShowFilter}
-                    // current filter values (to initialise local state inside the modal)
                     countryFilter={countryFilter}
                     streamFilter={streamFilter}
                     levelFilter={levelFilter}
                     deliveryMethodFilter={deliveryMethodFilter}
                     studyLanguageFilter={studyLanguageFilter}
                     courseOfferingFilter={courseOfferingFilter}
-                    // single batched callback — avoids 6 separate router.push calls
                     onApply={(filters: FilterOptionApplyPayload) => updateParams(filters)}
                 />
             )}
 
-            {/* filter block */}
             <FilterBlock
                 setShowFilter={setShowFilter}
                 clearAllFilters={clearAllFilters}
@@ -340,55 +322,52 @@ export default function FindCourse({
             />
 
             <section className="relative mt-8 min-h-80 w-full">
-                {/* loader overlay */}
-                {isLoading && (
+                {/* Overlay when filter changes while items are visible */}
+                {isLoading && items.length > 0 && (
                     <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/60 backdrop-blur-[1px]">
                         <SpinnerMini />
                     </div>
                 )}
 
-                {courseDataListResponse && courseDataListResponse.data.length > 0 ? (
+                {items.length > 0 ? (
                     <div
                         className={`transition-all duration-300 ${isLoading ? 'pointer-events-none opacity-30' : 'opacity-100'}`}
                     >
                         <div className="mt-8 grid grid-cols-3 flex-col gap-4 max-xl:gap-4 max-lg:grid-cols-2 max-sm:grid-cols-1">
-                            {courseDataListResponse.data.map((courseData) => {
-                                return <CourseCard key={courseData.documentId} courseData={courseData} />;
-                            })}
+                            {items.map((courseData) => (
+                                <CourseCard key={courseData.documentId} courseData={courseData} />
+                            ))}
                         </div>
 
-                        {/* pagination inside the dimmed wrapper */}
-                        {courseDataListResponse.meta && (
-                            <ModernPagination
-                                dataFor="Courses"
-                                metaData={courseDataListResponse.meta}
-                                pageNum={pageNum}
-                                setPageNum={(newPage: number) => {
-                                    updateParams({ page: String(newPage) }, false);
-                                    window.scrollTo({ top: 0, behavior: 'instant' });
-                                }}
-                            />
+                        {/* Sentinel triggers IntersectionObserver for next page */}
+                        <div ref={sentinelRef} className="h-2" />
+
+                        {isLoadingMore && (
+                            <div className="flex justify-center py-8">
+                                <SpinnerMini />
+                            </div>
+                        )}
+
+                        {!hasMore && !isLoadingMore && !isLoading && (
+                            <p className="py-8 text-center text-sm text-slate-400">All courses loaded</p>
                         )}
                     </div>
                 ) : (
-                    !isLoading &&
-                    courseDataListResponse !== null && (
-                        <div>
-                            <div className="py-32 text-center">
-                                <p className="text-xl font-medium text-slate-400">No Universities Found!</p>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        updateParams({
-                                            countryFilter: null,
-                                            streamFilter: null,
-                                        });
-                                    }}
-                                    className="mt-2 cursor-pointer border-b-2 border-transparent py-0.5 text-blue-600 select-none hover:border-blue-600"
-                                >
-                                    Clear filters
-                                </button>
-                            </div>
+                    !isLoading && (
+                        <div className="py-32 text-center">
+                            <p className="text-xl font-medium text-slate-400">No Courses Found!</p>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    updateParams({
+                                        countryFilter: null,
+                                        streamFilter: null,
+                                    });
+                                }}
+                                className="mt-2 cursor-pointer border-b-2 border-transparent py-0.5 text-blue-600 select-none hover:border-blue-600"
+                            >
+                                Clear filters
+                            </button>
                         </div>
                     )
                 )}

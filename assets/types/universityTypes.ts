@@ -112,6 +112,7 @@ export interface UniversityType {
     admissionDynamicPage?: DynamicContentType;
     scholarshipDynamicPage?: DynamicContentType;
     applicationRequirements?: ApplicationRequirementType[];
+    howToApply?: { id: number; bulletPoint: string }[];
 }
 
 // university response types

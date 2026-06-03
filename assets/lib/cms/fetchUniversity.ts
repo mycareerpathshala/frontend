@@ -20,7 +20,6 @@ export const getUniversitiesId = async (queryObject: QueryObjectType, enableCach
 // get university list for country page
 export const getUniversitiesForCountry = async (countryID: string) => {
     try {
-        // query object
         const queryObject = {
             filters: {
                 location: {
@@ -114,6 +113,7 @@ export const getSingleUniversityData = async (universityID: string) => {
                 },
                 admissionDynamicPage: true,
                 scholarshipDynamicPage: true,
+                howToApply: true,
             },
         };
 

@@ -1,57 +1,54 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-// imports
 import qs from 'qs';
 import { CountryMinType } from '@/assets/types/countryTypes';
 import { QueryObjectType } from '@/assets/types/responseTypes';
 import { UniversityResponseType } from '@/assets/types/universityTypes';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState, useTransition } from 'react';
-import ModernPagination from '../global/ModernPagination';
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import SpinnerMini from '../global/SpinnerMini';
 import FilterBlock from './FilterBlock';
 import FilterOption from './FilterOption';
 import UniversityCard from './UniversityCard';
 
-// constant data
-// Define how to translate state into Strapi sort strings
 const sortMap = {
     byNameAZ: 'name:asc',
     byNameZA: 'name:desc',
-    byTuitionLH: 'avgTuitionFee.minimum:asc', // Nested field sorting
+    byTuitionLH: 'avgTuitionFee.minimum:asc',
     byStudentLH: 'avgNumOfForeginStudents:asc',
 };
 
+type UniversityItem = UniversityResponseType['data'][number];
+
 export default function UniversityListing() {
-    // url syncing
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const { replace } = useRouter();
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
     const [showFilter, setShowFilter] = useState<boolean>(false);
-    const [universityData, setUniversityData] = useState<UniversityResponseType | null>(null);
+    const [items, setItems] = useState<UniversityItem[]>([]);
+    const [hasMore, setHasMore] = useState<boolean>(false);
     const [countryList, setCountryList] = useState<CountryMinType[] | null>(null);
 
-    // update to url sync
-    const [pageNum, setPageNum] = useState<number>(Number(searchParams.get('page')) || 1);
+    const [page, setPage] = useState<number>(1);
     const [countryFilter, setCountryFilter] = useState<string | null>(searchParams.get('countryID') || null);
     const [dataFilter, setDataFilter] = useState<'byNameAZ' | 'byNameZA' | 'byTuitionLH' | 'byStudentLH'>('byNameAZ');
 
-    // using transition for smoother ui updates
-    const [isPending, startTransition] = useTransition();
+    const [, startTransition] = useTransition();
+    const sentinelRef = useRef<HTMLDivElement>(null);
 
-    // static filtered data
     const filteredData = useMemo(
         () => countryList?.find((c) => c.documentId === countryFilter) ?? null,
         [countryList, countryFilter],
     );
 
-    // update url
     const updateURL = useCallback(
         (updates: Record<string, string | null>) => {
             const params = new URLSearchParams(searchParams.toString());
+            params.delete('page');
 
             Object.entries(updates).forEach(([key, value]) => {
                 if (value) {
@@ -66,7 +63,6 @@ export default function UniversityListing() {
         [pathname, replace, searchParams],
     );
 
-    // use effect for body scroll lock
     useEffect(() => {
         document.body.style.overflow = showFilter ? 'hidden' : 'unset';
         return () => {
@@ -74,14 +70,17 @@ export default function UniversityListing() {
         };
     }, [showFilter]);
 
-    // optimized fetch with abort controller
-    const fetchUniversityData = useCallback(
-        async (signal: AbortSignal) => {
-            setIsLoading(true);
+    // Fetch: replace on page 1, append on subsequent pages
+    useEffect(() => {
+        const controller = new AbortController();
+        const { signal } = controller;
+
+        const fetchUniversityData = async () => {
+            if (page === 1) setIsLoading(true);
+            else setIsLoadingMore(true);
 
             try {
                 const queryObject: QueryObjectType = {
-                    // Apply the sort here
                     sort: [sortMap[dataFilter as keyof typeof sortMap]],
                     filters: countryFilter ? { location: { country: { documentId: { $eq: countryFilter } } } } : {},
                     populate: {
@@ -89,7 +88,7 @@ export default function UniversityListing() {
                         avgTuitionFee: true,
                         universityMediaContent: { populate: { logo: true, coverPhoto: true } },
                     },
-                    pagination: { page: pageNum, pageSize: 10 },
+                    pagination: { page, pageSize: 10 },
                 };
 
                 const queryString = qs.stringify(queryObject, { encodeValuesOnly: true });
@@ -99,65 +98,46 @@ export default function UniversityListing() {
                 const parsedResponse = await response.json();
                 if (parsedResponse.status === 'error') throw new Error('Unsuccessful response');
 
-                setUniversityData(parsedResponse.response);
+                const { data, meta } = parsedResponse.response;
+
+                if (page === 1) {
+                    setItems(data);
+                } else {
+                    setItems((prev) => [...prev, ...data]);
+                }
+                setHasMore(meta.pagination.page < meta.pagination.pageCount);
             } catch (err: any) {
-                // FIX: Silence the AbortError overlay
                 if (err.name === 'AbortError') return;
                 console.error(err);
             } finally {
-                setIsLoading(false);
+                if (page === 1) setIsLoading(false);
+                else setIsLoadingMore(false);
             }
-        },
-        [pageNum, countryFilter, dataFilter],
-    );
-
-    // data fetching useEffect
-    useEffect(() => {
-        const controller = new AbortController();
-        const signal = controller.signal;
-
-        // calling the fetch function
-        fetchUniversityData(signal);
-
-        // clean up function
-        return () => controller.abort();
-    }, [fetchUniversityData]);
-
-    // Reset to page 1 whenever country or sort changes
-    // useEffect(() => {
-    //     setPageNum(1);
-    // }, [countryFilter, dataFilter]);
-
-    // handle change countries
-    const handleCountryChange = (id: string | null) => {
-        startTransition(() => {
-            setCountryFilter(id);
-            setPageNum(1);
-            updateURL({ countryID: id, page: '1' });
-        });
-    };
-
-    const handleSortChange = (sort: 'byNameAZ' | 'byNameZA' | 'byTuitionLH' | 'byStudentLH') => {
-        setDataFilter(sort);
-        setPageNum(1);
-        updateURL({ page: '1' });
-    };
-
-    const handlePageChange = (page: number) => {
-        setPageNum(page);
-        updateURL({ page: page.toString() });
-        window.scrollTo({ top: 0, behavior: 'instant' });
-    };
-
-    // Body scroll lock
-    useEffect(() => {
-        document.body.style.overflow = showFilter ? 'hidden' : 'unset';
-        return () => {
-            document.body.style.overflow = 'unset';
         };
-    }, [showFilter]);
 
-    // Fetch Countries (Initial load only)
+        fetchUniversityData();
+        return () => controller.abort();
+    }, [page, countryFilter, dataFilter]);
+
+    // IntersectionObserver — triggers next page load when sentinel enters viewport
+    useEffect(() => {
+        const el = sentinelRef.current;
+        if (!el) return;
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting && hasMore && !isLoading && !isLoadingMore) {
+                    setPage((prev) => prev + 1);
+                }
+            },
+            { rootMargin: '200px' },
+        );
+
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, [hasMore, isLoading, isLoadingMore, items.length]);
+
+    // Initial country list fetch
     useEffect(() => {
         const controller = new AbortController();
         const fetchCountryData = async () => {
@@ -176,18 +156,29 @@ export default function UniversityListing() {
         return () => controller.abort();
     }, []);
 
-    // 2. Helper to wrap state changes in transition
+    const handleCountryChange = (id: string | null) => {
+        startTransition(() => {
+            setCountryFilter(id);
+            setPage(1);
+            updateURL({ countryID: id });
+        });
+    };
+
+    const handleSortChange = (sort: 'byNameAZ' | 'byNameZA' | 'byTuitionLH' | 'byStudentLH') => {
+        setDataFilter(sort);
+        setPage(1);
+    };
+
     const handleClearFilters = () => {
         startTransition(() => {
             setCountryFilter(null);
             setDataFilter('byNameAZ');
-            setPageNum(1);
-            updateURL({ countryID: null, page: null });
+            setPage(1);
+            updateURL({ countryID: null });
         });
     };
 
-    // secure loading state
-    if (isLoading && !universityData) {
+    if (isLoading && items.length === 0) {
         return (
             <div className="animate-in fade-in flex flex-col items-center justify-center py-40 duration-700">
                 <SpinnerMini />
@@ -216,41 +207,38 @@ export default function UniversityListing() {
             />
 
             <section className="relative mt-8 min-h-150 w-full">
-                {/* 3. Using isPending OR isLoading for the Overlay during updates */}
-                {(isLoading || isPending) && universityData && (
+                {/* Overlay when filter changes while items are visible */}
+                {isLoading && items.length > 0 && (
                     <div className="absolute inset-0 z-20 flex items-start justify-center bg-white/40 pt-20 backdrop-blur-[2px]">
                         <SpinnerMini />
                     </div>
                 )}
 
-                {!isLoading && universityData && universityData.data.length > 0 ? (
+                {items.length > 0 ? (
                     <div
                         className={`transition-opacity duration-300 ${isLoading ? 'pointer-events-none opacity-50' : 'opacity-100'}`}
                     >
                         <div className="flex flex-col gap-6">
-                            {universityData.data.map((uni) => (
+                            {items.map((uni) => (
                                 <UniversityCard singleUniversity={uni} key={uni.documentId} />
                             ))}
                         </div>
-                        {universityData.meta && (
-                            <>
-                                {/* <Pagination
-                                    metaData={universityData.meta}
-                                    pageNum={pageNum}
-                                    setPageNum={handlePageChange}
-                                /> */}
-                                <ModernPagination
-                                    dataFor="Universities"
-                                    metaData={universityData.meta}
-                                    pageNum={pageNum}
-                                    setPageNum={handlePageChange}
-                                />
-                            </>
+
+                        {/* Sentinel triggers IntersectionObserver for next page */}
+                        <div ref={sentinelRef} className="h-2" />
+
+                        {isLoadingMore && (
+                            <div className="flex justify-center py-8">
+                                <SpinnerMini />
+                            </div>
+                        )}
+
+                        {!hasMore && !isLoadingMore && !isLoading && (
+                            <p className="py-8 text-center text-sm text-slate-400">All universities loaded</p>
                         )}
                     </div>
                 ) : (
-                    !isLoading &&
-                    universityData && (
+                    !isLoading && (
                         <div className="animate-in fade-in zoom-in py-32 text-center duration-300">
                             <p className="text-xl font-medium text-slate-400">No Universities Found!</p>
                             <button

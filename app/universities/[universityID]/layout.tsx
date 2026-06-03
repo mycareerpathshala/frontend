@@ -7,8 +7,9 @@ import { Metadata } from 'next';
 import Breadcrumb from '@/assets/components/global/Breadcrumb';
 import ApplyNowButton from '@/assets/components/global/ApplyNowButton';
 import SideNav from '@/assets/components/universities/SideNav';
+import HowToApplyAccordion from '@/assets/components/universities/HowToApplyAccordion';
 import { getSingleUniversityData, getUniversitiesId } from '@/assets/lib/cms/fetchUniversity';
-import { HiArrowDownTray, HiArrowTopRightOnSquare, HiCalendarDays, HiChevronDown, HiMapPin } from 'react-icons/hi2';
+import { HiArrowDownTray, HiArrowTopRightOnSquare, HiCalendarDays, HiMapPin } from 'react-icons/hi2';
 import UniversityMedia from '@/assets/components/universities/UniversityMedia';
 import { UniversityType } from '@/assets/types/universityTypes';
 import { StrapiDataType } from '@/assets/types/responseTypes';
@@ -192,23 +193,17 @@ export default async function SingleUniversityLayout({
                     </div>
                 </div>
 
-                <div className="mt-8 flex items-center justify-between max-sm:flex-col max-sm:gap-3">
-                    <p className="text-base max-md:text-sm">
-                        How to apply in <span className="font-bold">{universityData.name}</span> with{' '}
-                        <span className="text-primary-base">my </span>
-                        <span className="text-secondary-base font-bold">career </span>
-                        <span className="text-primary-base">pathshala</span>
-                    </p>
-                    <button type="button" className="flex items-center gap-2">
-                        <span className="text-[15px] font-semibold whitespace-nowrap max-md:text-sm">Know More</span>
-                        <HiChevronDown className="size-6" />
-                    </button>
-                </div>
+                {universityData.howToApply && universityData.howToApply.length > 0 && (
+                    <HowToApplyAccordion
+                        universityName={universityData.name}
+                        howToApply={universityData.howToApply}
+                    />
+                )}
             </section>
 
             <section className="mx-auto mt-8 grid w-full max-w-7xl grid-cols-[260px_1fr] gap-7.5 max-lg:mt-0 max-lg:grid-cols-1">
                 <aside className="max-lg:flex max-lg:flex-col-reverse max-lg:gap-16">
-                    <SideNav universityID={universityID} />
+                    <SideNav universityID={universityID} hasScholarship={!!universityData.scholarshipDynamicPage} />
 
                     <div className="mt-14 rounded-lg bg-[linear-gradient(165deg,#E5C3EB_-6.76%,#B5D3FF_113.72%)] p-4">
                         <h4 className="grid grid-cols-[1fr_auto] items-center justify-between">

@@ -10,6 +10,7 @@ import {
 // blog type
 export interface BlogType {
     blogTitle: string;
+    slug: string;
     category: 'General' | 'University' | 'Country' | 'Course' | 'Exam' | 'MBBS';
     subCategory?: string;
     blogCover: StrapiMediaType;

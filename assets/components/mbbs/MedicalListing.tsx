@@ -6,14 +6,12 @@ import { MedicalResponseType } from '@/assets/types/mbbsTypes';
 import { QueryObjectType } from '@/assets/types/responseTypes';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import qs from 'qs';
-import { useCallback, useEffect, useMemo, useState, useTransition } from 'react';
-import ModernPagination from '../global/ModernPagination';
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import SpinnerMini from '../global/SpinnerMini';
 import FilterBlock from './FilterBlock';
 import FilterOption from './FilterOption';
 import MedicalCard from './MedicalCard';
 
-// Define how to translate state into Strapi sort strings
 const sortMap = {
     byNameAZ: 'name:asc',
     byNameZA: 'name:desc',
@@ -21,36 +19,36 @@ const sortMap = {
     byAcceptance: 'avgAcceptanceRate:desc',
 };
 
+type MedicalItem = MedicalResponseType['data'][number];
+
 export default function MedicalListing() {
-    // URL syncing hooks
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const { replace } = useRouter();
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
     const [showFilter, setShowFilter] = useState<boolean>(false);
-    const [mbbsData, setMbbsData] = useState<MedicalResponseType | null>(null);
+    const [items, setItems] = useState<MedicalItem[]>([]);
+    const [hasMore, setHasMore] = useState<boolean>(false);
     const [countryList, setCountryList] = useState<CountryMinType[] | null>(null);
 
-    // Initialize state from URL Search Params
-    const [pageNum, setPageNum] = useState<number>(Number(searchParams.get('page')) || 1);
+    const [page, setPage] = useState<number>(1);
     const [countryFilter, setCountryFilter] = useState<string | null>(searchParams.get('countryID') || null);
-
-    // Sort stays as local state only (not synced to URL per your preference)
     const [dataFilter, setDataFilter] = useState<'byNameAZ' | 'byNameZA' | 'byTuitionLH' | 'byAcceptance'>('byNameAZ');
 
-    const [isPending, startTransition] = useTransition();
+    const [, startTransition] = useTransition();
+    const sentinelRef = useRef<HTMLDivElement>(null);
 
-    // Memoized filtered country data for the FilterBlock display
     const filteredData = useMemo(
         () => countryList?.find((c) => c.documentId === countryFilter) ?? null,
         [countryList, countryFilter],
     );
 
-    // Centralized URL Update Logic
     const updateURL = useCallback(
         (updates: Record<string, string | null>) => {
             const params = new URLSearchParams(searchParams.toString());
+            params.delete('page');
 
             Object.entries(updates).forEach(([key, value]) => {
                 if (value) {
@@ -65,7 +63,6 @@ export default function MedicalListing() {
         [pathname, replace, searchParams],
     );
 
-    // Body scroll lock for filter mobile overlay
     useEffect(() => {
         document.body.style.overflow = showFilter ? 'hidden' : 'unset';
         return () => {
@@ -73,10 +70,14 @@ export default function MedicalListing() {
         };
     }, [showFilter]);
 
-    // Data fetching logic
-    const fetchMbbsData = useCallback(
-        async (signal: AbortSignal) => {
-            setIsLoading(true);
+    // Fetch: replace on page 1, append on subsequent pages
+    useEffect(() => {
+        const controller = new AbortController();
+        const { signal } = controller;
+
+        const fetchMbbsData = async () => {
+            if (page === 1) setIsLoading(true);
+            else setIsLoadingMore(true);
 
             try {
                 const queryObject: QueryObjectType = {
@@ -97,7 +98,7 @@ export default function MedicalListing() {
                         },
                     },
                     pagination: {
-                        page: pageNum,
+                        page,
                         pageSize: 10,
                     },
                 };
@@ -106,29 +107,49 @@ export default function MedicalListing() {
                 const response = await fetch(`/api/mbbs?${queryString}`, { signal });
 
                 if (!response.ok) throw new Error("Couldn't get mbbs colleges!");
-
                 const parsedResponse = await response.json();
                 if (parsedResponse.status === 'error') throw new Error('Unsuccessful response');
 
-                setMbbsData(parsedResponse.response);
+                const { data, meta } = parsedResponse.response;
+
+                if (page === 1) {
+                    setItems(data);
+                } else {
+                    setItems((prev) => [...prev, ...data]);
+                }
+                setHasMore(meta.pagination.page < meta.pagination.pageCount);
             } catch (err: any) {
                 if (err.name === 'AbortError') return;
                 console.error(err);
             } finally {
-                setIsLoading(false);
+                if (page === 1) setIsLoading(false);
+                else setIsLoadingMore(false);
             }
-        },
-        [pageNum, countryFilter, dataFilter],
-    );
+        };
 
-    // Fetch triggering useEffect
-    useEffect(() => {
-        const controller = new AbortController();
-        fetchMbbsData(controller.signal);
+        fetchMbbsData();
         return () => controller.abort();
-    }, [fetchMbbsData]);
+    }, [page, countryFilter, dataFilter]);
 
-    // Initial Country Fetch
+    // IntersectionObserver — triggers next page load when sentinel enters viewport
+    useEffect(() => {
+        const el = sentinelRef.current;
+        if (!el) return;
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting && hasMore && !isLoading && !isLoadingMore) {
+                    setPage((prev) => prev + 1);
+                }
+            },
+            { rootMargin: '200px' },
+        );
+
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, [hasMore, isLoading, isLoadingMore, items.length]);
+
+    // Initial country list fetch
     useEffect(() => {
         const controller = new AbortController();
         const fetchCountryData = async () => {
@@ -147,38 +168,29 @@ export default function MedicalListing() {
         return () => controller.abort();
     }, []);
 
-    // Interaction Handlers
     const handleCountryChange = (id: string | null) => {
         startTransition(() => {
             setCountryFilter(id);
-            setPageNum(1);
-            updateURL({ countryID: id, page: '1' });
+            setPage(1);
+            updateURL({ countryID: id });
         });
     };
 
     const handleSortChange = (sort: any) => {
         setDataFilter(sort);
-        setPageNum(1);
-        updateURL({ page: '1' });
-    };
-
-    const handlePageChange = (page: number) => {
-        setPageNum(page);
-        updateURL({ page: page.toString() });
-        window.scrollTo({ top: 0, behavior: 'instant' });
+        setPage(1);
     };
 
     const handleClearFilters = () => {
         startTransition(() => {
             setCountryFilter(null);
             setDataFilter('byNameAZ');
-            setPageNum(1);
-            updateURL({ countryID: null, page: '1' });
+            setPage(1);
+            updateURL({ countryID: null });
         });
     };
 
-    // Initial Loading State
-    if (isLoading && !mbbsData) {
+    if (isLoading && items.length === 0) {
         return (
             <div className="animate-in fade-in flex flex-col items-center justify-center py-40 duration-700">
                 <SpinnerMini />
@@ -207,38 +219,38 @@ export default function MedicalListing() {
             />
 
             <section className="relative mt-8 min-h-100 w-full">
-                {/* Smooth Overlay during fetch/transition */}
-                {(isLoading || isPending) && mbbsData && (
+                {/* Overlay when filter changes while items are visible */}
+                {isLoading && items.length > 0 && (
                     <div className="absolute inset-0 z-20 flex items-start justify-center bg-white/40 pt-20 backdrop-blur-[2px]">
                         <SpinnerMini />
                     </div>
                 )}
 
-                {!isLoading && mbbsData && mbbsData.data.length > 0 ? (
+                {items.length > 0 ? (
                     <div
                         className={`transition-opacity duration-300 ${isLoading ? 'pointer-events-none opacity-50' : 'opacity-100'}`}
                     >
                         <div className="flex flex-col gap-6">
-                            {mbbsData.data.map((singleMbbs) => (
+                            {items.map((singleMbbs) => (
                                 <MedicalCard universityData={singleMbbs} key={singleMbbs.documentId} />
                             ))}
                         </div>
 
-                        {mbbsData?.meta && (
-                            <>
-                                {/* <Pagination metaData={mbbsData.meta} pageNum={pageNum} setPageNum={handlePageChange} /> */}
-                                <ModernPagination
-                                    dataFor="Medical Colleges"
-                                    metaData={mbbsData.meta}
-                                    pageNum={pageNum}
-                                    setPageNum={handlePageChange}
-                                />
-                            </>
+                        {/* Sentinel triggers IntersectionObserver for next page */}
+                        <div ref={sentinelRef} className="h-2" />
+
+                        {isLoadingMore && (
+                            <div className="flex justify-center py-8">
+                                <SpinnerMini />
+                            </div>
+                        )}
+
+                        {!hasMore && !isLoadingMore && !isLoading && (
+                            <p className="py-8 text-center text-sm text-slate-400">All medical colleges loaded</p>
                         )}
                     </div>
                 ) : (
-                    !isLoading &&
-                    mbbsData && (
+                    !isLoading && (
                         <div className="animate-in fade-in zoom-in py-32 text-center duration-300">
                             <p className="text-xl font-medium text-slate-400">No Medical University Found!</p>
                             <button

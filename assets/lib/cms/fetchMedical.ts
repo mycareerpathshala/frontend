@@ -75,8 +75,6 @@ export const getSingleMedicalData = async (medicalID: string) => {
     }
 };
 
-
-
 // get mbbs data for country
 export const getMedicalDataForCountry = async (countryID: string) => {
     try {
@@ -120,4 +118,4 @@ export const getMedicalDataForCountry = async (countryID: string) => {
         console.error(err);
         return null;
     }
-}
+};

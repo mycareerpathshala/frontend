@@ -1,9 +1,10 @@
 'use client';
 
+import { useAppContext } from '@/assets/context/AppContext';
 import { CountryMinType } from '@/assets/types/countryTypes';
 // imports
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
-import { HiCheck, HiChevronDown, HiFunnel, HiXMark } from 'react-icons/hi2';
+import { HiCheck, HiChevronDown, HiFunnel, HiMagnifyingGlass, HiXMark } from 'react-icons/hi2';
 import { LuArrowDownUp } from 'react-icons/lu';
 
 export default function FilterBlock({
@@ -19,6 +20,7 @@ export default function FilterBlock({
     dataFilter: 'byNameAZ' | 'byNameZA' | 'byTuitionLH' | 'byStudentLH';
     handleSortChange: (sort: 'byNameAZ' | 'byNameZA' | 'byTuitionLH' | 'byStudentLH') => void;
 }) {
+    const { setSearchEnabled } = useAppContext();
     const [showDataFilter, setShowDataFilter] = useState<boolean>(false);
     const dropDownRef = useRef<HTMLDivElement>(null);
 
@@ -90,6 +92,15 @@ export default function FilterBlock({
                             Clear
                         </button>
                     )}
+
+                    <button
+                        type="button"
+                        onClick={() => setSearchEnabled(true)}
+                        className="flex cursor-pointer items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-600 shadow-xs transition-all select-none hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600"
+                    >
+                        <HiMagnifyingGlass className="size-4 shrink-0 opacity-60" />
+                        <span>Search</span>
+                    </button>
                 </div>
 
                 {/* Right — sort */}

@@ -1,5 +1,6 @@
 // imports
 import FindCourseAd from '@/assets/components/global/FindCourseAd';
+import HtmlViewer from '@/assets/components/global/HtmlViewer';
 import MarkViewer from '@/assets/components/global/MarkViewer';
 import SubHeader from '@/assets/components/global/SubHeader';
 import FaqSection from '@/assets/components/universities/FaqSection';
@@ -140,8 +141,7 @@ export default async function AdmissionCriteriaPage({ params }: { params: Promis
                         <h2 className="text-xl font-bold">{universityData.admissionDynamicPage.blockTitle}</h2>
                     </div>
 
-                    {/* <MarkdownViewer content={universityData.shortDescription} /> */}
-                    <MarkViewer content={universityData.admissionDynamicPage.blockContent} tailwindClass="px-6" />
+                    <HtmlViewer content={universityData.admissionDynamicPage.blockContent} tailwindClass="px-6 py-4" />
                 </div>
             )}
 

@@ -5,6 +5,7 @@ import '@/assets/styles/globals.css';
 import Poppins from '@/assets/utilities/localFontConfig';
 import { AppProvider } from '@/assets/context/AppContext';
 import AuthModal from '@/assets/components/global/AuthModal';
+import InviteAd from '@/assets/components/global/InviteAd';
 import SearchModal from '@/assets/components/global/SearchModal';
 
 // metadata
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <AppProvider>
                     <SearchModal />
                     <AuthModal />
+                    <InviteAd />
                     {children}
                 </AppProvider>
             </body>

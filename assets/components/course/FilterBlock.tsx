@@ -1,7 +1,8 @@
 'use client';
 
+import { useAppContext } from '@/assets/context/AppContext';
 import React, { Dispatch, SetStateAction, useRef, useState } from 'react';
-import { HiAdjustmentsVertical, HiBookmark, HiCheck, HiExclamationCircle, HiTrash, HiXMark } from 'react-icons/hi2';
+import { HiAdjustmentsVertical, HiBookmark, HiCheck, HiExclamationCircle, HiMagnifyingGlass, HiTrash, HiXMark } from 'react-icons/hi2';
 import { MdClear } from 'react-icons/md';
 
 // ── Save-choice inline popup ──────────────────────────────────────────────────
@@ -127,6 +128,7 @@ export default function FilterBlock({
     onSaveChoice?: (name: string) => Promise<boolean>;
     defaultSaveName?: string;
 }) {
+    const { setSearchEnabled } = useAppContext();
     const [activeFilterHover, setActiveFilterHover] = useState<string | null>(null);
     const [showSavePopup, setShowSavePopup] = useState(false);
     const [savedFlash, setSavedFlash] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
@@ -183,17 +185,32 @@ export default function FilterBlock({
                             )}
                         </div>
 
-                        <div className="max-sm:w-full">
+                        <div className="flex items-center gap-2 max-sm:w-full max-sm:flex-col">
                             <button
                                 type="button"
-                                onClick={() => setShowFilter(true)}
-                                className="from-primary-gray hover:border-primary-base flex cursor-pointer items-center gap-2 rounded-lg border-2 border-gray-100 bg-linear-to-r to-[#fbe1ff] px-6 py-2 text-sm font-medium transition-all duration-200 ease-in-out select-none hover:shadow-md hover:brightness-105 active:scale-95 max-sm:py-3"
+                                onClick={() => setSearchEnabled(true)}
+                                className="flex cursor-pointer items-center gap-2 rounded-lg border-2 border-gray-100 bg-white px-6 py-2 text-sm font-medium transition-all duration-200 ease-in-out select-none hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md active:scale-95 max-sm:w-full max-sm:justify-center max-sm:py-3"
                             >
-                                <span>Course Filters</span>
-                                <span>
-                                    <HiAdjustmentsVertical className="size-6" />
-                                </span>
+                                <HiMagnifyingGlass className="size-5" />
+                                <span>Search</span>
                             </button>
+
+                            <div className="course-filter-btn-wrapper max-sm:w-full">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowFilter(true)}
+                                    className="flex cursor-pointer items-center gap-2 rounded-[6px] bg-white px-6 py-2 text-sm font-semibold transition-all duration-200 ease-in-out select-none hover:bg-blue-50 active:scale-95 max-sm:w-full max-sm:justify-center max-sm:py-3"
+                                >
+                                    <span className="relative flex size-2 shrink-0">
+                                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
+                                        <span className="relative inline-flex size-2 rounded-full bg-green-500" />
+                                    </span>
+                                    <span className="bg-linear-to-r from-cyan-500 via-blue-600 to-indigo-500 bg-clip-text text-transparent">
+                                        Course Filters
+                                    </span>
+                                    <HiAdjustmentsVertical className="size-6 shrink-0 text-blue-600" />
+                                </button>
+                            </div>
                         </div>
                     </div>
 

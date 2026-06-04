@@ -8,7 +8,7 @@ const globalForDb = globalThis as unknown as { _db: ReturnType<typeof drizzle> |
 function createDb() {
     const isProd = process.env.NODE_ENV === 'production';
     const client = postgres(process.env.DATABASE_URL!, {
-        ssl: isProd ? 'require' : false,
+        ssl: false,
         max: isProd ? 10 : 1,
     });
     return drizzle(client, { schema });

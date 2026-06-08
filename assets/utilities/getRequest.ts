@@ -11,7 +11,8 @@ export const fetchData = async (urlPath: string, queryObject: QueryObjectType, e
         encodeValuesOnly: true,
     });
 
-    const { NEXT_PUBLIC_STRAPI_URL: apiURL, STRAPI_API_TOKEN: apiToken } = process.env;
+    const apiURL = process.env.STRAPI_URL ?? process.env.NEXT_PUBLIC_STRAPI_URL;
+    const apiToken = process.env.STRAPI_API_TOKEN;
     if (!apiURL || !apiToken) {
         throw new Error('failed reading local environment variables');
     }

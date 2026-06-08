@@ -16,21 +16,14 @@ function LanguageBadge({ label, value, iconPath }: { label: string; value: strin
     );
 }
 
-function GpaRow({ label, minGPA, gpaScale, percentage }: { label: string; minGPA?: number; gpaScale?: number; percentage?: number }) {
-    if (!minGPA && !percentage) return null;
+function GpaRow({ label, minGPA, gpaScale }: { label: string; minGPA?: number; gpaScale?: number }) {
+    if (!minGPA) return null;
     return (
         <div className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 p-4 max-sm:flex-col max-sm:items-start max-sm:gap-1">
             <span className="text-sm text-slate-600">{label}</span>
-            <div className="flex items-center gap-3">
-                {minGPA && gpaScale && (
-                    <span className="font-bold text-slate-900">{minGPA} / {gpaScale} GPA</span>
-                )}
-                {percentage && (
-                    <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-semibold text-indigo-700">
-                        {percentage}% min
-                    </span>
-                )}
-            </div>
+            {minGPA && gpaScale && (
+                <span className="font-bold text-slate-900">{minGPA} / {gpaScale} GPA</span>
+            )}
         </div>
     );
 }
@@ -105,7 +98,6 @@ function RequirementSection({
                                     label="Middle School (10th)"
                                     minGPA={requirements.midSchoolGPA.minGPA}
                                     gpaScale={requirements.midSchoolGPA.gpaScale}
-                                    percentage={requirements.midSchoolGPA.minPercentage}
                                 />
                             )}
                             {requirements.highSchoolGPA && (
@@ -113,7 +105,6 @@ function RequirementSection({
                                     label="High School (12th)"
                                     minGPA={requirements.highSchoolGPA.minGPA}
                                     gpaScale={requirements.highSchoolGPA.gpaScale}
-                                    percentage={requirements.highSchoolGPA.minPercentage}
                                 />
                             )}
                             {requirements.bachelorGPA && (
@@ -121,7 +112,6 @@ function RequirementSection({
                                     label="Bachelor's Degree"
                                     minGPA={requirements.bachelorGPA.minGPA}
                                     gpaScale={requirements.bachelorGPA.gpaScale}
-                                    percentage={requirements.bachelorGPA.minPercentage}
                                 />
                             )}
                         </div>

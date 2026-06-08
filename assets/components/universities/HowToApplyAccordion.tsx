@@ -12,7 +12,7 @@ export default function HowToApplyAccordion({ universityName, howToApply }: Prop
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <div className="mt-8">
+        <div className="mt-8 rounded-xl border border-blue-100 bg-blue-50/40 px-5 py-4">
             <button
                 type="button"
                 onClick={() => setIsOpen((prev) => !prev)}
@@ -41,13 +41,18 @@ export default function HowToApplyAccordion({ universityName, howToApply }: Prop
                 }}
             >
                 <div className="overflow-hidden">
-                    <ul className="mt-4 space-y-2 pl-5">
-                        {howToApply.map((item) => (
-                            <li key={item.id} className="list-disc text-[15px] text-gray-700 max-md:text-sm">
-                                {item.bulletPoint}
-                            </li>
+                    <div className="mt-4 space-y-3">
+                        {howToApply.map((item, index) => (
+                            <div key={item.id} className="flex items-start gap-3">
+                                <span className="bg-primary-base mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white">
+                                    {index + 1}
+                                </span>
+                                <p className="text-[15px] leading-relaxed text-gray-700 max-md:text-sm">
+                                    {item.bulletPoint}
+                                </p>
+                            </div>
                         ))}
-                    </ul>
+                    </div>
                 </div>
             </div>
         </div>

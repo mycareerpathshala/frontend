@@ -1,7 +1,6 @@
 // imports
 import FindCourseAd from '@/assets/components/global/FindCourseAd';
 import HtmlViewer from '@/assets/components/global/HtmlViewer';
-import MarkViewer from '@/assets/components/global/MarkViewer';
 import SubHeader from '@/assets/components/global/SubHeader';
 import FaqSection from '@/assets/components/universities/FaqSection';
 import RequirementBlock from '@/assets/components/universities/RequirementBlock';

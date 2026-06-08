@@ -31,7 +31,9 @@ export default function CourseCards({
                         className="relative overflow-hidden rounded-xl bg-[linear-gradient(93deg,rgba(240,245,253,0.75)_2.36%,rgba(183,233,255,0.75)_142.86%)] px-6 py-3 shadow-lg max-md:p-4 max-sm:p-3"
                     >
                         <h3 className="text-primary-base text-lg leading-normal">
-                            <span className="font-bold">{courseData.courseName}</span>
+                            <Link href={`/courses/${courseData.documentId}`} className="font-bold hover:underline">
+                                {courseData.courseName}
+                            </Link>
                             &nbsp;|&nbsp;
                             <span className="font-medium">{courseData.majorName}</span>
                         </h3>

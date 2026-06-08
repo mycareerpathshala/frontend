@@ -34,7 +34,9 @@ export default function CourseCardWide({
                 {/* info */}
                 <div>
                     <h3 className="text-primary-base text-lg leading-normal">
-                        <span className="font-bold">{courseData.courseName}</span>
+                        <Link href={`/courses/${courseData.documentId}`} className="font-bold hover:underline">
+                            {courseData.courseName}
+                        </Link>
                         &nbsp;|&nbsp;
                         <span className="font-medium">{courseData.majorName}</span>
                     </h3>

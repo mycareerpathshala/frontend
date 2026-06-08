@@ -1,6 +1,11 @@
 FROM node:22-alpine AS builder
 WORKDIR /app
 
+# NEXT_PUBLIC_* vars used in client components must be baked in at build time.
+# Pass them as Docker build args (enable "Build Variable" toggle in Coolify).
+ARG NEXT_PUBLIC_STRAPI_URL
+ENV NEXT_PUBLIC_STRAPI_URL=$NEXT_PUBLIC_STRAPI_URL
+
 COPY package.json package-lock.json* ./
 RUN npm ci
 
@@ -23,5 +28,4 @@ COPY --from=builder /app/tsconfig.json ./tsconfig.json
 
 EXPOSE 4000
 
-# Push schema on every start (drizzle push is idempotent) then start the server
 CMD ["sh", "-c", "node node_modules/drizzle-kit/bin.cjs push && npm run start"]

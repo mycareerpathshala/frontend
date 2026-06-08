@@ -1,12 +1,27 @@
-FROM node:22-alpine
+FROM node:22-alpine AS builder
+WORKDIR /app
 
-WORKDIR /opt/mcp
-
-COPY package*.json ./
-RUN npm install
+COPY package.json package-lock.json* ./
+RUN npm ci
 
 COPY . .
+RUN mkdir -p public && npm run build
 
-EXPOSE 3000
+FROM node:22-alpine AS runner
+WORKDIR /app
 
-CMD ["npm", "run", "dev"]
+ENV NODE_ENV=production
+
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/next.config.ts ./next.config.ts
+COPY --from=builder /app/drizzle.config.ts ./drizzle.config.ts
+COPY --from=builder /app/assets/lib/database ./assets/lib/database
+COPY --from=builder /app/tsconfig.json ./tsconfig.json
+
+EXPOSE 4000
+
+# Push schema on every start (drizzle push is idempotent) then start the server
+CMD ["sh", "-c", "node node_modules/drizzle-kit/bin.cjs push && npm run start"]

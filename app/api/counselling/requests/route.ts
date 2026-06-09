@@ -1,7 +1,7 @@
 import { getSession } from '@/assets/lib/auth/session';
 import { db } from '@/assets/lib/database/db';
 import { counsellings, users } from '@/assets/lib/database/schema';
-import { sendEmail } from '@/assets/lib/email';
+import { sendEmail, EMAIL_FROM_ADMISSION } from '@/assets/lib/email';
 import { counsellingConfirmEmailHtml } from '@/assets/lib/email/templates/counsellingConfirm';
 import { type NewCounsellingRequestPayload } from '@/assets/lib/counselling';
 import { and, desc, eq, inArray } from 'drizzle-orm';
@@ -94,6 +94,7 @@ export async function POST(request: NextRequest) {
                 if (!user) return;
                 return sendEmail({
                     to:      created.email,
+                    from:    EMAIL_FROM_ADMISSION,
                     subject: 'Counselling request received — My Career Pathshala',
                     html:    counsellingConfirmEmailHtml({
                         firstName:          user.firstName,

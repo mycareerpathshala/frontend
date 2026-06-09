@@ -1,7 +1,7 @@
 import { getSession } from '@/assets/lib/auth/session';
 import { db } from '@/assets/lib/database/db';
 import { applications, users } from '@/assets/lib/database/schema';
-import { sendEmail } from '@/assets/lib/email';
+import { sendEmail, EMAIL_FROM_ADMISSION } from '@/assets/lib/email';
 import { applicationConfirmEmailHtml } from '@/assets/lib/email/templates/applicationConfirm';
 import { fetchData } from '@/assets/utilities/getRequest';
 import { eq } from 'drizzle-orm';
@@ -182,6 +182,7 @@ export async function POST(request: NextRequest) {
 
             await sendEmail({
                 to:      user.email,
+                from:    EMAIL_FROM_ADMISSION,
                 subject: `Application submitted — ${universityName}`,
                 html:    applicationConfirmEmailHtml({ firstName: user.firstName, universityName, courseName }),
             });

@@ -1,3 +1,5 @@
+import { brandHeader } from '../branding';
+
 export function welcomeEmailHtml({ firstName }: { firstName: string }): string {
     const year = new Date().getFullYear();
     return `<!DOCTYPE html>
@@ -13,13 +15,7 @@ export function welcomeEmailHtml({ firstName }: { firstName: string }): string {
       <td align="center">
         <table width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#ffffff;border-radius:16px;box-shadow:0 1px 4px rgba(0,0,0,0.06);overflow:hidden;">
 
-          <!-- Header -->
-          <tr>
-            <td style="background:linear-gradient(135deg,#1d4ed8 0%,#2563eb 100%);padding:36px 40px 32px;text-align:center;">
-              <p style="margin:0 0 4px;font-size:24px;font-weight:800;color:#ffffff;letter-spacing:-0.5px;">My Career Pathshala</p>
-              <p style="margin:0;font-size:13px;color:#bfdbfe;">Your global education journey starts here</p>
-            </td>
-          </tr>
+          ${brandHeader({ label: 'Welcome aboard' })}
 
           <!-- Hero greeting -->
           <tr>

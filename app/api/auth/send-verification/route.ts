@@ -1,7 +1,7 @@
 import { getSession } from '@/assets/lib/auth/session';
 import { db } from '@/assets/lib/database/db';
 import { users } from '@/assets/lib/database/schema';
-import { sendEmail } from '@/assets/lib/email';
+import { sendEmail, EMAIL_FROM_AUTH } from '@/assets/lib/email';
 import { verificationEmailHtml } from '@/assets/lib/email/templates/verification';
 import { SignJWT } from 'jose';
 import { eq } from 'drizzle-orm';
@@ -37,6 +37,7 @@ export async function POST() {
 
         await sendEmail({
             to: session.email,
+            from: EMAIL_FROM_AUTH,
             subject: 'Verify your My Career Pathshala email',
             html: verificationEmailHtml({ firstName: user.firstName, verifyUrl }),
         });

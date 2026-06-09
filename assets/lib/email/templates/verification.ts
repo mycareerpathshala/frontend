@@ -1,3 +1,5 @@
+import { brandHeader } from '../branding';
+
 export function verificationEmailHtml({ firstName, verifyUrl }: { firstName: string; verifyUrl: string }): string {
     return `<!DOCTYPE html>
 <html lang="en">
@@ -11,13 +13,7 @@ export function verificationEmailHtml({ firstName, verifyUrl }: { firstName: str
     <tr>
       <td align="center">
         <table width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#ffffff;border-radius:16px;box-shadow:0 1px 4px rgba(0,0,0,0.06);overflow:hidden;">
-          <!-- Header -->
-          <tr>
-            <td style="background:linear-gradient(135deg,#1d4ed8 0%,#2563eb 100%);padding:32px 40px 28px;">
-              <p style="margin:0;font-size:22px;font-weight:800;color:#ffffff;letter-spacing:-0.5px;">My Career Pathshala</p>
-              <p style="margin:6px 0 0;font-size:13px;color:#bfdbfe;">Email Verification</p>
-            </td>
-          </tr>
+          ${brandHeader({ label: 'Email Verification' })}
           <!-- Body -->
           <tr>
             <td style="padding:36px 40px 28px;">

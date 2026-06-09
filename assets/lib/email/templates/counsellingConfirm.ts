@@ -1,3 +1,5 @@
+import { brandHeader } from '../branding';
+
 export function counsellingConfirmEmailHtml({
     firstName,
     studyLevel,
@@ -26,13 +28,7 @@ export function counsellingConfirmEmailHtml({
       <td align="center">
         <table width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#ffffff;border-radius:16px;box-shadow:0 1px 4px rgba(0,0,0,0.06);overflow:hidden;">
 
-          <!-- Header -->
-          <tr>
-            <td style="background:linear-gradient(135deg,#0369a1 0%,#0284c7 100%);padding:32px 40px 28px;">
-              <p style="margin:0;font-size:22px;font-weight:800;color:#ffffff;letter-spacing:-0.5px;">My Career Pathshala</p>
-              <p style="margin:6px 0 0;font-size:13px;color:#bae6fd;">Counselling Request Received</p>
-            </td>
-          </tr>
+          ${brandHeader({ label: 'Counselling Request Received', gradient: 'linear-gradient(135deg,#0369a1 0%,#0284c7 100%)', labelColor: '#bae6fd' })}
 
           <!-- Body -->
           <tr>

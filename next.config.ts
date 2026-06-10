@@ -4,14 +4,8 @@ const nextConfig: NextConfig = {
     images: {
         remotePatterns: [
             {
-                protocol: 'http',
-                hostname: '194.164.150.193',
-                port: '',
-                pathname: '/uploads/**',
-            },
-            {
-                protocol: 'http',
-                hostname: '*.sslip.io',
+                protocol: 'https',
+                hostname: 'cms.mycareerpathshala.com',
                 port: '',
                 pathname: '/uploads/**',
             },

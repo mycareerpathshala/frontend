@@ -9,8 +9,21 @@ import KeyHighlights from '@/assets/components/mbbs/KeyHighlights';
 import MbbsApplyButton from '@/assets/components/mbbs/MbbsApplyButton';
 import RequirementMin from '@/assets/components/mbbs/RequirementMin';
 import { getMedicalCollegesData, getSingleMedicalData } from '@/assets/lib/cms/fetchMedical';
+import { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+
+export async function generateMetadata({ params }: { params: Promise<{ medicalID: string }> }): Promise<Metadata> {
+    const { medicalID } = await params;
+    const res = await getSingleMedicalData(medicalID);
+    if (!res?.data) return { title: 'MBBS College' };
+    const { name } = res.data;
+    const countryName = res.data.location?.country?.name ?? '';
+    return {
+        title: `${name} — MBBS Abroad${countryName ? ` in ${countryName}` : ''}`,
+        description: `Explore MBBS at ${name}${countryName ? ` in ${countryName}` : ''}. View fees, eligibility, NMC recognition, FMGE passing rate, and admission details on Mycareerpathshala.`,
+    };
+}
 
 export async function generateStaticParams() {
     const medicalResponse = await getMedicalCollegesData({ fields: ['documentId'] }, true);

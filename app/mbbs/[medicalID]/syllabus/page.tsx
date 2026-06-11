@@ -1,7 +1,15 @@
 // imports
+import { Metadata } from 'next';
 import MarkViewer from '@/assets/components/global/MarkViewer';
 import SubHeader from '@/assets/components/global/SubHeader';
 import { getMedicalCollegesData, getSingleMedicalData } from '@/assets/lib/cms/fetchMedical';
+
+export async function generateMetadata({ params }: { params: Promise<{ medicalID: string }> }): Promise<Metadata> {
+    const { medicalID } = await params;
+    const res = await getSingleMedicalData(medicalID);
+    if (!res?.data) return { title: 'Syllabus — MBBS College' };
+    return { title: `${res.data.name} — MBBS Syllabus`, description: `Subject-wise MBBS syllabus and curriculum at ${res.data.name}. View year-by-year course breakdown and clinical training details.` };
+}
 import { notFound } from 'next/navigation';
 
 export async function generateStaticParams() {

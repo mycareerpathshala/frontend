@@ -30,7 +30,10 @@ export default function Footer() {
                                 <Link href="/courses">Find Programs</Link>
                             </li>
                             <li>
-                                <Link href="/resources">Resources</Link>
+                                <Link href="/mbbs">MBBS Abroad</Link>
+                            </li>
+                            <li>
+                                <Link href="/blogs">Blogs</Link>
                             </li>
                         </ul>
                     </div>
@@ -39,9 +42,6 @@ export default function Footer() {
                         <ul className="flex flex-col items-start gap-1 text-sm">
                             <li>
                                 <Link href="/about">About US</Link>
-                            </li>
-                            <li>
-                                <Link href="/resources">Resource</Link>
                             </li>
                             <li>
                                 <Link href="/terms">Terms & Condition</Link>

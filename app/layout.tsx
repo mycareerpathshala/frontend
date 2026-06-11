@@ -12,12 +12,13 @@ import SearchModal from '@/assets/components/global/SearchModal';
 export const metadata: Metadata = {
     metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://mycareerpathshala.com'),
     title: {
-        template: '%s | My Career Pathshala',
-        default: 'My Career Pathshala — Study Abroad Guidance',
+        template: '%s | Mycareerpathshala',
+        default: "India's Trusted Career & Study Abroad Partner | Mycareerpathshala",
     },
-    description: 'My Career Pathshala helps students find top universities, MBBS colleges, and international courses. Get expert counselling for your study abroad journey.',
+    description: 'Empowering students with expert career counseling, NEET guidance, and global MBBS admissions. Your future starts with Mycareerpathshala.',
+    keywords: ['career counseling India', 'study abroad consultants', 'MBBS admission', 'NEET guidance', 'overseas education', 'study abroad', 'university admissions', 'career mentor'],
     openGraph: {
-        siteName: 'My Career Pathshala',
+        siteName: 'Mycareerpathshala',
         type: 'website',
         locale: 'en_IN',
     },

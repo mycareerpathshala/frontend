@@ -1,3 +1,9 @@
+import { Metadata } from 'next';
+export const metadata: Metadata = {
+    title: 'My Applications',
+    robots: { index: false, follow: false },
+};
+
 import DashboardHeader from '@/assets/components/dashboard/DashboardHeader';
 import ApplicationsPage from '@/assets/components/dashboard/ApplicationsPage';
 

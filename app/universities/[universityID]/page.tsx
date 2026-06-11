@@ -8,8 +8,22 @@ import KeyHighlights from '@/assets/components/universities/KeyHighlights';
 import Rankings from '@/assets/components/universities/Ranking';
 import UniversityCourses from '@/assets/components/universities/UniversityCourses';
 import { getSingleUniversityData, getUniversitiesId } from '@/assets/lib/cms/fetchUniversity';
+import { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+
+export async function generateMetadata({ params }: { params: Promise<{ universityID: string }> }): Promise<Metadata> {
+    const { universityID } = await params;
+    const res = await getSingleUniversityData(universityID);
+    if (!res?.data) return { title: 'University' };
+    const { name, acronym } = res.data;
+    const countryName = res.data.location?.country?.name ?? '';
+    const shortName = acronym ? ` (${acronym})` : '';
+    return {
+        title: `${name}${shortName}${countryName ? ` — ${countryName}` : ''}`,
+        description: `Explore ${name}${countryName ? ` in ${countryName}` : ''} — courses, fees, scholarships, rankings, and admission requirements. Apply through Mycareerpathshala.`,
+    };
+}
 
 export async function generateStaticParams() {
     const universitiesResponse = await getUniversitiesId({ fields: ['documentId'] }, true);

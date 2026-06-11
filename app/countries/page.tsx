@@ -1,6 +1,13 @@
 // imports
+import { Metadata } from 'next';
 import SingleCountryCard from '@/assets/components/country/CountryCard';
 import { getCountriesData } from '@/assets/lib/cms/fetchCountry';
+
+export const metadata: Metadata = {
+    title: 'Study Destinations — Explore Countries to Study Abroad',
+    description: 'Discover the best countries to study abroad — UK, Germany, Italy, Australia, USA, France and more. Compare universities, scholarships, and visa requirements.',
+    keywords: ['study abroad countries', 'best countries to study', 'overseas education', 'study in Europe', 'study in UK', 'study in Germany'],
+};
 import { CountryType } from '@/assets/types/countryTypes';
 import { QueryObjectType, StrapiDataType } from '@/assets/types/responseTypes';
 import { HiSparkles, HiGlobeAlt, HiAcademicCap } from 'react-icons/hi2';

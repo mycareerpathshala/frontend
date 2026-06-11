@@ -1,7 +1,15 @@
 // imports
 import FaqBlock from '@/assets/components/mbbs/FaqBlock';
 import { getMedicalCollegesData, getSingleMedicalData } from '@/assets/lib/cms/fetchMedical';
+import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+
+export async function generateMetadata({ params }: { params: Promise<{ medicalID: string }> }): Promise<Metadata> {
+    const { medicalID } = await params;
+    const res = await getSingleMedicalData(medicalID);
+    if (!res?.data) return { title: 'FAQs — MBBS College' };
+    return { title: `${res.data.name} — FAQs`, description: `Frequently asked questions about MBBS at ${res.data.name}. Get answers about fees, eligibility, hostel, and more.` };
+}
 
 export async function generateStaticParams() {
     const medicalResponse = await getMedicalCollegesData({ fields: ['documentId'] }, true);

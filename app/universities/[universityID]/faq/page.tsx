@@ -1,7 +1,15 @@
 // imports
+import { Metadata } from 'next';
 import FaqBlock from '@/assets/components/universities/FaqBlock';
 import { getSingleUniversityData, getUniversitiesId } from '@/assets/lib/cms/fetchUniversity';
 import { notFound } from 'next/navigation';
+
+export async function generateMetadata({ params }: { params: Promise<{ universityID: string }> }): Promise<Metadata> {
+    const { universityID } = await params;
+    const res = await getSingleUniversityData(universityID);
+    if (!res?.data) return { title: 'FAQs — University' };
+    return { title: `${res.data.name} — FAQs`, description: `Frequently asked questions about ${res.data.name}. Get answers about admissions, fees, scholarships, and student life.` };
+}
 
 export async function generateStaticParams() {
     const universitiesResponse = await getUniversitiesId({ fields: ['documentId'] }, true);

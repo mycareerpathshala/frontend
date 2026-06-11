@@ -1,6 +1,13 @@
 // imports
+import { Metadata } from 'next';
 import SpinnerMini from '@/assets/components/global/SpinnerMini';
 import MedicalListing from '@/assets/components/mbbs/MedicalListing';
+
+export const metadata: Metadata = {
+    title: 'MBBS Abroad — Top Medical Colleges & Admission Guide',
+    description: 'Find the best medical colleges abroad for MBBS. Compare fees, duration, eligibility, NMC recognition, and FMGE passing rates. Apply through Mycareerpathshala.',
+    keywords: ['MBBS abroad', 'MBBS in Russia', 'MBBS in Philippines', 'MBBS in Georgia', 'MBBS fees abroad', 'NMC approved colleges', 'FMGE passing rate'],
+};
 import Image from 'next/image';
 import { HiChartBar, HiSparkles, HiUserGroup } from 'react-icons/hi2';
 import { Suspense } from 'react';

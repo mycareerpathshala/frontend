@@ -1,7 +1,14 @@
 // imports
-
+import { Metadata } from 'next';
 import SubHeader from '@/assets/components/global/SubHeader';
 import { getMedicalCollegesData, getSingleMedicalData } from '@/assets/lib/cms/fetchMedical';
+
+export async function generateMetadata({ params }: { params: Promise<{ medicalID: string }> }): Promise<Metadata> {
+    const { medicalID } = await params;
+    const res = await getSingleMedicalData(medicalID);
+    if (!res?.data) return { title: 'Fee Structure — MBBS College' };
+    return { title: `${res.data.name} — Fee Structure`, description: `Complete fee structure and yearly tuition breakdown for MBBS at ${res.data.name}. Compare costs and plan your budget.` };
+}
 import { TuitionFeeByYearType } from '@/assets/types/componentTypes';
 import { notFound } from 'next/navigation';
 import { HiBanknotes, HiCurrencyDollar } from 'react-icons/hi2';

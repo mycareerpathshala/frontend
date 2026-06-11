@@ -1,8 +1,17 @@
 // imports
+import { Metadata } from 'next';
 import FindCourseAd from '@/assets/components/global/FindCourseAd';
 import HtmlViewer from '@/assets/components/global/HtmlViewer';
 import SubHeader from '@/assets/components/global/SubHeader';
 import FaqSection from '@/assets/components/universities/FaqSection';
+
+export async function generateMetadata({ params }: { params: Promise<{ universityID: string }> }): Promise<Metadata> {
+    const { universityID } = await params;
+    const { getSingleUniversityData } = await import('@/assets/lib/cms/fetchUniversity');
+    const res = await getSingleUniversityData(universityID);
+    if (!res?.data) return { title: 'Scholarships — University' };
+    return { title: `${res.data.name} — Scholarships`, description: `Available scholarships and financial aid at ${res.data.name}. Explore merit-based, need-based, and government scholarships for international students.` };
+}
 import { getSingleUniversityData, getUniversitiesId } from '@/assets/lib/cms/fetchUniversity';
 import { notFound } from 'next/navigation';
 

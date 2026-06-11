@@ -3,11 +3,11 @@ import { Metadata } from 'next';
 import Banner from '@/assets/components/global/Banner';
 
 export const metadata: Metadata = {
-    title: 'Study Abroad — Top Universities, MBBS & Courses',
-    description: 'Explore top universities, MBBS colleges, and international courses worldwide. Get personalized career counselling and expert study abroad guidance from My Career Pathshala.',
+    title: "India's Trusted Career & Study Abroad Partner | Mycareerpathshala",
+    description: 'Empowering students with expert career counseling, NEET guidance, and global MBBS admissions. Your future starts with Mycareerpathshala.',
     openGraph: {
-        title: 'Study Abroad — Top Universities, MBBS & Courses | My Career Pathshala',
-        description: 'Explore top universities, MBBS colleges, and international courses worldwide. Get personalized career counselling.',
+        title: "India's Trusted Career & Study Abroad Partner | Mycareerpathshala",
+        description: 'Empowering students with expert career counseling, NEET guidance, and global MBBS admissions. Your future starts with Mycareerpathshala.',
         type: 'website',
     },
 };

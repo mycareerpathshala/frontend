@@ -1,3 +1,9 @@
+import { Metadata } from 'next';
+export const metadata: Metadata = {
+    title: 'Dashboard',
+    robots: { index: false, follow: false },
+};
+
 import DashboardHeader from '@/assets/components/dashboard/DashboardHeader';
 import WelcomeStrip from '@/assets/components/dashboard/WelcomeStrip';
 import ProfileCard from '@/assets/components/dashboard/ProfileCard';

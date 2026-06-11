@@ -1,3 +1,9 @@
+import { Metadata } from 'next';
+export const metadata: Metadata = {
+    title: 'My Counselling Sessions',
+    robots: { index: false, follow: false },
+};
+
 import DashboardHeader from '@/assets/components/dashboard/DashboardHeader';
 import CounsellingPage from '@/assets/components/dashboard/CounsellingPage';
 

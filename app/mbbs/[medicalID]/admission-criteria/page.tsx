@@ -1,8 +1,16 @@
 // imports
+import { Metadata } from 'next';
 import SubHeader from '@/assets/components/global/SubHeader';
 import RequirementMax from '@/assets/components/mbbs/RequirementMax';
 import { getFallbackData } from '@/assets/lib/cms/fetchFallback';
 import { getMedicalCollegesData, getSingleMedicalData } from '@/assets/lib/cms/fetchMedical';
+
+export async function generateMetadata({ params }: { params: Promise<{ medicalID: string }> }): Promise<Metadata> {
+    const { medicalID } = await params;
+    const res = await getSingleMedicalData(medicalID);
+    if (!res?.data) return { title: 'Admission Criteria — MBBS College' };
+    return { title: `${res.data.name} — Admission Criteria`, description: `Eligibility and admission requirements for MBBS at ${res.data.name}. Check NEET scores, age limit, and document checklist.` };
+}
 import { notFound } from 'next/navigation';
 
 export async function generateStaticParams() {

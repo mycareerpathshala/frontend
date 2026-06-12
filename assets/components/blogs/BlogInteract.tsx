@@ -96,7 +96,7 @@ function BlogDisplay({ blogData }: { blogData: BlogType & StrapiDataType }) {
                     <div>
                         <Link
                             target="_blank"
-                            href={`/blogs/${blogData.slug}`}
+                            href={`/blogs/${blogData.documentId}`}
                             className="text-primary-base hover:bg-primary-base inline-flex items-center gap-2 rounded-md bg-white px-5 py-2 text-sm font-semibold shadow-sm transition hover:text-white"
                         >
                             Read Blog

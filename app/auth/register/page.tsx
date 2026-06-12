@@ -23,6 +23,7 @@ import { TbRocket, TbTrophy, TbTargetArrow, TbBuildingCommunity } from 'react-ic
 export default function RegisterPage() {
     const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
+    const [userType, setUserType] = useState<'student' | 'parent' | 'general'>('student');
 
     function getNextParam() {
         const params = new URLSearchParams(window.location.search);
@@ -55,7 +56,7 @@ export default function RegisterPage() {
             const res = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ firstName, lastName, email, password }),
+                body: JSON.stringify({ firstName, lastName, email, password, userType }),
             });
 
             const data = await res.json();
@@ -337,6 +338,29 @@ export default function RegisterPage() {
                                             <HiEye className="size-4" />
                                         )}
                                     </button>
+                                </div>
+                            </div>
+
+                            {/* user type */}
+                            <div>
+                                <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                                    I am a
+                                </label>
+                                <div className="grid grid-cols-3 gap-2">
+                                    {(['student', 'parent', 'general'] as const).map((type) => (
+                                        <button
+                                            key={type}
+                                            type="button"
+                                            onClick={() => setUserType(type)}
+                                            className={`rounded-xl border py-2 text-sm font-semibold capitalize transition ${
+                                                userType === type
+                                                    ? 'border-violet-400 bg-violet-50 text-violet-700 ring-2 ring-violet-100'
+                                                    : 'border-slate-200 bg-slate-50 text-slate-500 hover:border-slate-300 hover:bg-white'
+                                            }`}
+                                        >
+                                            {type}
+                                        </button>
+                                    ))}
                                 </div>
                             </div>
 

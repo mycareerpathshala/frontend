@@ -8,11 +8,14 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
     try {
-        const { firstName, lastName, email, password } = await request.json();
+        const { firstName, lastName, email, password, userType } = await request.json();
 
         if (!firstName || !lastName || !email || !password) {
             return NextResponse.json({ error: 'All fields are required' }, { status: 400 });
         }
+
+        const validUserTypes = ['student', 'parent', 'general'] as const;
+        const resolvedUserType = validUserTypes.includes(userType) ? userType : 'student';
 
         if (password.length < 8) {
             return NextResponse.json({ error: 'Password must be at least 8 characters' }, { status: 400 });
@@ -24,7 +27,7 @@ export async function POST(request: NextRequest) {
         }
 
         const passwordHash = await hash(password, 12);
-        await db.insert(users).values({ firstName, lastName, email, passwordHash });
+        await db.insert(users).values({ firstName, lastName, email, passwordHash, userType: resolvedUserType });
 
         // Welcome email — non-auth, sent from the admission sender.
         // Fire and forget so registration never fails due to email.

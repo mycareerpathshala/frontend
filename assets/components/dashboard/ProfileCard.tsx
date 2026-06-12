@@ -3,7 +3,7 @@
 // imports
 import { useAppContext } from '@/assets/context/AppContext';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     HiAcademicCap,
     HiArrowPath,
@@ -316,6 +316,17 @@ export default function ProfileCard() {
     const [verifyLoading, setVerifyLoading] = useState(false);
     const [phonePopupOpen, setPhonePopupOpen] = useState(false);
 
+    useEffect(() => {
+        fetch('/api/auth/profile')
+            .then((r) => r.json())
+            .then((body) => {
+                if (body?.data?.preferredStudyLevel) {
+                    setStudyLevel(body.data.preferredStudyLevel);
+                }
+            })
+            .catch(() => {});
+    }, []);
+
     async function handleSendVerification() {
         setVerifyLoading(true);
         try {
@@ -328,9 +339,14 @@ export default function ProfileCard() {
 
     const currentLevel = studyLevel ? STUDY_LEVELS.find((l) => l.id === studyLevel) : null;
 
-    function handleConfirm(id: string) {
+    async function handleConfirm(id: string) {
         setStudyLevel(id);
         setPopupOpen(false);
+        await fetch('/api/auth/profile', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ preferredStudyLevel: id }),
+        });
     }
 
     return (

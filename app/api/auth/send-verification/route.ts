@@ -32,15 +32,19 @@ export async function POST() {
             .setExpirationTime('24h')
             .sign(getSecret());
 
-        const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:4000';
         const verifyUrl = `${baseUrl}/api/auth/verify-email?token=${token}`;
 
-        await sendEmail({
-            to: session.email,
-            from: EMAIL_FROM_AUTH,
-            subject: 'Verify your My Career Pathshala email',
-            html: verificationEmailHtml({ firstName: user.firstName, verifyUrl }),
-        });
+        if (process.env.NODE_ENV === 'development') {
+            console.log(`[dev] Verify email URL for ${session.email}: ${verifyUrl}`);
+        } else {
+            await sendEmail({
+                to: session.email,
+                from: EMAIL_FROM_AUTH,
+                subject: 'Verify your My Career Pathshala email',
+                html: verificationEmailHtml({ firstName: user.firstName, verifyUrl }),
+            });
+        }
 
         return NextResponse.json({ success: true });
     } catch (err) {

@@ -10,7 +10,7 @@ import { formatDateToBlogStringDate } from '@/assets/utilities/helperFunction';
 function BlogCard({ blogData }: { blogData: BlogType & StrapiDataType }) {
     return (
         <a
-            href={`/blogs/${blogData.slug}`}
+            href={`/blogs/${blogData.documentId}`}
             target="_blank"
             rel="noopener noreferrer"
             className="group hover:bg-primary-gray/50 flex gap-4 rounded-lg p-2 no-underline transition"

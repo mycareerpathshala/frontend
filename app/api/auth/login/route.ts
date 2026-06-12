@@ -1,7 +1,7 @@
 import { createOTP } from '@/assets/lib/auth/otp';
-import { SESSION_COOKIE_OPTIONS } from '@/assets/lib/auth/session';
+import { SESSION_COOKIE_OPTIONS, signSession } from '@/assets/lib/auth/session';
 import { db } from '@/assets/lib/database/db';
-import { users } from '@/assets/lib/database/schema';
+import { users, userSettings } from '@/assets/lib/database/schema';
 import { sendEmail, EMAIL_FROM_AUTH } from '@/assets/lib/email';
 import { otpEmailHtml } from '@/assets/lib/email/templates/otp';
 import { compare } from 'bcryptjs';
@@ -40,24 +40,51 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
         }
 
+        // Check whether 2FA is enabled for this user (defaults to true if no row exists).
+        const [settingsRow] = await db
+            .select({ twoFactorEnabled: userSettings.twoFactorEnabled })
+            .from(userSettings)
+            .where(eq(userSettings.userId, user.id))
+            .limit(1);
+        const twoFactorEnabled = settingsRow?.twoFactorEnabled ?? false;
+
+        // 2FA disabled — issue session directly, no OTP step.
+        if (!twoFactorEnabled) {
+            const sessionToken = await signSession({
+                userId:    user.id,
+                firstName: user.firstName,
+                lastName:  user.lastName,
+                email:     user.email,
+                avatar:    user.avatar,
+            });
+            const response = NextResponse.json({ success: true });
+            response.cookies.set(SESSION_COOKIE_OPTIONS.name, sessionToken, SESSION_COOKIE_OPTIONS);
+            return response;
+        }
+
         // Password is correct — start the second factor. Generate a one-time code,
         // email it from the auth (noreply) sender, and hand the browser a signed
         // pending token. The real session is only issued in /api/auth/verify-otp.
         const code = await createOTP(user.id);
 
-        try {
-            await sendEmail({
-                to:      user.email,
-                from:    EMAIL_FROM_AUTH,
-                subject: 'Your My Career Pathshala login code',
-                html:    otpEmailHtml({ firstName: user.firstName, code }),
-            });
-        } catch (mailErr) {
-            console.error('[login] failed to send OTP email', mailErr);
-            return NextResponse.json(
-                { error: 'We could not send your login code. Please try again in a moment.' },
-                { status: 502 },
-            );
+        if (process.env.NODE_ENV === 'development') {
+            // Skip email in dev — log the OTP code to the terminal instead.
+            console.log(`[dev] OTP for ${user.email}: ${code}`);
+        } else {
+            try {
+                await sendEmail({
+                    to:      user.email,
+                    from:    EMAIL_FROM_AUTH,
+                    subject: 'Your My Career Pathshala login code',
+                    html:    otpEmailHtml({ firstName: user.firstName, code }),
+                });
+            } catch (mailErr) {
+                console.error('[login] failed to send OTP email', mailErr);
+                return NextResponse.json(
+                    { error: 'We could not send your login code. Please try again in a moment.' },
+                    { status: 502 },
+                );
+            }
         }
 
         const pendingToken = await new SignJWT({

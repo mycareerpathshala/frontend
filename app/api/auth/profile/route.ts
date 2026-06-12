@@ -23,8 +23,10 @@ export async function GET() {
                 dateOfBirth:    users.dateOfBirth,
                 gender:         users.gender,
                 country:        users.country,
-                secondaryEmail: users.secondaryEmail,
-                isVerified:     users.isVerified,
+                secondaryEmail:       users.secondaryEmail,
+                userType:             users.userType,
+                preferredStudyLevel:  users.preferredStudyLevel,
+                isVerified:           users.isVerified,
                 createdAt:      users.createdAt,
             })
             .from(users)
@@ -48,26 +50,30 @@ export async function PATCH(request: NextRequest) {
         if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
         const body = await request.json() as {
-            firstName?:      string;
-            lastName?:       string;
-            phone?:          string | null;
-            dateOfBirth?:    string | null;
-            gender?:         string | null;
-            country?:        string | null;
-            secondaryEmail?: string | null;
-            avatar?:         string;
+            firstName?:           string;
+            lastName?:            string;
+            phone?:               string | null;
+            dateOfBirth?:         string | null;
+            gender?:              string | null;
+            country?:             string | null;
+            secondaryEmail?:      string | null;
+            preferredStudyLevel?: string | null;
+            userType?:            'student' | 'parent' | 'general';
+            avatar?:              string;
         };
 
         // Build update object with only the fields that were explicitly provided
         const update: Record<string, unknown> = {};
-        if (body.firstName      !== undefined) update.firstName      = body.firstName.trim();
-        if (body.lastName       !== undefined) update.lastName       = body.lastName.trim();
-        if ('phone'          in body) update.phone          = body.phone          || null;
-        if ('dateOfBirth'    in body) update.dateOfBirth    = body.dateOfBirth    || null;
-        if ('gender'         in body) update.gender         = body.gender         || null;
-        if ('country'        in body) update.country        = body.country        || null;
-        if ('secondaryEmail' in body) update.secondaryEmail = body.secondaryEmail || null;
-        if (body.avatar         !== undefined) update.avatar         = body.avatar;
+        if (body.firstName           !== undefined) update.firstName           = body.firstName.trim();
+        if (body.lastName            !== undefined) update.lastName            = body.lastName.trim();
+        if ('phone'               in body) update.phone               = body.phone               || null;
+        if ('dateOfBirth'         in body) update.dateOfBirth         = body.dateOfBirth         || null;
+        if ('gender'              in body) update.gender              = body.gender              || null;
+        if ('country'             in body) update.country             = body.country             || null;
+        if ('secondaryEmail'      in body) update.secondaryEmail      = body.secondaryEmail      || null;
+        if ('preferredStudyLevel' in body) update.preferredStudyLevel = body.preferredStudyLevel || null;
+        if (body.userType            !== undefined) update.userType            = body.userType;
+        if (body.avatar              !== undefined) update.avatar              = body.avatar;
 
         if (Object.keys(update).length === 0) {
             return NextResponse.json({ error: 'No fields to update' }, { status: 400 });

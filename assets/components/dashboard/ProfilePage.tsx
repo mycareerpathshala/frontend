@@ -32,12 +32,21 @@ import DialCodeSelector, { DEFAULT_DIAL_COUNTRY, parsePhone, type DialCountry } 
 
 // ── Profile data type ─────────────────────────────────────────────────────────
 
+type UserType = 'student' | 'parent' | 'general';
+
+const USER_TYPE_OPTIONS: { value: UserType; label: string }[] = [
+    { value: 'student', label: 'Student' },
+    { value: 'parent', label: 'Parent' },
+    { value: 'general', label: 'General' },
+];
+
 interface ProfileData {
     phone: string | null;
     dateOfBirth: string | null;
     gender: string | null;
     country: string | null;
     secondaryEmail: string | null;
+    userType: UserType;
     avatar: string;
     isVerified: boolean;
     createdAt: string;
@@ -527,7 +536,7 @@ function ProfileHero({
                             </span>
                             <span className="flex items-center gap-1.5 rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700 capitalize">
                                 <HiShieldCheck className="size-3.5 text-blue-500" />
-                                Student
+                                {USER_TYPE_OPTIONS.find(o => o.value === (profile?.userType ?? 'student'))?.label ?? 'Student'}
                             </span>
                         </div>
                     </div>
@@ -585,6 +594,7 @@ interface PersonalForm {
     dateOfBirth: string;
     gender: string;
     country: string;
+    userType: UserType;
 }
 
 const GENDER_OPTIONS = [
@@ -604,6 +614,7 @@ function PersonalInfoCard({ profile, onSaved }: { profile: ProfileData | null; o
         dateOfBirth: '',
         gender: '',
         country: '',
+        userType: 'student',
     });
     const [draft, setDraft] = useState<PersonalForm>(form);
     const [editing, setEditing] = useState(false);
@@ -623,6 +634,7 @@ function PersonalInfoCard({ profile, onSaved }: { profile: ProfileData | null; o
             dateOfBirth: profile?.dateOfBirth ?? '',
             gender: profile?.gender ?? '',
             country: profile?.country ?? '',
+            userType: profile?.userType ?? 'student',
         });
     }, [profile, session]);
 
@@ -653,6 +665,7 @@ function PersonalInfoCard({ profile, onSaved }: { profile: ProfileData | null; o
                     dateOfBirth: draft.dateOfBirth || null,
                     gender: draft.gender || null,
                     country: draft.country || null,
+                    userType: draft.userType,
                 }),
             });
             const json = await res.json();
@@ -740,6 +753,12 @@ function PersonalInfoCard({ profile, onSaved }: { profile: ProfileData | null; o
                             value={draft.country}
                             onChange={(v) => setDraft((p) => ({ ...p, country: v }))}
                         />
+                        <SelectField
+                            label="I am a"
+                            value={draft.userType}
+                            onChange={(v) => setDraft((p) => ({ ...p, userType: v as UserType }))}
+                            options={USER_TYPE_OPTIONS}
+                        />
                     </div>
                 ) : (
                     <div>
@@ -752,6 +771,7 @@ function PersonalInfoCard({ profile, onSaved }: { profile: ProfileData | null; o
                         <InfoRow icon={MdCalendarMonth} label="Date of Birth" value={form.dateOfBirth} />
                         <InfoRow icon={MdPerson} label="Gender" value={genderLabel} />
                         <InfoRow icon={MdPublic} label="Country" value={form.country} />
+                        <InfoRow icon={HiShieldCheck} label="I am a" value={USER_TYPE_OPTIONS.find(o => o.value === form.userType)?.label ?? 'Student'} />
                     </div>
                 )}
             </div>
@@ -1111,12 +1131,12 @@ function SecurityCard() {
 
 // ── Account Info Card (sidebar) ───────────────────────────────────────────────
 
-function AccountInfoCard({ memberSince }: { memberSince: string }) {
+function AccountInfoCard({ memberSince, userType }: { memberSince: string; userType: UserType }) {
     const { session } = useAppContext();
 
     const rows = [
         { icon: HiIdentification, label: 'User ID', value: `#${session?.userId?.slice(0, 8) ?? '—'}` },
-        { icon: HiShieldCheck, label: 'Role', value: 'Student', highlight: true },
+        { icon: HiShieldCheck, label: 'Role', value: USER_TYPE_OPTIONS.find(o => o.value === userType)?.label ?? 'Student', highlight: true },
         { icon: MdCalendarMonth, label: 'Member Since', value: memberSince },
     ];
 
@@ -1249,7 +1269,7 @@ export default function ProfilePageContent() {
                     <SecurityCard />
                 </div>
                 <div className="col-span-3 flex flex-col gap-6 lg:col-span-1">
-                    <AccountInfoCard memberSince={memberSince} />
+                    <AccountInfoCard memberSince={memberSince} userType={profile?.userType ?? 'student'} />
                     <DangerZoneCard />
                 </div>
             </div>

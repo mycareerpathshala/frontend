@@ -16,6 +16,7 @@ import {
 // ── Enums ─────────────────────────────────────────────────────────────────────
 
 export const adminRoleEnum         = pgEnum('admin_role',         ['super', 'admin', 'editor', 'counsellor']);
+export const userTypeEnum          = pgEnum('user_type',          ['student', 'parent', 'general']);
 export const genderEnum            = pgEnum('gender',             ['male', 'female', 'non-binary', 'prefer-not-to-say']);
 export const studyLevelEnum        = pgEnum('study_level',        ['Undergraduate', 'Postgraduate', 'MBBS']);
 export const requestStatusEnum     = pgEnum('request_status',     ['pending', 'scheduled', 'completed', 'cancelled']);
@@ -38,8 +39,10 @@ export const users = pgTable(
         dateOfBirth:    text('date_of_birth'),
         gender:         genderEnum('gender'),
         country:        text('country'),
-        secondaryEmail: text('secondary_email'),
-        isVerified:     boolean('is_verified').notNull().default(false),
+        secondaryEmail:       text('secondary_email'),
+        userType:             userTypeEnum('user_type').notNull().default('student'),
+        preferredStudyLevel:  text('preferred_study_level'),
+        isVerified:           boolean('is_verified').notNull().default(false),
         createdAt:      timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
         updatedAt:      timestamp('updated_at', { withTimezone: true }).notNull().defaultNow().$onUpdateFn(() => new Date()),
     },

@@ -367,7 +367,7 @@ function SettingsSummaryCard({
     settings: UserSettings;
     saving: boolean;
 }) {
-    const inAppOn   = [settings.inAppApplications, settings.inAppCounselling].filter(Boolean).length;
+    const inAppOn   = [settings.inAppApplications, settings.inAppCounselling, settings.newCourseAlerts, settings.universityUpdates].filter(Boolean).length;
     const emailOn   = [
         settings.emailAdmissionDeadlines, settings.emailScholarshipAlerts,
         settings.emailPromotional, settings.emailNewsletter,

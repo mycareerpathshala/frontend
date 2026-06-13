@@ -109,8 +109,11 @@ export interface UniversityType {
     importantDateList?: ImportantDateType[];
     rankingInfo?: WorldRankingType[];
     faqs?: UniversityFaqType[];
+    overviewDynamicPage?: DynamicContentType;
+    courseDynamicPage?: DynamicContentType;
     admissionDynamicPage?: DynamicContentType;
     scholarshipDynamicPage?: DynamicContentType;
+    faqDynamicPage?: DynamicContentType;
     applicationRequirements?: ApplicationRequirementType[];
     howToApply?: { id: number; bulletPoint: string }[];
 }

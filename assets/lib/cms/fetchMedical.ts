@@ -60,6 +60,10 @@ export const getSingleMedicalData = async (medicalID: string) => {
                 },
                 rankingInfo: true,
                 syllabusDynamicPage: true,
+                overviewDynamicPage: true,
+                feeDynamicPage: true,
+                admissionDynamicPage: true,
+                faqDynamicPage: true,
             },
         };
 

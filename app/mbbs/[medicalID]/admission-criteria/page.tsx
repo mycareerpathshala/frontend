@@ -1,5 +1,6 @@
 // imports
 import { Metadata } from 'next';
+import HtmlViewer from '@/assets/components/global/HtmlViewer';
 import SubHeader from '@/assets/components/global/SubHeader';
 import RequirementMax from '@/assets/components/mbbs/RequirementMax';
 import { getFallbackData } from '@/assets/lib/cms/fetchFallback';
@@ -69,6 +70,16 @@ export default async function AdmissionCriteriaPage({ params }: { params: Promis
                         <span className="font-semibold">No admission requirements</span> found for{' '}
                         <span className="font-semibold">{medicalData.name}</span>
                     </p>
+                </div>
+            )}
+
+            {/* admission dynamic content */}
+            {medicalData.admissionDynamicPage && (
+                <div className="mt-8 overflow-hidden rounded-lg border border-gray-200">
+                    <div className="mb-4 w-full bg-linear-to-r from-cyan-100 to-blue-400 px-4 py-4">
+                        <h2 className="text-xl font-bold">{medicalData.admissionDynamicPage.blockTitle}</h2>
+                    </div>
+                    <HtmlViewer content={medicalData.admissionDynamicPage.blockContent} tailwindClass="px-6 py-4" />
                 </div>
             )}
         </>

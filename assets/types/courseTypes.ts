@@ -15,6 +15,7 @@ export interface CourseType {
     deliveryMethod: string;
     teachingLanguage: string;
     courseOfferings: string;
+    dynamicContent?: string;
     tuitionFeeByYear?: TuitionFeeByYearType[];
     stream?: StreamType;
     university?: UniversityType & StrapiDataType;

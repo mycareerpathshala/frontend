@@ -111,8 +111,11 @@ export const getSingleUniversityData = async (universityID: string) => {
                         faqList: true,
                     },
                 },
+                overviewDynamicPage: true,
+                courseDynamicPage: true,
                 admissionDynamicPage: true,
                 scholarshipDynamicPage: true,
+                faqDynamicPage: true,
                 howToApply: true,
             },
         };

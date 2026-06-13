@@ -1,4 +1,5 @@
 // imports
+import HtmlViewer from '@/assets/components/global/HtmlViewer';
 import FaqBlock from '@/assets/components/mbbs/FaqBlock';
 import { getMedicalCollegesData, getSingleMedicalData } from '@/assets/lib/cms/fetchMedical';
 import { Metadata } from 'next';
@@ -43,6 +44,16 @@ export default async function FAQPage({ params }: { params: Promise<{ medicalID:
                 </p>
                 {medicalData.faqs?.length ? <FaqBlock faqData={medicalData.faqs} /> : null}
             </div>
+
+            {/* faq dynamic content */}
+            {medicalData.faqDynamicPage && (
+                <div className="mt-8 overflow-hidden rounded-lg border border-gray-200">
+                    <div className="mb-4 w-full bg-linear-to-r from-cyan-100 to-blue-400 px-4 py-4">
+                        <h2 className="text-xl font-bold">{medicalData.faqDynamicPage.blockTitle}</h2>
+                    </div>
+                    <HtmlViewer content={medicalData.faqDynamicPage.blockContent} tailwindClass="px-6 py-4" />
+                </div>
+            )}
         </>
     );
 }

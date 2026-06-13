@@ -1,4 +1,5 @@
 // imports
+import HtmlViewer from '@/assets/components/global/HtmlViewer';
 import MarkViewer from '@/assets/components/global/MarkViewer';
 import FaqSection from '@/assets/components/mbbs/FaqSection';
 import FeeStructure from '@/assets/components/mbbs/FeeStructure';
@@ -107,6 +108,16 @@ export default async function SingleMedicalPage({ params }: { params: Promise<{ 
             {medicalData.applicationRequirements ? (
                 <RequirementMin applicationRequirements={medicalData.applicationRequirements} />
             ) : null}
+
+            {/* overview dynamic content */}
+            {medicalData.overviewDynamicPage && (
+                <div className="mt-8 overflow-hidden rounded-lg border border-gray-200">
+                    <div className="mb-4 w-full bg-linear-to-r from-cyan-100 to-blue-400 px-4 py-4">
+                        <h2 className="text-xl font-bold">{medicalData.overviewDynamicPage.blockTitle}</h2>
+                    </div>
+                    <HtmlViewer content={medicalData.overviewDynamicPage.blockContent} tailwindClass="px-6 py-4" />
+                </div>
+            )}
 
             {/* faq section */}
             {medicalData.faqs?.length ? <FaqSection faqs={medicalData.faqs} initialTopic="College" /> : null}

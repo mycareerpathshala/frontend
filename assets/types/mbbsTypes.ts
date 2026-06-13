@@ -86,6 +86,26 @@ export interface MedicalCollegeType {
         blockTitle: string;
         blockContent: string;
     };
+    overviewDynamicPage?: {
+        id: number;
+        blockTitle: string;
+        blockContent: string;
+    };
+    feeDynamicPage?: {
+        id: number;
+        blockTitle: string;
+        blockContent: string;
+    };
+    admissionDynamicPage?: {
+        id: number;
+        blockTitle: string;
+        blockContent: string;
+    };
+    faqDynamicPage?: {
+        id: number;
+        blockTitle: string;
+        blockContent: string;
+    };
 }
 
 // medical response types

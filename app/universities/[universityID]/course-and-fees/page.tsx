@@ -1,6 +1,7 @@
 // imports
 import { Metadata } from 'next';
 import FindCourseAd from '@/assets/components/global/FindCourseAd';
+import HtmlViewer from '@/assets/components/global/HtmlViewer';
 import SubHeader from '@/assets/components/global/SubHeader';
 import CourseListAll from '@/assets/components/universities/CourseListAll';
 import FaqSection from '@/assets/components/universities/FaqSection';
@@ -74,6 +75,16 @@ export default async function CourseAndFeesPage({ params }: { params: Promise<{ 
             {universityCourseDataResponse?.data.length ? (
                 <CourseListAll courseDataList={universityCourseDataResponse?.data} universityData={universityData} />
             ) : null}
+
+            {/* course dynamic content */}
+            {universityData.courseDynamicPage && (
+                <div className="mt-8 overflow-hidden rounded-lg border border-gray-200">
+                    <div className="mb-4 w-full bg-linear-to-r from-cyan-100 to-blue-400 px-4 py-4">
+                        <h2 className="text-xl font-bold">{universityData.courseDynamicPage.blockTitle}</h2>
+                    </div>
+                    <HtmlViewer content={universityData.courseDynamicPage.blockContent} tailwindClass="px-6 py-4" />
+                </div>
+            )}
 
             {/* faqs */}
             {universityData.faqs && <FaqSection faqs={universityData.faqs} initialTopic="Course" />}

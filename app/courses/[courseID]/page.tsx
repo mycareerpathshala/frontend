@@ -2,6 +2,7 @@
 // imports
 import Breadcrumb from '@/assets/components/global/Breadcrumb';
 import ExamContainer from '@/assets/components/course/ExamContainer';
+import HtmlViewer from '@/assets/components/global/HtmlViewer';
 import ApplyNowButton from '@/assets/components/global/ApplyNowButton';
 import { getCourseIds, getSingleCourseData } from '@/assets/lib/cms/fetchCourse';
 import { Metadata } from 'next';
@@ -12,9 +13,13 @@ import {
     HiArrowTopRightOnSquare,
     HiBookOpen,
     HiCalendarDays,
+    HiCheckCircle,
     HiClock,
     HiGlobeAlt,
     HiMapPin,
+    HiRocketLaunch,
+    HiShieldCheck,
+    HiUserGroup,
 } from 'react-icons/hi2';
 
 // dynamic metadata
@@ -296,17 +301,46 @@ export default async function SingleCoursePage({ params }: { params: Promise<{ c
                             <ExamContainer examLevel={course.courseLevel} />
                         </div>
                     </div>
+
+                    {/* dynamic content */}
+                    {course.dynamicContent && (
+                        <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+                            <div className="bg-linear-to-r from-cyan-100 to-blue-400 px-4 py-4">
+                                <h2 className="text-xl font-bold text-slate-800 max-sm:text-lg">Course Information and Details</h2>
+                            </div>
+                            <HtmlViewer content={course.dynamicContent} tailwindClass="px-6 py-5" />
+                        </div>
+                    )}
                 </div>
 
                 {/* RIGHT: sidebar */}
-                <div className="flex flex-col gap-4 max-lg:order-first max-lg:flex-row max-lg:flex-wrap max-sm:flex-col">
+                <div className="flex flex-col gap-4 self-start max-lg:order-first max-lg:flex-row max-lg:flex-wrap max-sm:flex-col">
                     {/* apply CTA */}
-                    <div className="min-w-65 flex-1 overflow-hidden rounded-2xl border border-blue-100 bg-blue-50 p-5">
-                        <h3 className="text-base font-semibold text-slate-800">Ready to Apply?</h3>
-                        <p className="mt-1 text-sm text-slate-500">Take the next step towards your academic journey.</p>
-                        <div className="mt-4 flex flex-col gap-2">
+                    <div className="min-w-65 flex-1 overflow-hidden rounded-2xl bg-linear-to-br from-blue-600 to-indigo-700 p-5 shadow-md">
+                        <div className="flex items-center gap-2">
+                            <HiRocketLaunch className="size-5 shrink-0 text-yellow-300" />
+                            <h3 className="text-base font-bold text-white">Ready to Apply?</h3>
+                        </div>
+                        <p className="mt-1 text-sm text-blue-100">Take the next step towards your academic journey.</p>
+
+                        <div className="mt-4 space-y-2.5">
+                            <div className="flex items-center gap-2">
+                                <HiCheckCircle className="size-4 shrink-0 text-green-300" />
+                                <p className="text-xs text-blue-100">Free expert counselling available</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <HiUserGroup className="size-4 shrink-0 text-green-300" />
+                                <p className="text-xs text-blue-100">Dedicated admission support team</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <HiShieldCheck className="size-4 shrink-0 text-green-300" />
+                                <p className="text-xs text-blue-100">Visa & document guidance included</p>
+                            </div>
+                        </div>
+
+                        <div className="mt-5 flex flex-col gap-2">
                             <ApplyNowButton
-                                className="bg-primary-base hover:bg-primary-light block w-full rounded-xl py-2.5 text-center text-sm font-semibold text-white transition-colors duration-200 select-none"
+                                className="block w-full rounded-xl bg-white py-2.5 text-center text-sm font-bold text-blue-700 transition-colors duration-200 select-none hover:bg-blue-50"
                                 university={university ? {
                                     documentId: university.documentId,
                                     name: university.name,
@@ -322,7 +356,7 @@ export default async function SingleCoursePage({ params }: { params: Promise<{ c
                             />
                             <Link
                                 href="/dashboard/counselling"
-                                className="border-primary-base text-primary-base hover:bg-primary-base block w-full rounded-xl border bg-white py-2.5 text-center text-sm font-semibold transition-colors duration-200 select-none hover:text-white"
+                                className="block w-full rounded-xl border border-white/40 bg-white/10 py-2.5 text-center text-sm font-semibold text-white transition-colors duration-200 select-none hover:bg-white/20"
                             >
                                 Talk to Counsellor
                             </Link>

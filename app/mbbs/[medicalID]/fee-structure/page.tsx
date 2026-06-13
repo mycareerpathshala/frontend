@@ -1,5 +1,6 @@
 // imports
 import { Metadata } from 'next';
+import HtmlViewer from '@/assets/components/global/HtmlViewer';
 import SubHeader from '@/assets/components/global/SubHeader';
 import { getMedicalCollegesData, getSingleMedicalData } from '@/assets/lib/cms/fetchMedical';
 
@@ -220,6 +221,16 @@ export default async function FeeStructurePage({ params }: { params: Promise<{ m
                     </div>
                 ) : null}
             </div>
+
+            {/* fee dynamic content */}
+            {medicalData.feeDynamicPage && (
+                <div className="mt-8 overflow-hidden rounded-lg border border-gray-200">
+                    <div className="mb-4 w-full bg-linear-to-r from-cyan-100 to-blue-400 px-4 py-4">
+                        <h2 className="text-xl font-bold">{medicalData.feeDynamicPage.blockTitle}</h2>
+                    </div>
+                    <HtmlViewer content={medicalData.feeDynamicPage.blockContent} tailwindClass="px-6 py-4" />
+                </div>
+            )}
         </>
     );
 }

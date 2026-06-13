@@ -1,5 +1,6 @@
 // imports
 import { Metadata } from 'next';
+import HtmlViewer from '@/assets/components/global/HtmlViewer';
 import FaqBlock from '@/assets/components/universities/FaqBlock';
 import { getSingleUniversityData, getUniversitiesId } from '@/assets/lib/cms/fetchUniversity';
 import { notFound } from 'next/navigation';
@@ -47,6 +48,16 @@ export default async function FAQPage({ params }: { params: Promise<{ university
                     </div>
                 )}
             </div>
+
+            {/* faq dynamic content */}
+            {universityData.faqDynamicPage && (
+                <div className="mt-8 overflow-hidden rounded-lg border border-gray-200">
+                    <div className="mb-4 w-full bg-linear-to-r from-cyan-100 to-blue-400 px-4 py-4">
+                        <h2 className="text-xl font-bold">{universityData.faqDynamicPage.blockTitle}</h2>
+                    </div>
+                    <HtmlViewer content={universityData.faqDynamicPage.blockContent} tailwindClass="px-6 py-4" />
+                </div>
+            )}
         </>
     );
 }

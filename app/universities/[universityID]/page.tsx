@@ -1,4 +1,5 @@
 // imports
+import HtmlViewer from '@/assets/components/global/HtmlViewer';
 import MarkViewer from '@/assets/components/global/MarkViewer';
 import SubHeader from '@/assets/components/global/SubHeader';
 import FaqSection from '@/assets/components/universities/FaqSection';
@@ -96,6 +97,16 @@ export default async function SingleUniversityPage({ params }: { params: Promise
 
             {/* course section */}
             <UniversityCourses universityData={universityData} />
+
+            {/* overview dynamic content */}
+            {universityData.overviewDynamicPage && (
+                <div className="mt-8 overflow-hidden rounded-lg border border-gray-200">
+                    <div className="mb-4 w-full bg-linear-to-r from-cyan-100 to-blue-400 px-4 py-4">
+                        <h2 className="text-xl font-bold">{universityData.overviewDynamicPage.blockTitle}</h2>
+                    </div>
+                    <HtmlViewer content={universityData.overviewDynamicPage.blockContent} tailwindClass="px-6 py-4" />
+                </div>
+            )}
 
             {/* faqs */}
             {universityData.faqs && <FaqSection faqs={universityData.faqs} initialTopic="University" />}

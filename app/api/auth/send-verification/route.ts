@@ -32,7 +32,7 @@ export async function POST() {
             .setExpirationTime('24h')
             .sign(getSecret());
 
-        const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:4000';
+        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://mycareerpathshala.com';
         const verifyUrl = `${baseUrl}/api/auth/verify-email?token=${token}`;
 
         if (process.env.NODE_ENV === 'development') {

@@ -18,9 +18,19 @@ function SingleBlog({
     active: boolean;
     handleClick: () => void;
 }) {
+    // On desktop (md+) the click selects the blog to preview in the side panel.
+    // On mobile there is no visible side panel, so the click should navigate to the blog page.
+    const handleSelect = (event: React.MouseEvent<HTMLAnchorElement>) => {
+        if (typeof window !== 'undefined' && window.matchMedia('(min-width: 768px)').matches) {
+            event.preventDefault();
+            handleClick();
+        }
+    };
+
     return (
-        <div
-            onClick={handleClick}
+        <Link
+            href={`/blogs/${blogData.documentId}`}
+            onClick={handleSelect}
             className={`group flex cursor-pointer flex-col gap-2 rounded-md border-l-4 px-4 py-3 transition-colors duration-150 ${
                 active
                     ? 'border-primary-base bg-primary-gray'
@@ -40,7 +50,7 @@ function SingleBlog({
                 {/* sub category */}
                 <span className="text-primary-base">{blogData.category}</span>
             </div>
-        </div>
+        </Link>
     );
 }
 

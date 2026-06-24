@@ -59,11 +59,11 @@ export default function Footer() {
                         <ul className="flex flex-col items-start gap-1 text-sm">
                             <li className="flex items-center gap-2">
                                 <HiPhone className="size-4" />
-                                <span>+91-9861905-906</span>
+                                <a href="tel:+919861905906" className="hover:underline">+91-9861905-906</a>
                             </li>
                             <li className="flex items-center gap-2">
                                 <HiEnvelope className="size-4" />
-                                <span>info@mycareerpathshala.com</span>
+                                <a href="mailto:info@mycareerpathshala.com" className="hover:underline">info@mycareerpathshala.com</a>
                             </li>
                         </ul>
                     </div>

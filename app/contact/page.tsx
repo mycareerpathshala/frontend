@@ -21,6 +21,10 @@ export const metadata: Metadata = {
     description: "Get in touch with My Career Pathshala — we're here to guide your career journey.",
 };
 
+// Always read the latest contact info from the DB so edits saved in the admin
+// dashboard (/contact-info) appear immediately, instead of being baked in at build time.
+export const dynamic = 'force-dynamic';
+
 const FALLBACK = {
     email:                'info@mycareerpathshala.com',
     phone:                '+91 98765 43210',
@@ -41,6 +45,19 @@ const FALLBACK = {
     languages:            'English • Hindi',
 } satisfies Omit<ContactInfo, 'id' | 'updatedAt'>;
 
+// External profile URLs that must carry a protocol to link off-site.
+const URL_KEYS = ['facebookUrl', 'instagramUrl', 'youtubeUrl', 'linkedinUrl'] as const;
+
+// Ensure an admin-entered URL (e.g. "facebook.com/page") links externally rather
+// than being treated as a relative path on the frontend domain.
+function normalizeUrl(value: string) {
+    const trimmed = value.trim();
+    if (!trimmed) return trimmed;
+    if (/^https?:\/\//i.test(trimmed)) return trimmed;
+    if (trimmed.startsWith('//')) return `https:${trimmed}`;
+    return `https://${trimmed.replace(/^\/+/, '')}`;
+}
+
 function resolve(raw: Partial<ContactInfo> | null) {
     const out = { ...FALLBACK };
     if (!raw) return out;
@@ -48,6 +65,7 @@ function resolve(raw: Partial<ContactInfo> | null) {
         const v = raw[k as keyof ContactInfo];
         if (typeof v === 'string' && v.trim()) out[k] = v;
     }
+    for (const k of URL_KEYS) out[k] = normalizeUrl(out[k]);
     return out;
 }
 
@@ -72,6 +90,9 @@ const heroPills = [
 export default async function ContactPage() {
     const raw = await getContactInfo();
     const ci  = resolve(raw);
+
+    // wa.me requires a bare international number (digits only, no "+" or spaces).
+    const waLink = `https://wa.me/${ci.whatsappNumber.replace(/\D/g, '')}`;
 
     const socialChannels = [
         {
@@ -212,7 +233,7 @@ export default async function ContactPage() {
                             personalised advice on the go.
                         </p>
                         <Link
-                            href={`https://wa.me/${ci.whatsappNumber}`}
+                            href={waLink}
                             target="_blank"
                             className="mt-5 flex items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-2.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-[#1ebe5a] hover:shadow-lg hover:shadow-green-300/50 active:scale-95"
                         >
@@ -274,7 +295,7 @@ export default async function ContactPage() {
                                 ))}
                             </ul>
                             <Link
-                                href={`https://wa.me/${ci.whatsappNumber}`}
+                                href={waLink}
                                 target="_blank"
                                 className="mt-7 inline-flex items-center gap-2.5 rounded-xl bg-white px-5 py-3 text-sm font-bold text-[#075E54] shadow-xl shadow-black/20 transition-all duration-150 hover:bg-green-50 hover:shadow-2xl active:scale-95"
                             >

@@ -2,6 +2,7 @@
 'use client';
 
 // imports
+import { mediaUrl } from '@/assets/utilities/mediaUrl';
 import { BlogType } from '@/assets/types/blogTypes';
 import { StrapiDataType } from '@/assets/types/responseTypes';
 import { formatDateToBlogStringDate } from '@/assets/utilities/helperFunction';
@@ -17,7 +18,7 @@ function BlogCard({ blogData }: { blogData: BlogType & StrapiDataType }) {
         >
             <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-md bg-slate-200">
                 <img
-                    src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${blogData.blogCover.formats?.small?.url}`}
+                    src={`${mediaUrl(blogData.blogCover.formats?.small?.url)}`}
                     alt="Blog thumbnail"
                     className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                 />

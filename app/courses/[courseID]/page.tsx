@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 // imports
+import { mediaUrl } from '@/assets/utilities/mediaUrl';
 import Breadcrumb from '@/assets/components/global/Breadcrumb';
 import ExamContainer from '@/assets/components/course/ExamContainer';
 import HtmlViewer from '@/assets/components/global/HtmlViewer';
@@ -85,7 +86,7 @@ export default async function SingleCoursePage({ params }: { params: Promise<{ c
                     className="relative overflow-hidden rounded-2xl"
                     style={{
                         backgroundImage: university?.universityMediaContent?.coverPhoto?.formats?.medium?.url
-                            ? `url(${process.env.NEXT_PUBLIC_STRAPI_URL}${university.universityMediaContent.coverPhoto.formats.medium.url})`
+                            ? `url(${mediaUrl(university.universityMediaContent.coverPhoto.formats.medium.url)})`
                             : undefined,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
@@ -119,7 +120,7 @@ export default async function SingleCoursePage({ params }: { params: Promise<{ c
                                 {university.universityMediaContent?.logo?.url && (
                                     <div className="relative size-10 shrink-0 overflow-hidden rounded-full border-2 border-white/50">
                                         <img
-                                            src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${university.universityMediaContent.logo.url}`}
+                                            src={`${mediaUrl(university.universityMediaContent.logo.url)}`}
                                             alt={`${university.name} logo`}
                                             className="absolute inset-0 h-full w-full object-cover"
                                         />
@@ -374,7 +375,7 @@ export default async function SingleCoursePage({ params }: { params: Promise<{ c
                                     {university.universityMediaContent?.logo?.url && (
                                         <div className="relative size-12 shrink-0 overflow-hidden rounded-full border border-gray-200">
                                             <img
-                                                src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${university.universityMediaContent.logo.url}`}
+                                                src={`${mediaUrl(university.universityMediaContent.logo.url)}`}
                                                 alt={`${university.name} logo`}
                                                 className="absolute inset-0 h-full w-full object-cover"
                                             />

@@ -1,4 +1,5 @@
 // imports
+import { mediaUrl } from '@/assets/utilities/mediaUrl';
 import { StrapiDataType } from '@/assets/types/responseTypes';
 import { StreamType } from '@/assets/types/streamTypes';
 import Link from 'next/link';
@@ -6,7 +7,7 @@ import { HiArrowRight } from 'react-icons/hi';
 
 function StreamCard({ streamData }: { streamData: StreamType & StrapiDataType }) {
     const streamCoverImage = streamData.streamCover?.formats?.medium?.url
-        ? `${process.env.NEXT_PUBLIC_STRAPI_URL}${streamData.streamCover.formats.medium.url}`
+        ? `${mediaUrl(streamData.streamCover.formats.medium.url)}`
         : '/img/placeholders/stream_placeholder.jpg';
 
     return (

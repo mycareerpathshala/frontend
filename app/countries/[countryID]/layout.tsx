@@ -1,5 +1,6 @@
 // imports
 
+import { mediaUrl } from '@/assets/utilities/mediaUrl';
 import SideNavCountry from '@/assets/components/country/SideNavCountry';
 import { getSingleCountryData } from '@/assets/lib/cms/fetchCountry';
 import { QueryObjectType } from '@/assets/types/responseTypes';
@@ -52,7 +53,7 @@ export default async function SingleCountryLayout({
                     height: '540px',
                     width: '100%',
                     backgroundImage: countryData.coverImage?.formats?.medium?.url
-                        ? `url(${process.env.NEXT_PUBLIC_STRAPI_URL}${countryData.coverImage.formats.medium.url})`
+                        ? `url(${mediaUrl(countryData.coverImage.formats.medium.url)})`
                         : 'background: linear-gradient(90deg, rgba(80, 10, 0, 1) 0%, rgba(0, 48, 113, 1) 100%)',
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',

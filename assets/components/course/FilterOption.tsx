@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 // imports
+import { mediaUrl } from '@/assets/utilities/mediaUrl';
 import { CountryMinType } from '@/assets/types/countryTypes';
 import { StrapiDataType } from '@/assets/types/responseTypes';
 import { StreamType } from '@/assets/types/streamTypes';
@@ -49,7 +50,7 @@ function CountryCard({
             >
                 <span className="text-slate-700 max-sm:text-sm">{countryData.name}</span>
                 <img
-                    src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${countryData.countryFlag?.url}`}
+                    src={`${mediaUrl(countryData.countryFlag?.url)}`}
                     alt={`${countryData.name} Flag`}
                     className="h-6 w-auto object-contain max-sm:h-4"
                 />
@@ -76,7 +77,7 @@ function StreamCard({
             className={`${streamData.documentId === localStreamFilter ? 'outline-sky-500' : 'outline-transparent'} group relative block cursor-pointer overflow-hidden rounded-md outline-4 outline-offset-4 hover:outline-sky-400`}
         >
             <img
-                src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${streamData.streamCover?.formats?.small?.url ? streamData.streamCover.formats.small.url : '/img/placeholders/stream_placeholder.jpg'}`}
+                src={`${mediaUrl(streamData.streamCover?.formats?.small?.url ? streamData.streamCover.formats.small.url : '/img/placeholders/stream_placeholder.jpg')}`}
                 alt={`${streamData.name} Cover`}
                 className=""
             />

@@ -1,6 +1,7 @@
 'use client';
 
 // imports
+import { mediaUrl } from '@/assets/utilities/mediaUrl';
 import { BlogType } from '@/assets/types/blogTypes';
 import { StrapiDataType } from '@/assets/types/responseTypes';
 import { formatDateToBlogStringDate } from '@/assets/utilities/helperFunction';
@@ -59,7 +60,7 @@ function BlogDisplay({ blogData }: { blogData: BlogType & StrapiDataType }) {
         <div
             className="relative flex h-130 items-end overflow-hidden rounded-xl bg-cover bg-center md:col-span-8"
             style={{
-                backgroundImage: `url(${process.env.NEXT_PUBLIC_STRAPI_URL}${blogData.blogCover.formats?.medium?.url})`,
+                backgroundImage: `url(${mediaUrl(blogData.blogCover.formats?.medium?.url)})`,
             }}
         >
             {/* overlay */}

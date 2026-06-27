@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 // imports
+import { mediaUrl } from '@/assets/utilities/mediaUrl';
 import { getMedicalDataForCountry } from '@/assets/lib/cms/fetchMedical';
 import { getUniversitiesForCountry } from '@/assets/lib/cms/fetchUniversity';
 import { CountryType } from '@/assets/types/countryTypes';
@@ -15,7 +16,7 @@ function UniversityRow({ universityData }: { universityData: UniversityTypeForCo
             <td className="flex items-center gap-3 py-4 pl-6 max-sm:gap-2 max-sm:py-3 max-sm:pl-3">
                 <span className="relative block h-10 w-10 shrink-0 max-sm:h-8 max-sm:w-8">
                     <img
-                        src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${universityData.universityMediaContent?.logo.url}`}
+                        src={`${mediaUrl(universityData.universityMediaContent?.logo.url)}`}
                         alt="University Icon"
                         className="object-cotain absolute inset-0 h-full w-full"
                     />
@@ -52,7 +53,7 @@ function MedicalRow({ mbbsData }: { mbbsData: MedicalCollegeType & StrapiDataTyp
             <td className="flex items-center gap-3 py-4 pl-6 max-sm:gap-2 max-sm:py-3 max-sm:pl-3">
                 <span className="relative block h-10 w-10 shrink-0 max-sm:h-8 max-sm:w-8">
                     <img
-                        src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${mbbsData.collegeMediaContent?.logo.url}`}
+                        src={`${mediaUrl(mbbsData.collegeMediaContent?.logo.url)}`}
                         alt="University Icon"
                         className="object-cotain absolute inset-0 h-full w-full"
                     />

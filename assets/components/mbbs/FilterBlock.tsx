@@ -1,5 +1,6 @@
 'use client';
 
+import { mediaUrl } from '@/assets/utilities/mediaUrl';
 import { useAppContext } from '@/assets/context/AppContext';
 import { CountryMinType } from '@/assets/types/countryTypes';
 // imports
@@ -66,7 +67,7 @@ export default function FilterBlock({
                                 <span className="size-4 shrink-0 overflow-hidden rounded-sm">
                                     {/* eslint-disable-next-line @next/next/no-img-element */}
                                     <img
-                                        src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${filteredData.countryFlag?.url}`}
+                                        src={`${mediaUrl(filteredData.countryFlag?.url)}`}
                                         alt={filteredData.name}
                                         className="size-full object-cover"
                                     />

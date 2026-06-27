@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 // imports
+import { mediaUrl } from '@/assets/utilities/mediaUrl';
 import { StrapiDataType } from '@/assets/types/responseTypes';
 import { UniversityType } from '@/assets/types/universityTypes';
 
@@ -11,7 +12,7 @@ export default function UniversityMedia({ universityData }: { universityData: Un
                 <img
                     src={
                         universityData.universityMediaContent?.coverPhoto.formats?.medium?.url
-                            ? `${process.env.NEXT_PUBLIC_STRAPI_URL}${universityData.universityMediaContent.coverPhoto.formats.medium.url}`
+                            ? `${mediaUrl(universityData.universityMediaContent.coverPhoto.formats.medium.url)}`
                             : '/img/placeholders/university_image.jpg'
                     }
                     alt={`${universityData.name} Cover Photo`}
@@ -25,7 +26,7 @@ export default function UniversityMedia({ universityData }: { universityData: Un
                 <img
                     src={
                         universityData.universityMediaContent?.photoOne.formats?.medium?.url
-                            ? `${process.env.NEXT_PUBLIC_STRAPI_URL}${universityData.universityMediaContent.photoOne.formats.medium.url}`
+                            ? `${mediaUrl(universityData.universityMediaContent.photoOne.formats.medium.url)}`
                             : '/img/placeholders/university_image.jpg'
                     }
                     alt={`${universityData.name} Photo One`}
@@ -38,7 +39,7 @@ export default function UniversityMedia({ universityData }: { universityData: Un
                 <img
                     src={
                         universityData.universityMediaContent?.photoTwo.formats?.medium?.url
-                            ? `${process.env.NEXT_PUBLIC_STRAPI_URL}${universityData.universityMediaContent.photoTwo.formats.medium.url}`
+                            ? `${mediaUrl(universityData.universityMediaContent.photoTwo.formats.medium.url)}`
                             : '/img/placeholders/university_image.jpg'
                     }
                     alt={`${universityData.name} Photo Two`}
@@ -51,7 +52,7 @@ export default function UniversityMedia({ universityData }: { universityData: Un
                 <img
                     src={
                         universityData.universityMediaContent?.photoThree.formats?.medium?.url
-                            ? `${process.env.NEXT_PUBLIC_STRAPI_URL}${universityData.universityMediaContent.photoThree.formats.medium.url}`
+                            ? `${mediaUrl(universityData.universityMediaContent.photoThree.formats.medium.url)}`
                             : '/img/placeholders/university_image.jpg'
                     }
                     alt={`${universityData.name} Photo Three`}

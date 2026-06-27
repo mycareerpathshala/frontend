@@ -2,6 +2,7 @@
 'use client';
 
 // imports
+import { mediaUrl } from '@/assets/utilities/mediaUrl';
 import ApplicationPopup from '@/assets/components/global/ApplicationPopup';
 import { useAppContext } from '@/assets/context/AppContext';
 import { CourseType } from '@/assets/types/courseTypes';
@@ -75,7 +76,7 @@ const CourseCard = memo(({ courseData }: { courseData: CourseType & { documentId
                 {/* upper section */}
                 <div
                     style={{
-                        backgroundImage: `url(${process.env.NEXT_PUBLIC_STRAPI_URL}${courseData.university?.universityMediaContent?.coverPhoto.formats?.medium?.url})`,
+                        backgroundImage: `url(${mediaUrl(courseData.university?.universityMediaContent?.coverPhoto.formats?.medium?.url)})`,
                         backgroundRepeat: 'no-repeat',
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
@@ -90,7 +91,7 @@ const CourseCard = memo(({ courseData }: { courseData: CourseType & { documentId
                         <div className="relative h-12.5 w-12.5 rounded-full">
                             <img
                                 className="absolute inset-0 overflow-hidden object-cover"
-                                src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${courseData.university?.universityMediaContent?.logo.url}`}
+                                src={`${mediaUrl(courseData.university?.universityMediaContent?.logo.url)}`}
                                 alt="Stanford University Logo"
                             />
                         </div>

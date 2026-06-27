@@ -1,4 +1,5 @@
 // imports
+import { mediaUrl } from '@/assets/utilities/mediaUrl';
 import { getCountriesData } from '@/assets/lib/cms/fetchCountry';
 import { QueryObjectType } from '@/assets/types/responseTypes';
 import Link from 'next/link';
@@ -62,7 +63,7 @@ export default async function CountryGrid() {
                         <CountryCard
                             key={index}
                             name={countryData.name}
-                            coverImage={`${process.env.NEXT_PUBLIC_STRAPI_URL}${countryData.coverImage?.formats?.medium?.url}`}
+                            coverImage={`${mediaUrl(countryData.coverImage?.formats?.medium?.url)}`}
                             url={`/countries/${countryData.documentId}`}
                         />
                     );

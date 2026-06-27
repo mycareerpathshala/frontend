@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 // imports
+import { mediaUrl } from '@/assets/utilities/mediaUrl';
 import Breadcrumb from '@/assets/components/global/Breadcrumb';
 import MedicalMedia from '@/assets/components/mbbs/MedicalMedia';
 import SideNav from '@/assets/components/mbbs/SideNav';
@@ -123,7 +124,7 @@ export default async function SingleMBBSLayout({
                                     download
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    href={`${process.env.NEXT_PUBLIC_STRAPI_URL}${medicalData.collegeMediaContent.brochure.url}`}
+                                    href={`${mediaUrl(medicalData.collegeMediaContent.brochure.url)}`}
                                     className="hover:bg-primary-gray flex w-fit cursor-pointer items-center gap-1 rounded-lg border px-2 py-1.5 transition-colors duration-200 ease-in-out select-none"
                                 >
                                     <HiArrowDownTray className="text-primary-base size-6" />
@@ -195,7 +196,7 @@ export default async function SingleMBBSLayout({
                             {medicalData.location && (
                                 <span className="relative block h-11.5 w-11.5 overflow-hidden rounded-full">
                                     <img
-                                        src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${medicalData.location.country?.countryFlag?.url ? medicalData.location.country.countryFlag.url : '/img/mcp_pen_icon.svg'}`}
+                                        src={`${mediaUrl(medicalData.location.country?.countryFlag?.url ? medicalData.location.country.countryFlag.url : '/img/mcp_pen_icon.svg')}`}
                                         alt={`${medicalData.name} country flag`}
                                         className="absolute inset-0 h-full w-full rounded-full object-cover"
                                     />

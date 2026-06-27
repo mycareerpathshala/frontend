@@ -2,6 +2,7 @@
 'use client';
 
 // imports
+import { mediaUrl } from '@/assets/utilities/mediaUrl';
 import ApplicationPopup from '@/assets/components/global/ApplicationPopup';
 import { useAppContext } from '@/assets/context/AppContext';
 import { StrapiDataType } from '@/assets/types/responseTypes';
@@ -76,7 +77,7 @@ export default function UniversityCard({ singleUniversity }: { singleUniversity:
                     {/* Media */}
                     <div className="relative h-52 lg:h-full">
                         <img
-                            src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${singleUniversity.universityMediaContent?.coverPhoto.formats?.small?.url}`}
+                            src={`${mediaUrl(singleUniversity.universityMediaContent?.coverPhoto.formats?.small?.url)}`}
                             alt={`${singleUniversity.name} Cover`}
                             className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
                         />
@@ -84,7 +85,7 @@ export default function UniversityCard({ singleUniversity }: { singleUniversity:
                         {/* Logo */}
                         <div className="absolute top-5 right-5 h-16 w-16 overflow-hidden rounded-xl border border-white bg-white p-1 shadow">
                             <img
-                                src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${singleUniversity.universityMediaContent?.logo.url}`}
+                                src={`${mediaUrl(singleUniversity.universityMediaContent?.logo.url)}`}
                                 alt={`${singleUniversity.name} Logo`}
                                 className="h-full w-full object-contain"
                             />

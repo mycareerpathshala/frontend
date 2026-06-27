@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 // imports
+import { mediaUrl } from '@/assets/utilities/mediaUrl';
 import { CountryMinType } from '@/assets/types/countryTypes';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { MdOutlineClose } from 'react-icons/md';
@@ -43,7 +44,7 @@ function CountryCard({
             >
                 <span className="text-slate-700 max-sm:text-sm">{countryData.name}</span>
                 <img
-                    src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${countryData.countryFlag?.url}`}
+                    src={`${mediaUrl(countryData.countryFlag?.url)}`}
                     alt={`${countryData.name} Flag`}
                     className="h-6 w-auto object-contain max-sm:h-4"
                 />

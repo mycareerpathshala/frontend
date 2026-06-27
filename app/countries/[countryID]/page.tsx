@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 // imports
+import { mediaUrl } from '@/assets/utilities/mediaUrl';
 import CountryRequirements from '@/assets/components/country/CountryRequirements';
 import CountryBanner from '@/assets/components/country/CountryBanner';
 import FactCardsContainer from '@/assets/components/country/FactCardsContainer';
@@ -80,7 +81,7 @@ export default async function SingleCountryPage({ params }: { params: Promise<{ 
             {/* ad section */}
             <CountryBanner
                 countryName={countryData.name}
-                flagUrl={`${process.env.NEXT_PUBLIC_STRAPI_URL}${countryData.countryFlag?.url}`}
+                flagUrl={`${mediaUrl(countryData.countryFlag?.url)}`}
             />
 
             {/* facts and figures */}

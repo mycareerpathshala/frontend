@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 // imports
+import { mediaUrl } from '@/assets/utilities/mediaUrl';
 import { CountryType } from '@/assets/types/countryTypes';
 import { StrapiDataType } from '@/assets/types/responseTypes';
 import Link from 'next/link';
@@ -13,7 +14,7 @@ export default function SingleCountryCard({ countryData }: { countryData: Countr
                 {/* Banner */}
                 <div className="relative h-64 w-full">
                     <img
-                        src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${countryData.coverImage?.formats?.medium?.url}`}
+                        src={`${mediaUrl(countryData.coverImage?.formats?.medium?.url)}`}
                         alt={`${countryData.name} Cover Image`}
                         className="h-full w-full object-cover"
                     />
@@ -24,7 +25,7 @@ export default function SingleCountryCard({ countryData }: { countryData: Countr
                     <div className="absolute top-4 flex w-full items-center justify-between px-4">
                         <div className="relative z-10 h-12 w-12 overflow-hidden rounded-full border-4 border-white bg-white shadow-xl">
                             <img
-                                src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${countryData.countryFlag?.url}`}
+                                src={`${mediaUrl(countryData.countryFlag?.url)}`}
                                 alt={`${countryData.name} Flag`}
                                 className="absolute inset-0 h-full w-full object-cover"
                             />

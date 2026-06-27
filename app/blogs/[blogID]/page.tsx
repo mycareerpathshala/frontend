@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 // imports
 
+import { mediaUrl } from '@/assets/utilities/mediaUrl';
 import MarkViewerBlog from '@/assets/components/blogs/MarkViewBlog';
 import { getBlogsData, getSingleBlogData } from '@/assets/lib/cms/fetchBlog';
 import { Metadata } from 'next';
@@ -13,7 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ blogID: s
     if (!res?.data) return { title: 'Blog' };
     const { data } = res;
     const description = `${data.category} article${data.authorName ? ` by ${data.authorName}` : ''} on My Career Pathshala.`;
-    const ogImage = data.blogCover?.url ? `${process.env.NEXT_PUBLIC_STRAPI_URL}${data.blogCover.url}` : undefined;
+    const ogImage = data.blogCover?.url ? `${mediaUrl(data.blogCover.url)}` : undefined;
     return {
         title: data.blogTitle,
         description,
@@ -111,7 +112,7 @@ export default async function SingleBlogPage({ params }: { params: Promise<{ blo
             <section className="mx-auto mt-8 w-full max-w-5xl max-sm:mt-4">
                 <div className="relative h-145 w-full max-lg:h-90 max-sm:h-65">
                     <img
-                        src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${blogData.blogCover.formats?.medium?.url ? blogData.blogCover.formats.medium.url : '/img/blog/blog_cover_fallback.jpg'}`}
+                        src={`${mediaUrl(blogData.blogCover.formats?.medium?.url ? blogData.blogCover.formats.medium.url : '/img/blog/blog_cover_fallback.jpg')}`}
                         alt="Blog Cover Image"
                         className="absolute inset-0 h-full w-full rounded-xl object-cover"
                     />

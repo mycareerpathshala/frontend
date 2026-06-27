@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 // imports
+import { mediaUrl } from '@/assets/utilities/mediaUrl';
 import { MedicalCollegeType } from '@/assets/types/mbbsTypes';
 import { StrapiDataType } from '@/assets/types/responseTypes';
 
@@ -11,7 +12,7 @@ export default function MedicalMedia({ medicalData }: { medicalData: MedicalColl
                 <img
                     src={
                         medicalData.collegeMediaContent?.coverPhoto.formats?.medium?.url
-                            ? `${process.env.NEXT_PUBLIC_STRAPI_URL}${medicalData.collegeMediaContent.coverPhoto.formats.medium.url}`
+                            ? `${mediaUrl(medicalData.collegeMediaContent.coverPhoto.formats.medium.url)}`
                             : '/img/placeholders/university_image.jpg'
                     }
                     alt={`${medicalData.name} Cover Photo`}
@@ -25,7 +26,7 @@ export default function MedicalMedia({ medicalData }: { medicalData: MedicalColl
                 <img
                     src={
                         medicalData.collegeMediaContent?.photoOne.formats?.medium?.url
-                            ? `${process.env.NEXT_PUBLIC_STRAPI_URL}${medicalData.collegeMediaContent.photoOne.formats.medium.url}`
+                            ? `${mediaUrl(medicalData.collegeMediaContent.photoOne.formats.medium.url)}`
                             : '/img/placeholders/university_image.jpg'
                     }
                     alt={`${medicalData.name} Photo One`}
@@ -38,7 +39,7 @@ export default function MedicalMedia({ medicalData }: { medicalData: MedicalColl
                 <img
                     src={
                         medicalData.collegeMediaContent?.photoTwo.formats?.medium?.url
-                            ? `${process.env.NEXT_PUBLIC_STRAPI_URL}${medicalData.collegeMediaContent.photoTwo.formats.medium.url}`
+                            ? `${mediaUrl(medicalData.collegeMediaContent.photoTwo.formats.medium.url)}`
                             : '/img/placeholders/university_image.jpg'
                     }
                     alt={`${medicalData.name} Photo Two`}
@@ -51,7 +52,7 @@ export default function MedicalMedia({ medicalData }: { medicalData: MedicalColl
                 <img
                     src={
                         medicalData.collegeMediaContent?.photoThree.formats?.medium?.url
-                            ? `${process.env.NEXT_PUBLIC_STRAPI_URL}${medicalData.collegeMediaContent.photoThree.formats.medium.url}`
+                            ? `${mediaUrl(medicalData.collegeMediaContent.photoThree.formats.medium.url)}`
                             : '/img/placeholders/university_image.jpg'
                     }
                     alt={`${medicalData.name} Photo Three`}

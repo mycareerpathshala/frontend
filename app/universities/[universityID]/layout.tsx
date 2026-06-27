@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 // imports
+import { mediaUrl } from '@/assets/utilities/mediaUrl';
 import React from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -146,7 +147,7 @@ export default async function SingleUniversityLayout({
                                     download
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    href={`${process.env.NEXT_PUBLIC_STRAPI_URL}${universityData.universityMediaContent.brochure.url}`}
+                                    href={`${mediaUrl(universityData.universityMediaContent.brochure.url)}`}
                                     className="hover:bg-primary-gray flex w-fit cursor-pointer items-center gap-1 rounded-lg border px-2 py-1.5 transition-colors duration-200 ease-in-out select-none"
                                 >
                                     <HiArrowDownTray className="text-primary-base size-6" />
@@ -214,7 +215,7 @@ export default async function SingleUniversityLayout({
                             {universityData.location && (
                                 <span className="relative block h-11.5 w-11.5 overflow-hidden rounded-full">
                                     <img
-                                        src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${universityData.location.country?.countryFlag?.url ? universityData.location.country.countryFlag.url : '/img/mcp_pen_icon.svg'}`}
+                                        src={`${mediaUrl(universityData.location.country?.countryFlag?.url ? universityData.location.country.countryFlag.url : '/img/mcp_pen_icon.svg')}`}
                                         alt={`${universityData.name} country flag`}
                                         className="absolute inset-0 h-full w-full rounded-full object-cover"
                                     />

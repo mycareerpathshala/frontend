@@ -2,6 +2,7 @@
 'use client';
 
 // imports
+import { mediaUrl } from '@/assets/utilities/mediaUrl';
 import { useAppContext } from '@/assets/context/AppContext';
 import { MedicalCollegeType } from '@/assets/types/mbbsTypes';
 import { StrapiDataType } from '@/assets/types/responseTypes';
@@ -85,7 +86,7 @@ export default function MedicalCard({ universityData }: { universityData: Medica
                     {/* Media */}
                     <div className="relative h-52 lg:h-full">
                         <img
-                            src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${universityData.collegeMediaContent?.coverPhoto.formats?.medium?.url ?? universityData.collegeMediaContent?.coverPhoto.url}`}
+                            src={`${mediaUrl(universityData.collegeMediaContent?.coverPhoto.formats?.medium?.url ?? universityData.collegeMediaContent?.coverPhoto.url)}`}
                             alt={`${universityData.name} Cover`}
                             className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
                         />
@@ -93,7 +94,7 @@ export default function MedicalCard({ universityData }: { universityData: Medica
                         {/* Logo */}
                         <div className="absolute top-5 right-5 h-16 w-16 overflow-hidden rounded-xl border border-white bg-white p-1 shadow">
                             <img
-                                src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${universityData.collegeMediaContent?.logo.url}`}
+                                src={`${mediaUrl(universityData.collegeMediaContent?.logo.url)}`}
                                 alt={`${universityData.name} Logo`}
                                 className="h-full w-full object-contain"
                             />

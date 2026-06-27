@@ -41,7 +41,7 @@ export interface MediaContentType {
 export interface EnglishProficiencyType {
     id: number;
     toefl?: number;
-    ielts: number;
+    ielts?: number;
     pteAcademic?: number;
     duolingo?: number;
     cambridge?: string;

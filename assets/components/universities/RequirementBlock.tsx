@@ -53,13 +53,15 @@ function RequirementSection({
                             App Fee: ${requirements.applicationFee.minimum} – ${requirements.applicationFee.maximum}
                         </span>
                     )}
-                    <Link
-                        href={requirements?.applicationPortalURL ?? '#'}
-                        className="flex items-center gap-2 rounded-lg bg-blue-600 px-3 py-1.5 text-sm text-white transition-colors hover:bg-blue-700"
-                    >
-                        <BsBoxArrowUpRight className="size-4" />
-                        Application Portal
-                    </Link>
+                    {requirements?.applicationPortalURL && (
+                        <Link
+                            href={requirements.applicationPortalURL}
+                            className="flex items-center gap-2 rounded-lg bg-blue-600 px-3 py-1.5 text-sm text-white transition-colors hover:bg-blue-700"
+                        >
+                            <BsBoxArrowUpRight className="size-4" />
+                            Application Portal
+                        </Link>
+                    )}
                 </div>
             </div>
 

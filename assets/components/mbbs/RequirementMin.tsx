@@ -4,11 +4,28 @@ import { FaGraduationCap } from 'react-icons/fa';
 import { GiAtom, GiDna2, GiMicroscope } from 'react-icons/gi';
 import { SiTarget } from 'react-icons/si';
 
+// treat only null / undefined as "absent" so a legitimate 0 still renders
+const has = (v?: number | null): v is number => v !== undefined && v !== null;
+
 export default function RequirementMin({
     applicationRequirements,
 }: {
     applicationRequirements: MedicalApplicationRequirementType;
 }) {
+    const hasHeroStats =
+        has(applicationRequirements.neetScoreMinimum) || has(applicationRequirements.totalGPAMinimum);
+
+    const hasSchoolingRecords =
+        has(applicationRequirements.secondaryGPAMinimum) || has(applicationRequirements.higherSecondaryGPAMinimum);
+
+    const hasScienceProficiency =
+        has(applicationRequirements.physicsScoreMinimum) ||
+        has(applicationRequirements.chemistryScoreMinimum) ||
+        has(applicationRequirements.biologyScoreMinimum);
+
+    // nothing to show — render nothing instead of an empty card
+    if (!hasHeroStats && !hasSchoolingRecords && !hasScienceProficiency) return null;
+
     return (
         <div className="mt-8 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
             {/* Header - Matching your established brand style */}
@@ -18,82 +35,110 @@ export default function RequirementMin({
 
             <div className="p-6">
                 {/* Primary Stats - Bento Grid */}
-                <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <div className="flex items-center gap-4 rounded-2xl border border-rose-100 bg-rose-50 p-6">
-                        <div className="flex size-12 items-center justify-center rounded-xl bg-white text-rose-500 shadow-sm">
-                            <SiTarget size={24} />
-                        </div>
-                        <div>
-                            <p className="text-[10px] font-bold tracking-widest text-slate-400 uppercase max-sm:text-xs">
-                                NEET Minimum
-                            </p>
-                            <h3 className="text-2xl font-bold text-slate-900">
-                                {applicationRequirements.neetScoreMinimum}
-                            </h3>
-                        </div>
-                    </div>
+                {hasHeroStats && (
+                    <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+                        {has(applicationRequirements.neetScoreMinimum) && (
+                            <div className="flex items-center gap-4 rounded-2xl border border-rose-100 bg-rose-50 p-6">
+                                <div className="flex size-12 items-center justify-center rounded-xl bg-white text-rose-500 shadow-sm">
+                                    <SiTarget size={24} />
+                                </div>
+                                <div>
+                                    <p className="text-[10px] font-bold tracking-widest text-slate-400 uppercase max-sm:text-xs">
+                                        NEET Minimum
+                                    </p>
+                                    <h3 className="text-2xl font-bold text-slate-900">
+                                        {applicationRequirements.neetScoreMinimum}
+                                    </h3>
+                                </div>
+                            </div>
+                        )}
 
-                    <div className="flex items-center gap-4 rounded-2xl border border-blue-100 bg-blue-50 p-6">
-                        <div className="flex size-12 items-center justify-center rounded-xl bg-white text-blue-500 shadow-sm">
-                            <FaGraduationCap size={24} />
-                        </div>
-                        <div>
-                            <p className="text-[10px] font-bold tracking-widest text-slate-400 uppercase max-sm:text-xs">Total GPA</p>
-                            <h3 className="text-2xl font-bold text-slate-900">
-                                {applicationRequirements.totalGPAMinimum}%
-                            </h3>
-                        </div>
+                        {has(applicationRequirements.totalGPAMinimum) && (
+                            <div className="flex items-center gap-4 rounded-2xl border border-blue-100 bg-blue-50 p-6">
+                                <div className="flex size-12 items-center justify-center rounded-xl bg-white text-blue-500 shadow-sm">
+                                    <FaGraduationCap size={24} />
+                                </div>
+                                <div>
+                                    <p className="text-[10px] font-bold tracking-widest text-slate-400 uppercase max-sm:text-xs">
+                                        Total GPA
+                                    </p>
+                                    <h3 className="text-2xl font-bold text-slate-900">
+                                        {applicationRequirements.totalGPAMinimum}
+                                    </h3>
+                                </div>
+                            </div>
+                        )}
                     </div>
-                </div>
+                )}
 
                 {/* Secondary & Subject Scores */}
-                <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-                    {/* GPA Breakdown */}
-                    <div className="space-y-4">
-                        <p className="text-xs font-bold tracking-tighter text-slate-400 uppercase max-sm:text-sm">Schooling Records</p>
-                        <div className="space-y-3">
-                            <div className="flex items-center justify-between rounded-xl border border-slate-100 p-3">
-                                <span className="text-sm font-medium text-slate-600">Secondary GPA</span>
-                                <span className="font-bold text-slate-800">
-                                    {applicationRequirements.secondaryGPAMinimum}%
-                                </span>
+                {(hasSchoolingRecords || hasScienceProficiency) && (
+                    <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+                        {/* GPA Breakdown */}
+                        {hasSchoolingRecords && (
+                            <div className="space-y-4">
+                                <p className="text-xs font-bold tracking-tighter text-slate-400 uppercase max-sm:text-sm">
+                                    Schooling Records
+                                </p>
+                                <div className="space-y-3">
+                                    {has(applicationRequirements.secondaryGPAMinimum) && (
+                                        <div className="flex items-center justify-between rounded-xl border border-slate-100 p-3">
+                                            <span className="text-sm font-medium text-slate-600">Secondary GPA</span>
+                                            <span className="font-bold text-slate-800">
+                                                {applicationRequirements.secondaryGPAMinimum}
+                                            </span>
+                                        </div>
+                                    )}
+                                    {has(applicationRequirements.higherSecondaryGPAMinimum) && (
+                                        <div className="flex items-center justify-between rounded-xl border border-slate-100 p-3">
+                                            <span className="text-sm font-medium text-slate-600">
+                                                Higher Secondary GPA
+                                            </span>
+                                            <span className="font-bold text-slate-800">
+                                                {applicationRequirements.higherSecondaryGPAMinimum}
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
-                            <div className="flex items-center justify-between rounded-xl border border-slate-100 p-3">
-                                <span className="text-sm font-medium text-slate-600">Higher Secondary GPA</span>
-                                <span className="font-bold text-slate-800">
-                                    {applicationRequirements.higherSecondaryGPAMinimum}%
-                                </span>
-                            </div>
-                        </div>
-                    </div>
+                        )}
 
-                    {/* Subject Specifics */}
-                    <div className="space-y-4">
-                        <p className="text-xs font-bold tracking-tighter text-slate-400 uppercase max-sm:text-sm">
-                            Science Proficiency
-                        </p>
-                        <div className="space-y-4">
-                            <SubjectBar
-                                icon={<GiAtom />}
-                                name="Physics"
-                                score={applicationRequirements.physicsScoreMinimum}
-                                color="bg-orange-500"
-                            />
-                            <SubjectBar
-                                icon={<GiMicroscope />}
-                                name="Chemistry"
-                                score={applicationRequirements.chemistryScoreMinimum}
-                                color="bg-blue-500"
-                            />
-                            <SubjectBar
-                                icon={<GiDna2 />}
-                                name="Biology"
-                                score={applicationRequirements.biologyScoreMinimum}
-                                color="bg-emerald-500"
-                            />
-                        </div>
+                        {/* Subject Specifics */}
+                        {hasScienceProficiency && (
+                            <div className="space-y-4">
+                                <p className="text-xs font-bold tracking-tighter text-slate-400 uppercase max-sm:text-sm">
+                                    Science Proficiency
+                                </p>
+                                <div className="space-y-4">
+                                    {has(applicationRequirements.physicsScoreMinimum) && (
+                                        <SubjectBar
+                                            icon={<GiAtom />}
+                                            name="Physics"
+                                            score={applicationRequirements.physicsScoreMinimum}
+                                            color="bg-orange-500"
+                                        />
+                                    )}
+                                    {has(applicationRequirements.chemistryScoreMinimum) && (
+                                        <SubjectBar
+                                            icon={<GiMicroscope />}
+                                            name="Chemistry"
+                                            score={applicationRequirements.chemistryScoreMinimum}
+                                            color="bg-blue-500"
+                                        />
+                                    )}
+                                    {has(applicationRequirements.biologyScoreMinimum) && (
+                                        <SubjectBar
+                                            icon={<GiDna2 />}
+                                            name="Biology"
+                                            score={applicationRequirements.biologyScoreMinimum}
+                                            color="bg-emerald-500"
+                                        />
+                                    )}
+                                </div>
+                            </div>
+                        )}
                     </div>
-                </div>
+                )}
             </div>
         </div>
     );

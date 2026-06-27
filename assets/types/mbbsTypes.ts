@@ -16,13 +16,13 @@ import { StrapiCollectionMetaType, StrapiDataType, StrapiResponseType, StrapiSin
 export interface MedicalApplicationRequirementType {
     id: number;
     applicationFee?: number;
-    neetScoreMinimum: number;
-    secondaryGPAMinimum: number;
-    higherSecondaryGPAMinimum: number;
-    totalGPAMinimum: number;
-    physicsScoreMinimum: number;
-    chemistryScoreMinimum: number;
-    biologyScoreMinimum: number;
+    neetScoreMinimum?: number;
+    secondaryGPAMinimum?: number;
+    higherSecondaryGPAMinimum?: number;
+    totalGPAMinimum?: number;
+    physicsScoreMinimum?: number;
+    chemistryScoreMinimum?: number;
+    biologyScoreMinimum?: number;
     englishProficiency?: EnglishProficiencyType;
     applicationDateList?: ApplicationDateType[];
 }

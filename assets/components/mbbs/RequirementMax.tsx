@@ -7,11 +7,31 @@ import { FaGlobeAmericas, FaGraduationCap, FaMoneyBillWave } from 'react-icons/f
 import { GiAtom, GiDna2, GiMicroscope } from 'react-icons/gi';
 import { SiTarget } from 'react-icons/si';
 
+// treat only null / undefined as "absent" so a legitimate 0 still renders
+const has = (v?: number | null): v is number => v !== undefined && v !== null;
+
 export default function RequirementMax({
     applicationRequirements,
 }: {
     applicationRequirements: MedicalApplicationRequirementType;
 }) {
+    const ep = applicationRequirements.englishProficiency;
+    const hasEnglish =
+        !!ep && (has(ep.ielts) || has(ep.toefl) || has(ep.pteAcademic) || has(ep.duolingo) || has(ep.toeic) || !!ep.cambridge);
+
+    const hasSubjects =
+        has(applicationRequirements.physicsScoreMinimum) ||
+        has(applicationRequirements.chemistryScoreMinimum) ||
+        has(applicationRequirements.biologyScoreMinimum);
+
+    const hasGpaHistory =
+        has(applicationRequirements.secondaryGPAMinimum) || has(applicationRequirements.higherSecondaryGPAMinimum);
+
+    const hasHeroStats =
+        has(applicationRequirements.neetScoreMinimum) ||
+        has(applicationRequirements.totalGPAMinimum) ||
+        (!!ep && has(ep.ielts));
+
     return (
         <div className="flex flex-col gap-8">
             {/* 1. Academic & Entrance Section */}
@@ -20,86 +40,114 @@ export default function RequirementMax({
                     <h2 className="flex items-center gap-2 text-xl font-bold text-slate-800">
                         <FaGraduationCap className="size-6 text-blue-500" /> Academic Prerequisites
                     </h2>
-                    <div className="flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700">
-                        <FaMoneyBillWave /> App Fee: ${applicationRequirements.applicationFee}
-                    </div>
+                    {has(applicationRequirements.applicationFee) && (
+                        <div className="flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700">
+                            <FaMoneyBillWave /> App Fee: ${applicationRequirements.applicationFee}
+                        </div>
+                    )}
                 </div>
 
                 <div className="p-6">
                     {/* Hero Stats */}
-                    <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
-                        <StatCard
-                            label="NEET Minimum"
-                            value={applicationRequirements.neetScoreMinimum}
-                            icon={<SiTarget />}
-                            theme="rose"
-                        />
-                        <StatCard
-                            label="Total Aggregate"
-                            value={`${applicationRequirements.totalGPAMinimum}%`}
-                            icon={<FaGraduationCap />}
-                            theme="blue"
-                        />
-                        {applicationRequirements.englishProficiency && (
-                            <StatCard
-                                label="Language Level"
-                                value={`IELTS ${applicationRequirements.englishProficiency.ielts}`}
-                                icon={<FaGlobeAmericas />}
-                                theme="cyan"
-                            />
-                        )}
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
-                        {/* Subject Specifics */}
-                        <div className="space-y-4">
-                            <p className="text-sm font-bold tracking-widest text-slate-400 uppercase">PCB Percentage</p>
-                            <div className="space-y-4">
-                                <SubjectBar
-                                    icon={<GiAtom />}
-                                    name="Physics"
-                                    score={applicationRequirements.physicsScoreMinimum}
-                                    color="bg-orange-500"
+                    {hasHeroStats && (
+                        <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                            {has(applicationRequirements.neetScoreMinimum) && (
+                                <StatCard
+                                    label="NEET Minimum"
+                                    value={applicationRequirements.neetScoreMinimum}
+                                    icon={<SiTarget />}
+                                    theme="rose"
                                 />
-                                <SubjectBar
-                                    icon={<GiMicroscope />}
-                                    name="Chemistry"
-                                    score={applicationRequirements.chemistryScoreMinimum}
-                                    color="bg-blue-500"
+                            )}
+                            {has(applicationRequirements.totalGPAMinimum) && (
+                                <StatCard
+                                    label="Total Aggregate GPA"
+                                    value={applicationRequirements.totalGPAMinimum}
+                                    icon={<FaGraduationCap />}
+                                    theme="blue"
                                 />
-                                <SubjectBar
-                                    icon={<GiDna2 />}
-                                    name="Biology"
-                                    score={applicationRequirements.biologyScoreMinimum}
-                                    color="bg-emerald-500"
+                            )}
+                            {ep && has(ep.ielts) && (
+                                <StatCard
+                                    label="Language Level"
+                                    value={`IELTS ${ep.ielts}`}
+                                    icon={<FaGlobeAmericas />}
+                                    theme="cyan"
                                 />
-                            </div>
+                            )}
                         </div>
+                    )}
 
-                        {/* Record History */}
-                        <div className="space-y-4">
-                            <p className="text-sm font-bold tracking-widest text-slate-400 uppercase">GPA History</p>
-                            <div className="grid grid-cols-1 gap-3">
-                                <div className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 p-4">
-                                    <span className="text-sm text-slate-600">Secondary (10th)</span>
-                                    <span className="font-bold text-slate-900">
-                                        {applicationRequirements.secondaryGPAMinimum}%
-                                    </span>
+                    {(hasSubjects || hasGpaHistory) && (
+                        <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
+                            {/* Subject Specifics */}
+                            {hasSubjects && (
+                                <div className="space-y-4">
+                                    <p className="text-sm font-bold tracking-widest text-slate-400 uppercase">
+                                        PCB Percentage
+                                    </p>
+                                    <div className="space-y-4">
+                                        {has(applicationRequirements.physicsScoreMinimum) && (
+                                            <SubjectBar
+                                                icon={<GiAtom />}
+                                                name="Physics"
+                                                score={applicationRequirements.physicsScoreMinimum}
+                                                color="bg-orange-500"
+                                            />
+                                        )}
+                                        {has(applicationRequirements.chemistryScoreMinimum) && (
+                                            <SubjectBar
+                                                icon={<GiMicroscope />}
+                                                name="Chemistry"
+                                                score={applicationRequirements.chemistryScoreMinimum}
+                                                color="bg-blue-500"
+                                            />
+                                        )}
+                                        {has(applicationRequirements.biologyScoreMinimum) && (
+                                            <SubjectBar
+                                                icon={<GiDna2 />}
+                                                name="Biology"
+                                                score={applicationRequirements.biologyScoreMinimum}
+                                                color="bg-emerald-500"
+                                            />
+                                        )}
+                                    </div>
                                 </div>
-                                <div className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 p-4">
-                                    <span className="text-sm text-slate-600">Higher Secondary (12th)</span>
-                                    <span className="font-bold text-slate-900">
-                                        {applicationRequirements.higherSecondaryGPAMinimum}%
-                                    </span>
+                            )}
+
+                            {/* Record History */}
+                            {hasGpaHistory && (
+                                <div className="space-y-4">
+                                    <p className="text-sm font-bold tracking-widest text-slate-400 uppercase">
+                                        GPA History
+                                    </p>
+                                    <div className="grid grid-cols-1 gap-3">
+                                        {has(applicationRequirements.secondaryGPAMinimum) && (
+                                            <div className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 p-4">
+                                                <span className="text-sm text-slate-600">Secondary (10th)</span>
+                                                <span className="font-bold text-slate-900">
+                                                    {applicationRequirements.secondaryGPAMinimum} GPA
+                                                </span>
+                                            </div>
+                                        )}
+                                        {has(applicationRequirements.higherSecondaryGPAMinimum) && (
+                                            <div className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 p-4">
+                                                <span className="text-sm text-slate-600">Higher Secondary (12th)</span>
+                                                <span className="font-bold text-slate-900">
+                                                    {applicationRequirements.higherSecondaryGPAMinimum} GPA
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
+                            )}
                         </div>
-                    </div>
+                    )}
                 </div>
             </div>
 
             {/* 2. English Proficiency & Deadlines Row */}
-            {applicationRequirements.englishProficiency && (
+            {hasEnglish && ep && (
                 <div className="">
                     {/* English Proficiency Table */}
                     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white lg:col-span-2">
@@ -107,42 +155,18 @@ export default function RequirementMax({
                             <h3 className="text-lg font-bold text-slate-800">English Language Requirements</h3>
                         </div>
                         <div className="grid grid-cols-2 gap-4 p-6 sm:grid-cols-3">
-                            <LanguageBadge
-                                label="IELTS"
-                                value={applicationRequirements.englishProficiency.ielts}
-                                iconPath="ielts.svg"
-                            />
-                            {applicationRequirements.englishProficiency.toefl && (
-                                <LanguageBadge
-                                    label="TOEFL"
-                                    value={applicationRequirements.englishProficiency.toefl}
-                                    iconPath="toefl.svg"
-                                />
+                            {has(ep.ielts) && <LanguageBadge label="IELTS" value={ep.ielts} iconPath="ielts.svg" />}
+                            {has(ep.toefl) && <LanguageBadge label="TOEFL" value={ep.toefl} iconPath="toefl.svg" />}
+                            {has(ep.pteAcademic) && (
+                                <LanguageBadge label="PTE" value={ep.pteAcademic} iconPath="pte.svg" />
                             )}
-                            {applicationRequirements.englishProficiency.pteAcademic && (
-                                <LanguageBadge
-                                    label="PTE"
-                                    value={applicationRequirements.englishProficiency.pteAcademic}
-                                    iconPath="pte.svg"
-                                />
+                            {has(ep.duolingo) && (
+                                <LanguageBadge label="Duolingo" value={ep.duolingo} iconPath="duolingo.svg" />
                             )}
-                            {applicationRequirements.englishProficiency.duolingo && (
-                                <LanguageBadge
-                                    label="Duolingo"
-                                    value={applicationRequirements.englishProficiency.duolingo}
-                                    iconPath="duolingo.svg"
-                                />
-                            )}
-                            {applicationRequirements.englishProficiency.toeic && (
-                                <LanguageBadge
-                                    label="TOEIC"
-                                    value={applicationRequirements.englishProficiency.toeic}
-                                    iconPath="toeic.svg"
-                                />
-                            )}
-                            {applicationRequirements.englishProficiency.cambridge && (
+                            {has(ep.toeic) && <LanguageBadge label="TOEIC" value={ep.toeic} iconPath="toeic.svg" />}
+                            {ep.cambridge && (
                                 <div className="col-span-full rounded-lg border border-blue-100 bg-blue-50 p-3 text-[11px] text-blue-700 italic">
-                                    Cambridge: {applicationRequirements.englishProficiency.cambridge}
+                                    Cambridge: {ep.cambridge}
                                 </div>
                             )}
                         </div>

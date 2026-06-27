@@ -58,8 +58,8 @@ export interface RequiredDocumentsType {
 // admission requirement types
 export interface ApplicationRequirementType {
     id: number;
-    title: string;
-    level: 'Undergraduate' | 'Postgraduate';
+    title?: string;
+    level?: 'Undergraduate' | 'Postgraduate';
     applicationPortalURL?: string;
     applicationFee?: {
         id: number;

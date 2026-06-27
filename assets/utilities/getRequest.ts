@@ -6,31 +6,13 @@ const MAX_RETRIES = 3;
 const RETRY_DELAY_MS = 150;
 
 // Master switch: while bulk content upload is in progress, disable ALL caching so
-// every change in Strapi shows up instantly. Set to false once uploading is done
-// to activate the tiered ISR windows below.
+// every change in Strapi shows up instantly. Set to false to use the ISR window below.
 const CONTENT_UPLOAD_IN_PROGRESS = false;
 
-// ISR revalidation window (seconds) per Strapi endpoint; 0 = no caching (always fresh).
-const BLOG_REVALIDATE_SECONDS = 1800; // 30 min — most frequently updated content
-const CATALOG_REVALIDATE_SECONDS = 21600; // 6 h — universities, medical colleges, courses
-const REFERENCE_REVALIDATE_SECONDS = 86400; // 24 h — countries, streams, terms, fallbacks
+// ISR revalidation window (seconds) applied to EVERY Strapi endpoint. 0 = no caching (always fresh).
+const REVALIDATE_SECONDS = 1800; // 30 min — uniform across all content
 
-const REVALIDATE_BY_PATH: [prefix: string, seconds: number][] = [
-    ['/api/blogs', BLOG_REVALIDATE_SECONDS],
-    ['/api/universities', CATALOG_REVALIDATE_SECONDS],
-    ['/api/medical-colleges', CATALOG_REVALIDATE_SECONDS],
-    ['/api/courses', CATALOG_REVALIDATE_SECONDS],
-    ['/api/countries', REFERENCE_REVALIDATE_SECONDS],
-    ['/api/streams', REFERENCE_REVALIDATE_SECONDS],
-    ['/api/terms-and-condition', REFERENCE_REVALIDATE_SECONDS],
-    ['/api/fallbacks', REFERENCE_REVALIDATE_SECONDS],
-];
-
-const getRevalidateSeconds = (urlPath: string) => {
-    if (CONTENT_UPLOAD_IN_PROGRESS) return 0;
-    const rule = REVALIDATE_BY_PATH.find(([prefix]) => urlPath.startsWith(prefix));
-    return rule ? rule[1] : CATALOG_REVALIDATE_SECONDS;
-};
+const getRevalidateSeconds = () => (CONTENT_UPLOAD_IN_PROGRESS ? 0 : REVALIDATE_SECONDS);
 
 // general fetch request — retries up to MAX_RETRIES times on transient failures
 export const fetchData = async (urlPath: string, queryObject: QueryObjectType, enableCache: boolean = true) => {
@@ -44,7 +26,7 @@ export const fetchData = async (urlPath: string, queryObject: QueryObjectType, e
         throw new Error('failed reading local environment variables');
     }
 
-    const revalidate = enableCache ? getRevalidateSeconds(urlPath) : 0;
+    const revalidate = enableCache ? getRevalidateSeconds() : 0;
 
     const url = `${apiURL}${urlPath}?${query}`;
     const options: RequestInit = {
